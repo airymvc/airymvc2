@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<access_control><!--authentication data can be distributed in multiple table,
+role information can also be put in each table; role can be used to
+control the access right to module or controller-->
+    <mapping_tables>
+        <mapping_table id="1">
+            <name>admin</name>
+            <mapping_fields>
+                <user_id>account_id</user_id>
+                <pwd>pwd</pwd>
+                <pwd_encrypt>salt</pwd_encrypt>
+                <!--
+                <role>role</role>
+                <role_set>adm, user, superuser</role_set>
+                -->
+                <is_delete>is_delete</is_delete>
+            </mapping_fields>
+        </mapping_table>
+
+        <mapping_table id="2">
+            <name>member</name>
+            <mapping_fields>
+                <user_id>account_id</user_id>
+                <pwd>pwd</pwd>
+                <!-- not put salt, then it will be used for checking login -->
+                <!-- role_set maps to the value of the role in database -->
+                <role>role</role>
+                <role_set>adm, user, superuser</role_set>
+                <!-- if use_delete_flag is set, that means we use delete flag to mark deletion -->
+            </mapping_fields>
+        </mapping_table>
+    </mapping_tables>
+    <!-- This one should be a component for users to inherit -->
+    <authentication>
+        <module name="default">
+        <controller>userLogin</controller>
+<!--         Four kinds of actions regarding to authentication
+             (1) check if login 
+             (2) if login error 
+             (3) if need register
+             (4) popup login menu  -->
+                     <!-- if not set, use default actions for that module-->
+                     <!-- in the future, this part should be set in the browse -->
+        <sign_in_action>signIn</sign_in_action>
+        <login_action>userLogin</login_action>
+        <login_error_action>userLoginError</login_error_action>
+        <register_action>register</register_action>
+        <loginout>loginout</loginout>
+        </module>
+        <module name="backend">
+        <controller>login</controller>
+        <!-- if not set, use default actions for that module-->
+        </module>
+    </authentication>
+
+    <successful_dispatch><!--if login successful, setup the module, controller and action you forward to ..usually the entry page for the web-->      
+            <module name ="backend">
+            <controller>admin</controller>
+            <action>getAdm</action>
+            </module>
+            <module name ="default">
+            <controller>memberInfo</controller>
+            <action>getMemberInfo</action>
+            </module>
+    </successful_dispatch>
+    <before_login_browse_rules>
+        <module name = "backend">
+            <allow>
+                <controller>admin</controller>
+                    <action>add</action>
+                    <action>getTitle</action>
+            </allow> 
+            <allow>
+                <controller>event</controller>
+            </allow>
+        </module>
+        <module name = "default">
+            <allow>
+                <controller>index</controller>
+                    <action>index</action>
+                    <action>eventDetail</action>
+                    <action>search</action>
+            </allow>
+        </module>
+    </before_login_browse_rules>
+    
+    <module_table_mapping>
+        <module name="backend">
+            <ref_map_id>1</ref_map_id>
+        </module>
+         <module name="default">
+            <ref_map_id>2</ref_map_id>
+        </module>       
+    </module_table_mapping>
+    
+    <after_login_access_rules>
+        <module name = "backend">
+            <ref_map_id>1</ref_map_id>
+            <rule>
+                <!-- three types :(1) "only_allow": this is block all only allow module or even to controoler
+                                 (2) "allow_all": block all only allow module or even to controller
+                                 (3) "block_all": allow all only block module or even to controller
+                                 -->
+                <access type="block_all"/>
+            </rule>
+        </module>
+    
+        <module name ="default">
+            <ref_map_id>2</ref_map_id>
+            <rule>
+                <ref_role>adm</ref_role>
+                <access type="block_all">
+                    <module>frontweb</module>
+                </access>
+            </rule>
+            <rule>
+                <ref_role>user1</ref_role>
+                <access type="only_block">
+                    <module>frontweb</module>
+                    <controller>test1</controller>
+                </access>
+            </rule>
+            <rule>
+                <ref_role>superuser1</ref_role>
+                <access type="only_allow">
+                    <module>frontweb</module>
+                    <controller>test2</controller>
+                </access>
+            </rule>
+        </module>
+
+    </after_login_access_rules>
+
+</access_control>
