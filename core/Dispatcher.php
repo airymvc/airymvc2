@@ -18,7 +18,7 @@ class Dispatcher{
                 $actionName = $Router->getActionName();
 		//$controller = $moduleName . '_' . $controller;
                 //The default module name must be set in config.ini
-		$controllerfile = 'modules'.DIRECTORY_SEPARATOR . $moduleName .DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR . $controller .'.php';
+		$controllerfile = 'project'. DIRECTORY_SEPARATOR.'modules'.DIRECTORY_SEPARATOR . $moduleName .DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR . $controller .'.php';
                 session_start();
                 Dispatcher::forward($moduleName, $controllerName, $actionName, $params, $controller, $controllerfile, $action);  
 	}
@@ -31,7 +31,7 @@ class Dispatcher{
                 $controller = (is_null($controller)) ? $controllerName.self::CONTROLLER_POSTFIX : $controller;
                 $action = (is_null($action)) ? $actionName.self::ACTION_POSTFIX : $action;
                 
-		$controllerfile1 = 'modules'.DIRECTORY_SEPARATOR . $moduleName .DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR . $controller .'.php';
+		$controllerfile1 = 'project'. DIRECTORY_SEPARATOR.'modules'.DIRECTORY_SEPARATOR . $moduleName .DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR . $controller .'.php';
                 $controllerfile = (is_null($controllerfile)) ? $controllerfile1 : $controllerfile;
                 
                 if (file_exists($controllerfile))
