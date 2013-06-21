@@ -10,7 +10,7 @@ class Initializer {
         set_include_path(get_include_path() . PATH_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "lib");
         set_include_path(get_include_path() . PATH_SEPARATOR . "app");
         set_include_path(get_include_path() . PATH_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "coreLib");
-        set_include_path(get_include_path() . PATH_SEPARATOR . "moduleLib");
+        set_include_path(get_include_path() . PATH_SEPARATOR . "common");
         set_include_path(get_include_path() . PATH_SEPARATOR . "plugin");
 
 
@@ -31,12 +31,12 @@ class Initializer {
             date_default_timezone_set($Config->getTimezone());
         }
         /*
-         * include folders under moduleLib, coreLib, plug-in
+         * include folders under share, coreLib, plug-in
          *  
          */
         $plugIn = $root . DIRECTORY_SEPARATOR . "plugin";
         $coreLib = $root . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "coreLib";
-        $moduleLib = $root . DIRECTORY_SEPARATOR . "moduleLib";
+        $moduleLib = $root . DIRECTORY_SEPARATOR . "share";
 
         $plugInFolders = Initializer::getDirectory($plugIn, TRUE);
         foreach ($plugInFolders as $i => $folder1)
@@ -62,7 +62,7 @@ class Initializer {
         {
             $fd = trim($folder1);
             $rp = trim($moduleLib) . DIRECTORY_SEPARATOR;
-            $f = "moduleLib" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
+            $f = "share" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
             set_include_path(get_include_path() . PATH_SEPARATOR . $f);
         }
 
