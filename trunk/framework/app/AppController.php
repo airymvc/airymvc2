@@ -75,7 +75,7 @@ class AppController extends AbstractController
 
         public function switchView($moduleName, $viewName){
             $viewClassName = $viewName . self::VIEW_POSTFIX;
-            $viewFile = "modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR
+            $viewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR
                         . "views".DIRECTORY_SEPARATOR . $viewClassName .".php";
             $this->view->setViewFilePath($viewFile);
         }
@@ -85,13 +85,13 @@ class AppController extends AbstractController
             $moduleName = MvcReg::getModuleName();
 
             $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
-            $actionViewFile = "modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
+            $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
             $absActionViewFile = PathService::getInstance()->getRootDir() . DIRECTORY_SEPARATOR . $actionViewFile;
         
             if (!file_exists($absActionViewFile)) {
                 $name = $controllerName . "_" . $actionName;
                 $actionViewClassName = $name . self::VIEW_POSTFIX;
-                $actionViewFile = "modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
+                $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
             }
             
             MvcReg::setActionViewClassName($actionViewClassName);

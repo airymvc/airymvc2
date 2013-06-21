@@ -175,8 +175,8 @@ class Router {
     {
         $modelClassName = $controllerName . self::MODEL_POSTFIX;
 	$viewClassName = $controllerName . self::VIEW_POSTFIX;
-        $modelFile = "modules" .DIRECTORY_SEPARATOR. $this->moduleName .DIRECTORY_SEPARATOR."models" .DIRECTORY_SEPARATOR. $modelClassName.".php";
-        $viewFile = "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $viewClassName .".php";
+        $modelFile = "project". DIRECTORY_SEPARATOR. "modules" .DIRECTORY_SEPARATOR. $this->moduleName .DIRECTORY_SEPARATOR."models" .DIRECTORY_SEPARATOR. $modelClassName.".php";
+        $viewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $viewClassName .".php";
 
         MvcReg::setModelClassName($modelClassName);
         MvcReg::setViewClassName($viewClassName);
@@ -187,13 +187,13 @@ class Router {
     public function setDefaultActionView($controllerName, $actionName)
     {
         $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
-        $actionViewFile = "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
+        $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
         $absActionViewFile = $this->root . DIRECTORY_SEPARATOR . $actionViewFile;
         
         if (!file_exists($absActionViewFile)) {
             $name = $controllerName . "_" . $actionName;
             $actionViewClassName = $name . self::VIEW_POSTFIX;
-            $actionViewFile = "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
+            $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
         }
         MvcReg::setActionViewClassName($actionViewClassName);
         MvcReg::setActionViewFile($actionViewFile);  

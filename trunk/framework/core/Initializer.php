@@ -5,18 +5,19 @@ class Initializer {
 
     public static function initialize() {
         set_include_path(get_include_path() . PATH_SEPARATOR . "core");
-        set_include_path(get_include_path() . PATH_SEPARATOR . "modules");
         set_include_path(get_include_path() . PATH_SEPARATOR . "config");
         set_include_path(get_include_path() . PATH_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "lib");
         set_include_path(get_include_path() . PATH_SEPARATOR . "app");
         set_include_path(get_include_path() . PATH_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "coreLib");
-        set_include_path(get_include_path() . PATH_SEPARATOR . "common");
+        set_include_path(get_include_path() . PATH_SEPARATOR . "project");
+        set_include_path(get_include_path() . PATH_SEPARATOR . "project" . DIRECTORY_SEPARATOR . "share");
+        set_include_path(get_include_path() . PATH_SEPARATOR . "project" . DIRECTORY_SEPARATOR . "modules");
         set_include_path(get_include_path() . PATH_SEPARATOR . "plugin");
 
 
         //set module paths
         $root = PathService::getInstance()->getRootDir();
-        $modulePath = $root . DIRECTORY_SEPARATOR . "modules";
+        $modulePath = $root . DIRECTORY_SEPARATOR . "project" .DIRECTORY_SEPARATOR . "modules";
         $moduleFolders = Initializer::getDirectory($modulePath, TRUE);
         foreach ($moduleFolders as $i => $mfolder)
         {
@@ -31,12 +32,12 @@ class Initializer {
             date_default_timezone_set($Config->getTimezone());
         }
         /*
-         * include folders under share, coreLib, plug-in
+         * include folders under project, coreLib, plug-in
          *  
          */
         $plugIn = $root . DIRECTORY_SEPARATOR . "plugin";
         $coreLib = $root . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "coreLib";
-        $moduleLib = $root . DIRECTORY_SEPARATOR . "share";
+        $project = $root . DIRECTORY_SEPARATOR . "project";
 
         $plugInFolders = Initializer::getDirectory($plugIn, TRUE);
         foreach ($plugInFolders as $i => $folder1)
@@ -57,12 +58,12 @@ class Initializer {
             set_include_path(get_include_path() . PATH_SEPARATOR . $f);
         }
         
-        $moduleLibFolders = Initializer::getDirectory($moduleLib, TRUE);
-        foreach ($moduleLibFolders as $i => $folder1)
+        $projectFolders = Initializer::getDirectory($project, TRUE);
+        foreach ($projectFolders as $i => $folder1)
         {
             $fd = trim($folder1);
-            $rp = trim($moduleLib) . DIRECTORY_SEPARATOR;
-            $f = "share" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
+            $rp = trim($project) . DIRECTORY_SEPARATOR;
+            $f = "project" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
             set_include_path(get_include_path() . PATH_SEPARATOR . $f);
         }
 
