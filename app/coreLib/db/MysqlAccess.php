@@ -22,9 +22,10 @@ class MysqlAccess  {
     private $keywords;
     private $query_type;
 
-    function __construct() {
-        $Config = Config::getInstance();
-        $this->dbConfig_array = $Config->getDBConfig();
+    function __construct($databaseId = 0) {
+        $config = Config::getInstance();
+        $configArray = $config->getDBConfig();
+        $this->dbConfig_array = $configArray[$databaseId];
         $this->setKeywords();
     }
 

@@ -3,7 +3,7 @@ require_once('MysqlAccess.php');
 
 
 class AcDb {
-    /*
+    /**
      * $db is used when there is only single db setting
      */
     public $db;
@@ -13,14 +13,12 @@ class AcDb {
     }
 
     public function initialDB() {
-        $Config = Config::getInstance();
-        $dbConfigArray = $Config->getDBConfig();
-
-        //Check if the dbtype is "MySQL"
-        if (strtolower($dbConfigArray['dbtype']) == "mysql") {
-            $this->db = new MysqlAccess();
-        }
-        //Check if the dbtype is others....... 
+        $this->multiDb = DbConfig::getConfig();
+        $acl           = new AclUtility();
+        $aclDbId       = $acl->getMapDatabaseId();
+        $this->db      = $this->multiDb[$aclDbId];
+        
+        return $this->db; 
     }
 
     public function getUserByUidPwd($table_name, $uid_field, $uid, $pwd_or_salt_field, 
