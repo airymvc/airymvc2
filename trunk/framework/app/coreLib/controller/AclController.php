@@ -10,9 +10,9 @@ require_once ('AclUtility.php');
 class AclController extends AbstractController {
 
     protected $_loginForm;
-    protected $model;
-    protected $view;
-    protected $params;
+//    protected $model;
+//    protected $view;
+//    protected $params;
     protected $_registerViewName;
     protected $_uidLabel = null;
     protected $_pwdLabel = null;
@@ -21,7 +21,7 @@ class AclController extends AbstractController {
 //    const IS_LOGIN = "islogin";
 //    const UID = "uid";
 
-    const VIEW_POSTFIX = 'View';
+//    const VIEW_POSTFIX = 'View';
     const ACTION_POSTFIX = 'Action';
 
     public function initial($params) {
@@ -189,12 +189,12 @@ class AclController extends AbstractController {
         }
     }
 
-    function setDefaultModel() {
-        if (file_exists(MvcReg::$_modelFile)) {
-            require_once (MvcReg::$_modelFile);
-            $this->model = new MvcReg::$_modelClassName();
-        }
-    }
+//    function setDefaultModel() {
+//        if (file_exists(MvcReg::$_modelFile)) {
+//            require_once (MvcReg::$_modelFile);
+//            $this->model = new MvcReg::$_modelClassName();
+//        }
+//    }
 
     function setParams($params) {
         $this->params = $params;
@@ -232,42 +232,42 @@ class AclController extends AbstractController {
         $this->view = $view;
     }
 
-    public function switchView($moduleName, $viewName) {
-        $viewClassName = $viewName . self::VIEW_POSTFIX;
-        $viewFile = "project". DIRECTORY_SEPARATOR. "modules" . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR
-                  . "views" . DIRECTORY_SEPARATOR . $viewClassName . ".php";
-        $this->view->setViewFilePath($viewFile);
-    }
+//    public function switchView($moduleName, $viewName) {
+//        $viewClassName = $viewName . self::VIEW_POSTFIX;
+//        $viewFile = "project". DIRECTORY_SEPARATOR. "modules" . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR
+//                  . "views" . DIRECTORY_SEPARATOR . $viewClassName . ".php";
+//        $this->view->setViewFilePath($viewFile);
+//    }
 
-    public function switchToCallAction($actionName) {
-            $controllerName = MvcReg::getControllerName();
-            $moduleName = MvcReg::getModuleName();
-
-            $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
-            $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
-            $absActionViewFile = PathService::getInstance()->getRootDir() . DIRECTORY_SEPARATOR . $actionViewFile;
-        
-            if (!file_exists($absActionViewFile)) {
-                $name = $controllerName . "_" . $actionName;
-                $actionViewClassName = $name . self::VIEW_POSTFIX;
-                $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
-            }
-            
-            MvcReg::setActionViewClassName($actionViewClassName);
-            MvcReg::setActionViewFile($actionViewFile); 
-            
-            $action = $actionName . self::ACTION_POSTFIX;
-            $this->setDefaultView();
-            $this->$action();
-    }
-
-    public function getCurrentActionURL() {
-        $moduleName = MvcReg::getModuleName();
-        $controllerName = MvcReg::getControllerName();
-        $actionName = MvcReg::getActionName();
-        $url = PathService::getInstance()->getFormActionURL($moduleName, $controllerName, $actionName);
-        return $url;
-    }
+//    public function switchToCallAction($actionName) {
+//            $controllerName = MvcReg::getControllerName();
+//            $moduleName = MvcReg::getModuleName();
+//
+//            $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
+//            $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
+//            $absActionViewFile = PathService::getInstance()->getRootDir() . DIRECTORY_SEPARATOR . $actionViewFile;
+//        
+//            if (!file_exists($absActionViewFile)) {
+//                $name = $controllerName . "_" . $actionName;
+//                $actionViewClassName = $name . self::VIEW_POSTFIX;
+//                $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
+//            }
+//            
+//            MvcReg::setActionViewClassName($actionViewClassName);
+//            MvcReg::setActionViewFile($actionViewFile); 
+//            
+//            $action = $actionName . self::ACTION_POSTFIX;
+//            $this->setDefaultView();
+//            $this->$action();
+//    }
+//
+//    public function getCurrentActionURL() {
+//        $moduleName = MvcReg::getModuleName();
+//        $controllerName = MvcReg::getControllerName();
+//        $actionName = MvcReg::getActionName();
+//        $url = PathService::getInstance()->getFormActionURL($moduleName, $controllerName, $actionName);
+//        return $url;
+//    }
 
 }
 ?>
