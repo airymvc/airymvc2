@@ -11,9 +11,14 @@ class AclUtility
 
     function __construct($aclxml = null) {
         $root = PathService::getInstance()->getRootDir();
-        if (is_null($aclxml)) 
-        {
-            $this->_aclxml = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';          
+        if (is_null($aclxml)) {
+            $this->_aclxml = $root .DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';
+            //Fallback to framework level's aclxml file
+            $frameworkAclXml = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';
+            if (!file_exists($this->_aclxml)) {
+                $this->_aclxml = $frameworkAclXml;
+            }
+            
         } else {
             $this->_aclxml = $aclxml;
         }
