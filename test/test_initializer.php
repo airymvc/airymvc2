@@ -1,11 +1,6 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 require_once '../core/PathService.php';
+
 $root = PathService::getInstance()->getRootDir();
 $coreLib = $root . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "coreLib";
  $r = Initializer::getDirectory($coreLib, TRUE);

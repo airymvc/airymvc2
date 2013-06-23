@@ -3,7 +3,9 @@ require_once('MysqlAccess.php');
 
 
 class AcDb {
-
+    /*
+     * $db is used when there is only single db setting
+     */
     public $db;
 
     public function __construct() {
@@ -12,10 +14,10 @@ class AcDb {
 
     public function initialDB() {
         $Config = Config::getInstance();
-        $dbConfig_array = $Config->getDBConfig();
+        $dbConfigArray = $Config->getDBConfig();
 
         //Check if the dbtype is "MySQL"
-        if (strtolower($dbConfig_array['dbtype']) == "mysql") {
+        if (strtolower($dbConfigArray['dbtype']) == "mysql") {
             $this->db = new MysqlAccess();
         }
         //Check if the dbtype is others....... 

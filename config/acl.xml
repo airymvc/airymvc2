@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<access_control><!--authentication data can be distributed in multiple table,
+<access_control>
+    <!-- tbis database id is based on the id number from config.ini file -->
+    <!-- choose the database which you put the authentication information -->
+    <mapping_database_id>0</mapping_database_id>0    
+    
+<!--authentication data can be distributed in multiple table,
 role information can also be put in each table; role can be used to
 control the access right to module or controller-->
     <mapping_tables>
