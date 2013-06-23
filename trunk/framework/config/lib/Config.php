@@ -12,12 +12,17 @@ class Config{
     const JSKEY       = 'script';
     const CSSKEY      = 'css';
     
-    function __construct($iniFilePath = null)
+    function __construct($iniFilePath = null) 
     {
         $root = PathService::getInstance()->getRootDir();
-        if (is_null($iniFilePath))
-        {
-            $this->_iniFilePath = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini';
+        if (is_null($iniFilePath)) {
+            $this->_iniFilePath = $root . DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini';
+            //Fallback config path to framework's level config folder's config.ini
+            $frameworkConfig = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini';
+            if (!file_exists($this->_iniFilePath)) {
+                $this->_iniFilePath = $frameworkConfig;    
+            }
+             
         } else {
             $this->_iniFilePath = $iniFilePath;
         }
