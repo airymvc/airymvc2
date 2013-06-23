@@ -3,7 +3,11 @@
 
 class Initializer {
 
+    /**
+     * This initialize those include path 
+     */
     public static function initialize() {
+        
         set_include_path(get_include_path() . PATH_SEPARATOR . "core");
         set_include_path(get_include_path() . PATH_SEPARATOR . "config");
         set_include_path(get_include_path() . PATH_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "lib");
@@ -31,7 +35,8 @@ class Initializer {
         if (!is_null($Config->getTimezone())) {
             date_default_timezone_set($Config->getTimezone());
         }
-        /*
+        
+        /**
          * include folders under project, coreLib, plug-in
          *  
          */
@@ -68,7 +73,14 @@ class Initializer {
         }
 
     }
-        
+    
+    /**
+     * The input folder will be recursively loop throught and save the folder into an array
+     * 
+     * @param string $directory
+     * @param boolean $recursive
+     * @return array 
+     */    
     public static function getDirectory($directory, $recursive) {
 	$array_items = array();
         $ignore = array('.', '..', '.svn', '.DS_Store');
