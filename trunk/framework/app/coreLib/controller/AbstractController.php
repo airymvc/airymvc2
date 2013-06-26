@@ -14,14 +14,7 @@ abstract class AbstractController{
         const VIEW_POSTFIX = 'View';
         const ACTION_POSTFIX = 'Action';
 
-        public function initial($params)
-        {
-
-            $this->setDefaultModel();
-            $this->view = new AppView();
-            $this->setDefaultView();
-            $this->setParams($params);
-        }
+        public function initial($params) {}
 
         function setDefaultView()
         {
@@ -42,10 +35,21 @@ abstract class AbstractController{
             }
         }
         
-	function setParams($params){}	
-	function getParams(){}
-	public function getModel(){}
-	public function getView(){}
+        public function setParams($params)
+        {
+            $this->params = $params;
+        }
+
+        public function getParams()
+        {
+            return $this->params;
+        }
+        /**
+            * @return the $model
+            */
+        public function getModel() {
+            return $this->model;
+        }
 	
         /**
             * @param field_type $model
@@ -56,7 +60,21 @@ abstract class AbstractController{
         }
         
         
-	public function setView($view){}
+        /**
+            * @return the $view
+            */
+        public function getView() {
+            return $this->view;
+        }
+
+
+
+        /**
+            * @param field_type $view
+            */
+        public function setView($view) {
+            $this->view = $view;
+        }
         
         
         public function switchView($moduleName, $viewName){
