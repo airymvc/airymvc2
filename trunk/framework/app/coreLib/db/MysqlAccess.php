@@ -14,26 +14,26 @@
 
 class MysqlAccess implements DbAccessInterface{
 
-    private $dbConfig_array;
-    private $query_stmt;
-    private $select_stmt;
-    private $select_part;
-    private $update_part;
-    private $delete_part;
-    private $insert_part;
-    private $join_part;
-    private $join_on_part;
-    private $where_part;
-    private $order_part;
-    private $group_part;
-    private $limit_part;
+    private $dbConfigArray;
+    private $queryStmt;
+    private $selectStatement;
+    private $selectPart;
+    private $updatePart;
+    private $deletePart;
+    private $insertPart;
+    private $joinPart;
+    private $joinOnPart;
+    private $wherePart;
+    private $orderPart;
+    private $groupPart;
+    private $limitPart;
     private $keywords;
-    private $query_type;
+    private $queryType;
 
     function __construct($databaseId = 0) {
         $config = Config::getInstance();
         $configArray = $config->getDBConfig();
-        $this->dbConfig_array = $configArray[$databaseId];
+        $this->dbConfigArray = $configArray[$databaseId];
         $this->setKeywords();
     }
 
@@ -48,7 +48,7 @@ class MysqlAccess implements DbAccessInterface{
      */
 
     public function where($condition) {
-        $this->where_part = " WHERE ";
+        $this->wherePart = " WHERE ";
         $ops = array_keys($condition);
         if (empty($ops[0])) {
             //NO "AND", "OR" 
@@ -58,11 +58,11 @@ class MysqlAccess implements DbAccessInterface{
             $sub_keys = array_keys($field_array);
             $pos = strpos($sub_keys[0], '.');
             if ($pos == false){
-                $this->where_part = $this->where_part
+                $this->wherePart = $this->wherePart
                      . " `" . $sub_keys[0] . "` " . $opr . " '" . $condition[$ops[0]][$opr][$sub_keys[0]] . "' ";
             } else {
                 $tf = explode (".", $sub_keys[0]);
-                $this->where_part = $this->where_part
+                $this->wherePart = $this->wherePart
                      . " `{$tf[0]}`.`{$tf[1]}` " . $opr . " '" . $condition[$ops[0]][$opr][$sub_keys[0]] . "' ";
             }
         } else {   //Multiple Join Conditions
@@ -75,22 +75,22 @@ class MysqlAccess implements DbAccessInterface{
                             if ($first_one) {
                                 $pos = strpos($mfield, '.');
                                 if ($pos == false){
-                                    $this->where_part = $this->where_part
+                                    $this->wherePart = $this->wherePart
                                            . " `" . $mfield . "` " . $mopr . " '" . $fv_pair[$mfield] . "' ";
                                 } else {
                                     $tf = explode (".", $mfield);
-                                    $this->where_part = $this->where_part
+                                    $this->wherePart = $this->wherePart
                                            . " `{$tf[0]}`.`{$tf[1]}` " . $mopr . " '" . $fv_pair[$mfield] . "' ";                               
                                 }
                                 $first_one = FALSE;
                             } else {
                                 $pos = strpos($mfield, '.');
                                 if ($pos == false){
-                                    $this->where_part = $this->where_part . strtoupper($op)
+                                    $this->wherePart = $this->wherePart . strtoupper($op)
                                            . " `" . $mfield . "` " . $mopr . " '" . $fv_pair[$mfield] . "' ";
                                 } else {
                                     $tf = explode (".", $mfield);
-                                    $this->where_part = $this->where_part . strtoupper($op)
+                                    $this->wherePart = $this->wherePart . strtoupper($op)
                                            . " `{$tf[0]}`.`{$tf[1]}` " . $mopr . " '" . $fv_pair[$mfield] . "' ";                              
                                 }
                             
@@ -113,9 +113,9 @@ class MysqlAccess implements DbAccessInterface{
 
         foreach ($tables as $index => $tbl) {
             if ($index == 0) {
-                $this->join_part = " INNER JOIN `" . $tbl . "`";
+                $this->joinPart = " INNER JOIN `" . $tbl . "`";
             } else {
-                $this->join_part = $this->join_part . " INNER JOIN `" . $tbl . "`";
+                $this->joinPart = $this->joinPart . " INNER JOIN `" . $tbl . "`";
             }
         }
     }
@@ -136,7 +136,7 @@ class MysqlAccess implements DbAccessInterface{
      */
 
     public function joinOn($condition) {
-        $this->join_on_part = " ON ";
+        $this->joinOnPart = " ON ";
         $ops = array_keys($condition);
         
         if (empty($ops[0])) {
@@ -145,7 +145,7 @@ class MysqlAccess implements DbAccessInterface{
             $opr = $condition[$ops[0]][0][0];
             $table1 = $keys[1];
             $table2 = $keys[2];
-            $this->join_on_part = $this->join_on_part
+            $this->joinOnPart = $this->joinOnPart
                     . " `" . $table1 . "`.`" . $condition[$ops[0]][0][$table1] . "` " . $opr
                     . " `" . $table2 . "`.`" . $condition[$ops[0]][0][$table2] . "`";
         } else {   //Multiple Join Conditions
@@ -159,10 +159,10 @@ class MysqlAccess implements DbAccessInterface{
                          $mopr = $tf_pair[0];
                          $mtable1 = $mkeys[1];
                          $mtable2 = $mkeys[2];
-                         $this->join_on_part = $this->join_on_part 
+                         $this->joinOnPart = $this->joinOnPart 
                                . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
                                . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";  
-                         return $this->join_on_part;
+                         return $this->joinOnPart;
                 }
                 foreach ($tf_pairs as $idx => $tf_pair) {
                          if (count($tf_pairs) - 1 == $idx) {
@@ -170,7 +170,7 @@ class MysqlAccess implements DbAccessInterface{
                              $mopr = $tf_pair[0];
                              $mtable1 = $mkeys[1];
                              $mtable2 = $mkeys[2];
-                             $this->join_on_part = $this->join_on_part 
+                             $this->joinOnPart = $this->joinOnPart 
                                    . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
                                    . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";                           
                          } else {
@@ -178,12 +178,12 @@ class MysqlAccess implements DbAccessInterface{
                              $mopr = $tf_pair[0];
                              $mtable1 = $mkeys[1];
                              $mtable2 = $mkeys[2];
-                             $this->join_on_part = $this->join_on_part 
+                             $this->joinOnPart = $this->joinOnPart 
                                     . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
                                     . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`" . $op;   
                          }
                 }
-                return $this->join_on_part;
+                return $this->joinOnPart;
             }
             foreach ($ops as $index => $op) {
                 $tf_pairs = $condition[$op]; 
@@ -193,7 +193,7 @@ class MysqlAccess implements DbAccessInterface{
                           $mopr = $tf_pair[0];
                           $mtable1 = $mkeys[1];
                           $mtable2 = $mkeys[2];
-                          $this->join_on_part = $this->join_on_part . $op
+                          $this->joinOnPart = $this->joinOnPart . $op
                                . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
                                . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";  
                 } elseif (count($tf_pairs) > 1) {
@@ -203,7 +203,7 @@ class MysqlAccess implements DbAccessInterface{
                               $mopr = $tf_pair[0];
                               $mtable1 = $mkeys[1];
                               $mtable2 = $mkeys[2];
-                              $this->join_on_part = $this->join_on_part 
+                              $this->joinOnPart = $this->joinOnPart 
                                    . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
                                    . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";                           
                           } else {
@@ -211,7 +211,7 @@ class MysqlAccess implements DbAccessInterface{
                               $mopr = $tf_pair[0];
                               $mtable1 = $mkeys[1];
                               $mtable2 = $mkeys[2];
-                              $this->join_on_part = $this->join_on_part 
+                              $this->joinOnPart = $this->joinOnPart 
                                     . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
                                     . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`" . $op;   
                           }
@@ -223,20 +223,20 @@ class MysqlAccess implements DbAccessInterface{
     }
 
     public function select($columns, $table, $distinct = 0) {
-        $this->query_type = "SELECT";
+        $this->queryType = "SELECT";
         if ($distinct == 0) {
-            $this->select_part = 'SELECT ';
+            $this->selectPart = 'SELECT ';
         } else {
-            $this->select_part = 'SELECT DISTINCT ';         
+            $this->selectPart = 'SELECT DISTINCT ';         
         }
         $columns = $this->mysql_escape($columns);
         $table = $this->mysql_escape($table);
 
         foreach ($columns as $index => $col) {
             if ($index == count($columns) - 1) {
-                $this->select_part = $this->select_part . $col . " FROM `" . $table . "`";
+                $this->selectPart = $this->selectPart . $col . " FROM `" . $table . "`";
             } else {
-                $this->select_part = $this->select_part . $col . ", ";
+                $this->selectPart = $this->selectPart . $col . ", ";
             }
         }
     }
@@ -249,15 +249,15 @@ class MysqlAccess implements DbAccessInterface{
     public function update($columns, $table) {
         $columns = $this->mysql_escape($columns);
         $table = $this->mysql_escape($table);
-        $this->query_type = "UPDATE";
-        $this->update_part = "UPDATE `" . $table . "` SET ";
+        $this->queryType = "UPDATE";
+        $this->updatePart = "UPDATE `" . $table . "` SET ";
         $size = count($columns) - 1;
         $n = 0;
         foreach ($columns as $column_index => $column_value) {
             if ($n == $size) {
-                $this->update_part = $this->update_part . "`" . $column_index . "`='" . $column_value . "'";
+                $this->updatePart = $this->updatePart . "`" . $column_index . "`='" . $column_value . "'";
             } else {
-                $this->update_part = $this->update_part . "`" . $column_index . "`='" . $column_value . "', ";
+                $this->updatePart = $this->updatePart . "`" . $column_index . "`='" . $column_value . "', ";
             }
             $n++;
         }
@@ -274,15 +274,15 @@ class MysqlAccess implements DbAccessInterface{
     public function insert($columns, $table) {
         $columns = $this->mysql_escape($columns);
         $table = $this->mysql_escape($table);
-        $this->query_type = "INSERT";
-        $this->insert_part = "INSERT INTO " . $table . " ( ";
+        $this->queryType = "INSERT";
+        $this->insertPart = "INSERT INTO " . $table . " ( ";
         $size = count($columns) - 1;
         $n = 0;
         foreach ($columns as $column_index => $column_value) {
             if ($n == $size) {
-                $this->insert_part = $this->insert_part . "`" . $column_index . "`) VALUES (";
+                $this->insertPart = $this->insertPart . "`" . $column_index . "`) VALUES (";
             } else {
-                $this->insert_part = $this->insert_part . "`" . $column_index . "`, ";
+                $this->insertPart = $this->insertPart . "`" . $column_index . "`, ";
             }
             $n++;
         }
@@ -291,15 +291,15 @@ class MysqlAccess implements DbAccessInterface{
         foreach ($columns as $column_index => $column_value) {
             if ($n == $size) {
                 if (array_key_exists($column_value, $this->keywords)) {
-                    $this->insert_part = $this->insert_part . $column_value . ")";
+                    $this->insertPart = $this->insertPart . $column_value . ")";
                 } else {
-                    $this->insert_part = $this->insert_part . "'" . $column_value . "')";
+                    $this->insertPart = $this->insertPart . "'" . $column_value . "')";
                 }
             } else {
                 if (array_key_exists($column_value, $this->keywords)) {
-                    $this->insert_part = $this->insert_part . $column_value . ", ";
+                    $this->insertPart = $this->insertPart . $column_value . ", ";
                 } else {
-                    $this->insert_part = $this->insert_part . "'" . $column_value . "', ";
+                    $this->insertPart = $this->insertPart . "'" . $column_value . "', ";
                 }
             }
             $n++;
@@ -312,8 +312,8 @@ class MysqlAccess implements DbAccessInterface{
 
     public function delete($table) {
         $table = $this->mysql_escape($table);
-        $this->query_type = "DELETE";
-        $this->delete_part = "DELETE FROM " . $table;
+        $this->queryType = "DELETE";
+        $this->deletePart = "DELETE FROM " . $table;
     }
 
     /*
@@ -326,9 +326,9 @@ class MysqlAccess implements DbAccessInterface{
         $offset = (!is_null($offset)) ? $this->mysql_escape($offset) : $offset;
         $interval = $this->mysql_escape($interval);
         if (!is_null($offset)) {
-            $this->limit_part = $this->limit_part . " LIMIT " . trim($offset) . ", " . trim($interval);   
+            $this->limitPart = $this->limitPart . " LIMIT " . trim($offset) . ", " . trim($interval);   
         } else {
-            $this->limit_part = $this->limit_part . " LIMIT " . trim($interval);            
+            $this->limitPart = $this->limitPart . " LIMIT " . trim($interval);            
         }
     }
 
@@ -340,9 +340,9 @@ class MysqlAccess implements DbAccessInterface{
     public function orderBy($column, $if_desc = NULL) {
         $column = $this->mysql_escape($column);
         if ($if_desc == NULL) {
-            $this->order_part = $this->order_part . " ORDER BY " . $column;
+            $this->orderPart = $this->orderPart . " ORDER BY " . $column;
         } else {
-            $this->order_part = $this->order_part . " ORDER BY " . $column . " DESC";
+            $this->orderPart = $this->orderPart . " ORDER BY " . $column . " DESC";
         }
     }
     
@@ -351,22 +351,22 @@ class MysqlAccess implements DbAccessInterface{
      */
     public function groupBy($column) {
         $column = $this->mysql_escape($column);
-        $this->group_part = $this->group_part . " GROUP BY " . $column;
+        $this->groupPart = $this->groupPart . " GROUP BY " . $column;
     }
     
     
     public function execute() {
 
-        $query_stmt = $this->getStatement();
+        $queryStmt = $this->getStatement();
         
-        $con = mysql_connect($this->dbConfig_array['host'],$this->dbConfig_array['id'],$this->dbConfig_array['pwd']);
-        mysql_set_charset($this->dbConfig_array['encoding'] ,$con);
+        $con = mysql_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
+        mysql_set_charset($this->dbConfigArray['encoding'] ,$con);
                 
         if (!$con) {
             die('Could not connect: ' . mysql_error());
         }
-        mysql_select_db($this->dbConfig_array['database'], $con);
-        $mysql_results = mysql_query($query_stmt);
+        mysql_select_db($this->dbConfigArray['database'], $con);
+        $mysql_results = mysql_query($queryStmt);
         
         if (!$mysql_results) {
             die('Could not query:' . mysql_error());
@@ -378,75 +378,75 @@ class MysqlAccess implements DbAccessInterface{
     }
 
     /**
-     * @return the $dbConfig_array
+     * @return the $dbConfigArray
      */
-    public function getDbConfig_array() {
-        return $this->dbConfig_array;
+    public function getdbConfigArray() {
+        return $this->dbConfigArray;
     }
 
     /**
-     * @return the $query_stmt
+     * @return the $queryStmt
      */
     public function getStatement() {
         //Combine every part of the query statement
-        switch ($this->query_type) {
+        switch ($this->queryType) {
             case "SELECT":
-                $this->query_stmt = null;
-                $this->query_stmt = $this->select_part . $this->join_part . $this->join_on_part
-                        . $this->where_part . $this->group_part . $this->order_part . $this->limit_part; 
+                $this->queryStmt = null;
+                $this->queryStmt = $this->selectPart . $this->joinPart . $this->joinOnPart
+                        . $this->wherePart . $this->groupPart . $this->orderPart . $this->limitPart; 
                 break;
             case "UPDATE":
-                $this->query_stmt = null;
-                $this->query_stmt = $this->update_part . $this->where_part;
+                $this->queryStmt = null;
+                $this->queryStmt = $this->updatePart . $this->wherePart;
                 break;
             case "INSERT":
-                $this->query_stmt = null;
-                $this->query_stmt = $this->insert_part;
+                $this->queryStmt = null;
+                $this->queryStmt = $this->insertPart;
                 break;
             case "DELETE":
-                $this->query_stmt = null;
-                $this->query_stmt = $this->delete_part . $this->where_part;
+                $this->queryStmt = null;
+                $this->queryStmt = $this->deletePart . $this->wherePart;
                 break;
         }
-        return $this->query_stmt;
+        return $this->queryStmt;
     }
     
     public function getSelectStatement(){
-        if ($this->query_type != "SELECT") {
+        if ($this->queryType != "SELECT") {
             return null;
         }
-        $this->select_stmt = null;
-        $this->select_stmt = $this->select_part . $this->join_part . $this->join_on_part
-                           . $this->where_part . $this->group_part . $this->order_part . $this->limit_part;         
-        return $this->select_stmt;
+        $this->selectStatement = null;
+        $this->selectStatement = $this->selectPart . $this->joinPart . $this->joinOnPart
+                           . $this->wherePart . $this->groupPart . $this->orderPart . $this->limitPart;         
+        return $this->selectStatement;
     }
     
     public function cleanAll(){
-        $this->query_type = "";
-        $this->select_part = "";
-        $this->join_part = "";
-        $this->join_on_part = "";
-        $this->where_part = "";
-        $this->order_part = "";
-        $this->limit_part = "";
-        $this->update_part = "";
-        $this->insert_part = "";
-        $this->delete_part = "";
-        $this->group_part = "";
+        $this->queryType = "";
+        $this->selectPart = "";
+        $this->joinPart = "";
+        $this->joinOnPart = "";
+        $this->wherePart = "";
+        $this->orderPart = "";
+        $this->limitPart = "";
+        $this->updatePart = "";
+        $this->insertPart = "";
+        $this->deletePart = "";
+        $this->groupPart = "";
     }
 
     /**
-     * @param field_type $dbConfig_array
+     * @param field_type $dbConfigArray
      */
-    public function setDbConfig_array($dbConfig_array) {
-        $this->dbConfig_array = $dbConfig_array;
+    public function setdbConfigArray($dbConfigArray) {
+        $this->dbConfigArray = $dbConfigArray;
     }
 
     /**
-     * @param field_type $query_stmt
+     * @param field_type $queryStmt
      */
-    public function setStatement($query_stmt) {
-        $this->query_stmt = $query_stmt;
+    public function setStatement($queryStmt) {
+        $this->queryStmt = $queryStmt;
     }
 
     public function setKeywords() {
@@ -457,8 +457,8 @@ class MysqlAccess implements DbAccessInterface{
         /**
          * Need to add connection in order to avoid ODBC errors here 
          */
-        $con = mysql_connect($this->dbConfig_array['host'],$this->dbConfig_array['id'],$this->dbConfig_array['pwd']);
-        mysql_set_charset($this->dbConfig_array['encoding'] ,$con);
+        $con = mysql_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
+        mysql_set_charset($this->dbConfigArray['encoding'] ,$con);
         //check if $content is an array
         if (is_array($content)) {
             foreach ($content as $key => $value) {

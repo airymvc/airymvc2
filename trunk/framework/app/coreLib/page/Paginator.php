@@ -52,10 +52,10 @@ class Paginator{
     
     public function initialDB() {
         $Config = Config::getInstance();
-        $dbConfig_array = $Config->getDBConfig();
+        $dbConfigArray = $Config->getDBConfig();
 
         //Check if the dbtype is "MySQL"
-        if (strtolower($dbConfig_array['dbtype']) == "mysql") {
+        if (strtolower($dbConfigArray['dbtype']) == "mysql") {
             $this->db = new MysqlAccess();
         }
         //Check if the dbtype is others....... 
