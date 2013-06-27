@@ -12,7 +12,7 @@
  *
  */
 
-class MysqlAccess implements DbAccessInterface {
+class MysqlAccess implements DbAccessInterface{
 
     private $dbConfig_array;
     private $query_stmt;
