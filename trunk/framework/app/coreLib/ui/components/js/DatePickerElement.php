@@ -63,18 +63,15 @@ class DatePickerElement extends JUIComponent{
         $this->_dateFormat = $dateFormat;
     }
     
-    protected function renderElements() {
+    
+    public function render()
+    {
         $datePickerText = $this->_inputElement->render(); 
         /**
          * Add Javascript support, follow the Jquery Tool Tabs
          */
         $datePickerText = $datePickerText . $this->appendJs($this->_id);
         $this->_elementText = $datePickerText;
-    }
-    
-    public function render()
-    {
-        $this->renderElements();
         return $this->_elementText;
     }
     

@@ -18,7 +18,7 @@
  *
  * @author Hung-Fu Aaron Chang
  */
-abstract class JUIComponent {
+class JUIComponent {
     
     protected $_id;
     protected $_attributes = array();
@@ -47,9 +47,7 @@ abstract class JUIComponent {
     {
         $this->_elements[$tabLink] = $elements;
     }
-    
-    abstract protected function renderElements();
-    
+        
     public function render(){
         return $this->_elementText;
     }
