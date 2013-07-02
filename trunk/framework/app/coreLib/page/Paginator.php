@@ -10,14 +10,9 @@
  * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
  * The project website URL: https://code.google.com/p/airymvc/
  *
- *
+ * @author: Hung-Fu Aaron Chang
  */
 
-/**
- * Description of Paginator
- *
- * @author Hung-Fu Aaron Chang
- */
 class Paginator{
     //put your code here
     private $_linkAction;

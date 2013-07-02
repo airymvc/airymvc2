@@ -9,6 +9,7 @@
  * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
  * The project website URL: https://code.google.com/p/airymvc/
  *
+ * @author: Hung-Fu Aaron Chang
  */
 
 /*
@@ -20,18 +21,11 @@
 class AclController extends AbstractController {
 
     protected $_loginForm;
-//    protected $model;
-//    protected $view;
-//    protected $params;
     protected $_registerViewName;
     protected $_uidLabel = null;
     protected $_pwdLabel = null;
     protected $_insertHtmlString;
 
-//    const IS_LOGIN = "islogin";
-//    const UID = "uid";
-
-//    const VIEW_POSTFIX = 'View';
     const ACTION_POSTFIX = 'Action';
     protected $_auth;
 
@@ -43,8 +37,6 @@ class AclController extends AbstractController {
         $this->_auth = new AuthElement();
         
     }
-
-
 
     /**
      * signIn, check with the database table with uid, pwd and mapping table

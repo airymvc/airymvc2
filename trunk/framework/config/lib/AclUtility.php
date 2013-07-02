@@ -8,7 +8,7 @@
  *
  * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
  *
- *
+ * @author: Hung-Fu Aaron Chang
  */
 
 class AclUtility 
