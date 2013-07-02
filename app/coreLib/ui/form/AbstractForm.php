@@ -10,12 +10,6 @@
  * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
  * The project website URL: https://code.google.com/p/airymvc/
  *
- *
- */
-
-/**
- * Description of simpleForm
- *
  * @author Hung-Fu Aaron Chang
  */
 

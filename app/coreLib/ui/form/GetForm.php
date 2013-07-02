@@ -9,15 +9,11 @@
  * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
  * The project website URL: https://code.google.com/p/airymvc/
  *
- *
+ * @author Hung-Fu Aaron Chang
  */
 
 require_once ('AbstractForm.php');
-/**
- * Description of getForm
- *
- * @author Hung-Fu Aaron Chang
- */
+
 class GetForm extends AbstractForm{
     //put your code here
         public function __construct($id) {

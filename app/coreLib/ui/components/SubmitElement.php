@@ -10,15 +10,11 @@
  * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
  * The project website URL: https://code.google.com/p/airymvc/
  *
- *
+ * @author: Hung-Fu Aaron Chang
  */
 
 require_once 'AbstractFormElement.php';
-/**
- * Description of submitElement
- *
- * @author Hung-Fu Aaron Chang
- */
+
 class SubmitElement extends AbstractFormElement{
     //put your code here
     protected $_type  = InputType::SUBMIT;
