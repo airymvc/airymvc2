@@ -22,7 +22,8 @@ abstract class AbstractController{
         protected $model;
 	protected $view;
 	protected $params;
-        protected $acl;
+        protected $layout;
+        //protected $acl;
         
         const VIEW_POSTFIX = 'View';
         const ACTION_POSTFIX = 'Action';
@@ -37,7 +38,7 @@ abstract class AbstractController{
                 $this->view->setViewFilePath(MvcReg::getViewFile());
             }
         }
-        public function activateAcl(){}    
+        //public function activateAcl(){}    
         
         protected function setDefaultModel()
         {

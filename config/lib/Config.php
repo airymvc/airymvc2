@@ -127,7 +127,7 @@ class Config{
      {
      	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
          if (!isset($iniArray['Lead_File'])) {
-             return null;
+             return "index.php";
          }
          
          return $iniArray['Lead_File'];

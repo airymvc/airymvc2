@@ -39,10 +39,18 @@ class AppView extends AbstractView{
         protected $_hasScript = false;
         
 	
+        protected $_path;
+        
+        protected $_languageService;
+        
 	public function __construct()
 	{
-            $this->_viewFilePath = null;            
+            $this->_viewFilePath = null;   
+            $this->_path   = PathService::getInstance();
+            $this->_languageService = LangService::getInstance();
+
             stream_wrapper_register('airy.view', 'StreamHelper');
+
 	}	
         
         /**
@@ -59,7 +67,7 @@ class AppView extends AbstractView{
                         {
                             if ($value instanceof UIComponent || $value instanceof JUIComponent) {
                                 $htmlValue        = $value->render();
-                                $newHtmlValue     = $this->replaceWordByKey($htmlValue);
+                                $newHtmlValue     = $this->_languageService->replaceWordByKey($htmlValue);
                                 ${$name}          = $newHtmlValue; 
                                 $this->hasAnyScript($newHtmlValue);
                             } else {
@@ -70,10 +78,14 @@ class AppView extends AbstractView{
                     /**
                      * Deprecated
                      * @TODO: change to all upper case variables 
-                     */    
-                    $path           = PathService::getInstance();
-                    $httpServerHost = $path->getAbsoluteHostURL();
-                    $serverHost     = $path->getAbsoluteHostPath();
+                     */                        
+                    $httpServerHost   = $this->_path->getAbsoluteHostURL();
+                    $serverHost       = $this->_path->getAbsoluteHostPath();
+                    
+                    $HTTP_SERVER_HOST = $this->_path->getAbsoluteHostURL();
+                    $SERVER_HOST      = $this->_path->getAbsoluteHostPath();
+                    $LEAD_FILE        = Config::getInstance()->getLeadFile();
+                    $LEAD_URL         = $HTTP_SERVER_HOST . "/" . $LEAD_FILE;
                                                                  
                     $viewContent = file_get_contents($this->_viewFilePath);
                     $this->hasAnyScript($viewContent);
@@ -86,7 +98,7 @@ class AppView extends AbstractView{
                         $viewContent = $this->addPluginLib($viewContent);                       
                     }
                     
-                    $viewContent = $this->replaceWordByKey($viewContent);
+                    $viewContent = $this->_languageService->replaceWordByKey($viewContent);
                     
                     $fp = fopen("airy.view://view_content", "r+");                    
                     fwrite($fp, $viewContent);
@@ -127,26 +139,6 @@ class AppView extends AbstractView{
 		$this->_viewFilePath = $viewFilePath;
 	}
 
-        /**
-         *
-         * @param string $buffer 
-         */
-        protected function replaceWordByKey($buffer){
-
-            preg_match_all('/(%({\w*})({\w*})%|%({\w*})%)/', $buffer, $matches);
-            $lang = LangService::getInstance();
-            /**
-             * @TODO: Consider two level keyword like %{A}{B}% 
-             */
-            foreach ($matches[0] as $idx => $rawWdKey) {
-                $tmpWdKey = str_replace('%{', '', $rawWdKey);
-                $wdKey = str_replace('}%', '', $tmpWdKey);
-                $toReplaceWord = $lang->getWord($wdKey, LangReg::getLanguageCode()); 
-                $buffer = str_replace($rawWdKey, $toReplaceWord, $buffer);
-            }   
-            
-            return $buffer;
-        }
         
         /**
          * Check if there is any javascript in the view
@@ -210,7 +202,6 @@ class AppView extends AbstractView{
                         
             return $content;
         }
-
-
+        
 	
 }
