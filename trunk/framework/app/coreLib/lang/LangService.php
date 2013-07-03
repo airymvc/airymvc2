@@ -100,6 +100,26 @@ class LangService {
         return $words[$toLangCode][$wdKey]; 
     }
     
+    /**
+     *
+     * @param string $buffer 
+     */
+    protected function replaceWordByKey($buffer){
+
+        preg_match_all('/(%({\w*})({\w*})%|%({\w*})%)/', $buffer, $matches);
+        /**
+         * @TODO: Consider two level keyword like %{A}{B}% 
+         */
+        foreach ($matches[0] as $idx => $rawWdKey) {
+                $tmpWdKey = str_replace('%{', '', $rawWdKey);
+                $wdKey = str_replace('}%', '', $tmpWdKey);
+                $toReplaceWord = $this->getWord($wdKey, LangReg::getLanguageCode()); 
+                $buffer = str_replace($rawWdKey, $toReplaceWord, $buffer);
+        }   
+            
+        return $buffer;
+    }
+    
 }
 
 ?>

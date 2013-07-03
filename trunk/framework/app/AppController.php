@@ -19,6 +19,8 @@ class AppController extends AbstractController
             $this->view = new AppView();
             $this->setDefaultView();
             $this->setParams($params);
+            $this->layout = new Layout();
+            $this->layout->setView($this->view);
         }
 
 }
