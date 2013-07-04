@@ -19,16 +19,42 @@
  */
 abstract class AbstractController{
     
+    	protected $params;
+        
         protected $model;
-	protected $view;
-	protected $params;
+
         protected $layout;
-        //protected $acl;
+        protected $view;
+        
+        
+        //Other variables for a controller 
+        protected $_viewDir;
+        protected $_controllerDir;
+        protected $_modelDir;
+
         
         const VIEW_POSTFIX = 'View';
         const ACTION_POSTFIX = 'Action';
 
-        public function initial($params) {}
+        public function init() {}
+        
+        public function initial($params) {
+            $this->setDefaultModel();
+            $this->view = new AppView();
+            $this->setDefaultView();
+            $this->setParams($params);
+            $this->layout = new Layout();
+            $this->layout->setView($this->view);
+            $this->prepareVariables();
+        } 
+        
+        private function prepareVariables () {
+            $modulesDir = PathService::getInstance()->getModulesDir();
+            $moduleName = MvcReg::getModuleName();
+            $this->_modelDir      = $modulesDir . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . "models"; 
+            $this->_controllerDir = $modulesDir . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . "controllers";
+            $this->_viewDir       = $modulesDir . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . "views";
+        }
 
         function setDefaultView()
         {
@@ -129,6 +155,18 @@ abstract class AbstractController{
             return $url;
         }
     
+        
+        protected function getViewDir() {
+            return $this->_viewDir;
+        }
+        
+        protected function getControllerDir() {
+            return $this->_controllerDir;
+        }
+        
+        protected function getModelDir(){
+            return $this->_modelDir;
+        }
 }
 
 ?>

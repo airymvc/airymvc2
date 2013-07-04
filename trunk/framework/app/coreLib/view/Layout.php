@@ -14,8 +14,7 @@
  */
 
 class Layout {
-    
-    
+        
     protected $_layoutPath = null;
     
     protected $_layout = null;
@@ -46,9 +45,10 @@ class Layout {
      *                                      "option"     => array of options)
      * 
      */
+    
     public function setLayout($layoutPath, $layout) {
          $this->_layoutPath = $layoutPath;
-         $this->_layout;
+         $this->_layout     = $layout;
     }
     
     public function render(){
@@ -73,13 +73,14 @@ class Layout {
                      } else {
                          throw new Exception('Layout is missing controller');
                      }
+                     $paramString = "";
                      if (isset($viewComponent[self::OPTION])) {
                          $paramString =$this->getParamString($viewComponent[self::OPTION]);
                      }
                      
-                    $HttpServerHost = $this->_path->getAbsoluteHostURL();
+                    $HttpServerHost = PathService::getInstance()->getAbsoluteHostURL();
                     $config         = Config::getInstance();
-                    $LeadingUrl     = $HttpServerHost . "/" . $config->getLeadFile();
+                    $LeadingUrl     = $HttpServerHost . "/" . $config->getLeadFileName();
                     $mvcKeywords    = $config->getMVCKeyword();
                     $moduleKey      = $mvcKeywords['module'];
                     $controllerKey  = $mvcKeywords['controller'];
@@ -90,13 +91,14 @@ class Layout {
                                   $actionKey ."=". $actionName;
                     
                     $url = $LeadingUrl . "?" . $actionPath . $paramString;
-                    $viewContent = file_get_contents($url);
+                    $viewContent = $this->getData($url);
                     $viewContents[$contentKey] = $viewContent;
                  } catch(Exception $e) {
                      echo sprintf("View Exception: %s", $e->getMessage());
                  }
              } else if ($viewComponent instanceof AppView){
                  //Use $this->_view->render();
+                 $viewComponent->isInLayout(true);
                  $viewContent = $viewComponent->render();
                  $viewContents[$contentKey] = $viewContent;
              } else {
@@ -109,13 +111,13 @@ class Layout {
          
          //Loop through each contents
          //Replace view components with keywords
-         $layoutContent = $this->composeContent($layoutContent, $viewContents);         
+         $newLayoutContent = $this->composeContent($layoutContent, $viewContents);         
          
          //Stream output  
          stream_wrapper_register('airy.layout', 'StreamHelper');
          
          $fp = fopen("airy.layout://layout_content", "r+");                    
-         fwrite($fp, $layoutContent);
+         fwrite($fp, $newLayoutContent);
          fclose($fp);
 
          include "airy.layout://layout_content"; 
@@ -148,6 +150,14 @@ class Layout {
         }   
             
         return $content;
+    }
+    
+
+    private function getData($url) {
+        
+        $httpClient = new HttpClient();
+        
+        return$httpClient->getData($url);
     }
     
 }

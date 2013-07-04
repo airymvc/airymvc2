@@ -117,8 +117,8 @@ Class StreamHelper {
     */
     public function stream_stat()
     {
-        $this->_stat = array('size' => strlen(Storage::$_varArray[$this->_viewVariableName]),
-                           );
+        $this->_stat = array('size' => strlen(Storage::$_varArray[$this->_viewVariableName])
+                            );
         return $this->_stat;
     }
 

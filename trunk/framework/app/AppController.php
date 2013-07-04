@@ -15,12 +15,9 @@ class AppController extends AbstractController
 {
         public function initial($params)
         {
-            $this->setDefaultModel();
-            $this->view = new AppView();
-            $this->setDefaultView();
-            $this->setParams($params);
-            $this->layout = new Layout();
-            $this->layout->setView($this->view);
+            parent::initial($params);
+
+            
         }
 
 }
