@@ -104,7 +104,7 @@ class LangService {
      *
      * @param string $buffer 
      */
-    protected function replaceWordByKey($buffer){
+    public function replaceWordByKey($buffer){
 
         preg_match_all('/(%({\w*})({\w*})%|%({\w*})%)/', $buffer, $matches);
         /**

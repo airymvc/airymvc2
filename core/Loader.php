@@ -23,15 +23,15 @@ class Loader
                      "MvcReg",
                      "PathService",
                      "Router",
-                     "Dispatcher",
-                     "AppError",
-    			  );
+                     "Dispatcher"
+//                     "AppError",
+                  );
     			  
     if (!in_array($object, $valid)){
-       throw new Exception("Not a valid object '{$object}' to load");
+        throw new Exception("Not a valid object '{$object}' to load");
     }
     if (empty(self::$loaded[$object])){
-      self::$loaded[$object]= new $object();
+        self::$loaded[$object]= new $object();
     }
     return self::$loaded[$object];
   }

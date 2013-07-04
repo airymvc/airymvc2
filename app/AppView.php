@@ -36,7 +36,9 @@ class AppView extends AbstractView{
          * 
          * @var Boolean 
          */
-        protected $_hasScript = false;
+        protected $_hasScript  = false;
+        
+        protected $_isInLayout = false;
         
 	
         protected $_path;
@@ -82,10 +84,9 @@ class AppView extends AbstractView{
                     $httpServerHost   = $this->_path->getAbsoluteHostURL();
                     $serverHost       = $this->_path->getAbsoluteHostPath();
                     
-                    $HTTP_SERVER_HOST = $this->_path->getAbsoluteHostURL();
+                    $ABSOLUTE_URL     = $this->_path->getAbsoluteHostURL();
                     $SERVER_HOST      = $this->_path->getAbsoluteHostPath();
-                    $LEAD_FILE        = Config::getInstance()->getLeadFile();
-                    $LEAD_URL         = $HTTP_SERVER_HOST . "/" . $LEAD_FILE;
+                    $LEAD_FILENAME    = Config::getInstance()->getLeadFileName();
                                                                  
                     $viewContent = file_get_contents($this->_viewFilePath);
                     $this->hasAnyScript($viewContent);
@@ -104,7 +105,11 @@ class AppView extends AbstractView{
                     fwrite($fp, $viewContent);
                     fclose($fp);
 
-                    include "airy.view://view_content";                    
+                    if (!$this->_isInLayout) {
+                        include "airy.view://view_content";   
+                    } else {
+                        return file_get_contents("airy.view://view_content");
+                    }
                     
                 } else {
                     throw new Exception('No View File Existed!');
@@ -201,6 +206,10 @@ class AppView extends AbstractView{
             
                         
             return $content;
+        }
+        
+        public function isInLayout($boolFlag) {
+            $this->_isInLayout = $boolFlag;
         }
         
 	

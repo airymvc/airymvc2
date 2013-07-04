@@ -64,10 +64,27 @@ class PathService {
                 }
                 return $url;
     }   
+    
     public function getRootDir()
     {
-           $dir = dirname(dirname(__FILE__));
-           return $dir;
+        $dir = dirname(dirname(__FILE__));
+        return $dir;
+    }
+    
+    public function getProjectDir()
+    {
+        $rootDir = $this->getRootDir();
+        $projDir = $rootDir . DIRECTORY_SEPARATOR . "project";
+        return $projDir;
+                      
+    }
+    
+    public function getModulesDir()
+    {
+        $projDir = $this->getProjectDir();
+        $modulesDir = $projDir . DIRECTORY_SEPARATOR . "modules";
+        return $modulesDir;
+                      
     }
 
 }

@@ -116,8 +116,11 @@ class Dispatcher{
         private static function toMVC($controller, $action, $params)  
 	{
                 global $app;
-                $app = new $controller();                    
+                $app = new $controller();   
+                //This means constructor does not initialize the necessary params
                 $app->initial($params); 
+                //init method acts as a constructor after all the variables being set
+                $app->init();
 		$app->$action();       
         }
 
