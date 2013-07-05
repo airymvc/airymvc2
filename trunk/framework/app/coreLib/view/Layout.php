@@ -21,6 +21,14 @@ class Layout {
     
     protected $_view;
     
+    
+    /**
+     * Variables that have been set to this layout are saved in an array
+     * 
+     * @var array 
+     */
+    protected $_variables; 
+    
     const MODULE     = "module";
     const CONTROLLER = "controller";
     const ACTION     = "action";
@@ -109,15 +117,32 @@ class Layout {
              }
          }
          
+         /**
+          * Deal with layout variables 
+          */
+         if (!is_null($this->_variables)) {
+             foreach ($this->_variables as $name=>$value)
+             {
+                  if ($value instanceof UIComponent || $value instanceof JUIComponent) {
+                      $htmlValue    = $value->render();
+                      $newHtmlValue = LangService::getInstance()->replaceWordByKey($htmlValue);
+                      ${$name}      = $newHtmlValue; 
+                  } else {
+                      ${$name} = $value;
+                  }         
+             }
+         }
+         
+         
          //Loop through each contents
          //Replace view components with keywords
-         $newLayoutContent = $this->composeContent($layoutContent, $viewContents);         
+         $layoutContent = $this->composeContent($layoutContent, $viewContents);         
          
          //Stream output  
          stream_wrapper_register('airy.layout', 'StreamHelper');
          
          $fp = fopen("airy.layout://layout_content", "r+");                    
-         fwrite($fp, $newLayoutContent);
+         fwrite($fp, $layoutContent);
          fclose($fp);
 
          include "airy.layout://layout_content"; 
@@ -158,6 +183,15 @@ class Layout {
         $httpClient = new HttpClient();
         
         return$httpClient->getData($url);
+    }
+    
+    public function setVariable($variableName, $value) {
+        $this->_variables[$variableName] = $value;
+    }
+        
+        
+    public function setVar($variableName, $value) {
+        $this->_variables[$variableName] = $value;
     }
     
 }

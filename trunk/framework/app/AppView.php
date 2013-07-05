@@ -63,7 +63,6 @@ class AppView extends AbstractView{
             try {
                 if (!is_null($this->_viewFilePath) && file_exists($this->_viewFilePath)) {
    
-                    //$rsp will be passed to view as a return key-value pair array
                     if (!is_null($this->_variables)) {
                         foreach ($this->_variables as $name=>$value)
                         {
@@ -210,6 +209,11 @@ class AppView extends AbstractView{
         
         public function isInLayout($boolFlag) {
             $this->_isInLayout = $boolFlag;
+        }
+        
+        
+        public function getViewVariables() {
+            return $this->_variables;
         }
         
 	
