@@ -32,7 +32,7 @@ class Layout {
     const MODULE     = "module";
     const CONTROLLER = "controller";
     const ACTION     = "action";
-    const OPTION     = "option";
+    const PARAMS     = "params";
         
     
     public function setView($view) {
@@ -50,10 +50,9 @@ class Layout {
      * $layout = array ($layoutKey => array("module"     => $module [optional], 
      *                                      "controller" => $controlName, 
      *                                      "action"     => $actionName, 
-     *                                      "option"     => array of options)
+     *                                      "params"     => array of params)
      * 
      */
-    
     public function setLayout($layoutPath, $layout) {
          $this->_layoutPath = $layoutPath;
          $this->_layout     = $layout;
@@ -82,8 +81,8 @@ class Layout {
                          throw new Exception('Layout is missing controller');
                      }
                      $paramString = "";
-                     if (isset($viewComponent[self::OPTION])) {
-                         $paramString =$this->getParamString($viewComponent[self::OPTION]);
+                     if (isset($viewComponent[self::PARAMS])) {
+                         $paramString =$this->getParamString($viewComponent[self::PARAMS]);
                      }
                      
                     $HttpServerHost = PathService::getInstance()->getAbsoluteHostURL();
@@ -133,7 +132,6 @@ class Layout {
              }
          }
          
-         
          //Loop through each contents
          //Replace view components with keywords
          $layoutContent = $this->composeContent($layoutContent, $viewContents);         
@@ -150,11 +148,11 @@ class Layout {
     
     /**
      *
-     * @param array $options 
+     * @param array $params 
      */
-    private function getParamString ($options) {
+    private function getParamString ($params) {
           $keyValuePair = "";
-          foreach ($options as $key => $value) {
+          foreach ($params as $key => $value) {
                 $keyValuePair .= "&" .$key . "=" . $value;
           } 
           
@@ -164,14 +162,12 @@ class Layout {
     protected function composeContent($content, $viewContents){
 
         preg_match_all('/(@({\w*})({\w*})@|@({\w*})@)/', $content, $matches);
-        /**
-         * @TODO: Consider two level keyword like %{A}{B}% 
-         */
+
         foreach ($matches[0] as $idx => $rawKey) {
-                $tmpKey = str_replace('@{', '', $rawKey);
-                $contentKey = str_replace('}@', '', $tmpKey);
-                $replaceContent = $viewContents[$contentKey]; 
-                $content = str_replace($rawKey, $replaceContent, $content);
+                 $tmpKey = str_replace('@{', '', $rawKey);
+                 $contentKey = str_replace('}@', '', $tmpKey);
+                 $replaceContent = $viewContents[$contentKey]; 
+                 $content = str_replace($rawKey, $replaceContent, $content);
         }   
             
         return $content;
