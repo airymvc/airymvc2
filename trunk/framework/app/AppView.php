@@ -45,22 +45,25 @@ class AppView extends AbstractView{
         
         protected $_languageService;
         
-	public function __construct()
-	{
-            $this->_viewFilePath = null;   
-            $this->_path   = PathService::getInstance();
-            $this->_languageService = LangService::getInstance();
-
-            stream_wrapper_register('airy.view', 'StreamHelper');
-
-	}	
+		public function __construct()
+		{
+          	$this->_viewFilePath = null;
+          	$this->_path   = PathService::getInstance();
+          	$this->_languageService = LangService::getInstance();
+			
+          	$existed = in_array("airy.view", stream_get_wrappers());
+		  	if ($existed) {
+    		  	stream_wrapper_unregister("airy.view");
+		  	}
+          	stream_wrapper_register('airy.view', 'StreamHelper');
+		}	
         
         /**
          *
          * @throws Exception 
          */
-	public function render() {
-            try {
+		public function render() {
+           try {
                 if (!is_null($this->_viewFilePath) && file_exists($this->_viewFilePath)) {
    
                     if (!is_null($this->_variables)) {
@@ -116,15 +119,15 @@ class AppView extends AbstractView{
             } catch (Exception $e) {
                 echo 'Exception: ',  $e->getMessage(), "\n";
             }
-	}        
+		}        
 	
 
-	/**
-	 * @return the $viewfilepath
-	 */
-	public function getViewfilepath() {
-		return $this->_viewFilePath;
-	}
+		/**
+	 	 * @return the $viewfilepath
+	 	 */
+		public function getViewfilepath() {
+			return $this->_viewFilePath;
+		}
 
 
         public function setVariable($variableName, $value) {
@@ -136,12 +139,12 @@ class AppView extends AbstractView{
               $this->_variables[$variableName] = $value;
         }
         
-	/**
-	 * @param field_type $viewfilepath
-	 */
-	public function setViewFilePath($viewFilePath) {
-		$this->_viewFilePath = $viewFilePath;
-	}
+		/**
+	 	 * @param field_type $viewfilepath
+	 	 */
+		public function setViewFilePath($viewFilePath) {
+			$this->_viewFilePath = $viewFilePath;
+		}
 
         
         /**

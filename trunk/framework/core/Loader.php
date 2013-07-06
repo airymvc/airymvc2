@@ -23,8 +23,8 @@ class Loader
                      "MvcReg",
                      "PathService",
                      "Router",
-                     "Dispatcher"
-//                     "AppError",
+                     "Dispatcher",
+                     "Storage"
                   );
     			  
     if (!in_array($object, $valid)){

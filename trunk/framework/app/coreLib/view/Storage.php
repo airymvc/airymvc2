@@ -19,7 +19,7 @@ class Storage {
      * This is used for save the varialbe into an array
      * @var array 
      */
-    static public $_varArray = array();
+    public static $_varArray = array();
     
     /**
      * setter

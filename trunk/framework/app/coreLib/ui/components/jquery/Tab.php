@@ -96,11 +96,11 @@ class Tab extends JUIComponent{
     
     protected function appendTabJs($tabId) {
         
-        $tabText = '<script type="text/javascript">';
-        $tabText = $tabText . '$(function() {';
-        $tabText = $tabText . '$("div#' . $tabId .'").tabs();';
-        $tabText = $tabText . '});';
-        $tabText = $tabText . '</script>';
+        $tabText = '<script type="text/javascript">'
+        		 . '$(function() {'
+        		 . '$("div#' . $tabId .'").tabs();'
+        	     . '});'
+        	     . '</script>';
         
         return $tabText;
     }
