@@ -21,6 +21,8 @@ class Layout {
     
     protected $_view;
     
+    protected $_keyContents = array();
+    
     
     /**
      * Variables that have been set to this layout are saved in an array
@@ -61,6 +63,8 @@ class Layout {
     public function render(){
          //To get the layout file
          $layoutContent = file_get_contents($this->_layoutPath);
+         
+         $this->prepareContent($layoutContent);
          
          //Fetch each views
          $viewContents = array();
@@ -136,7 +140,11 @@ class Layout {
          //Replace view components with keywords
          $layoutContent = $this->composeContent($layoutContent, $viewContents);         
          
-         //Stream output  
+         //Stream output
+         $existed = in_array("airy.layout", stream_get_wrappers());
+		 if ($existed) {
+    		 stream_wrapper_unregister("airy.layout");
+		 }  
          stream_wrapper_register('airy.layout', 'StreamHelper');
          
          $fp = fopen("airy.layout://layout_content", "r+");                    
@@ -159,20 +167,26 @@ class Layout {
           return $keyValuePair;
     }
     
+    /*
+     * This method uses (1) <?php echo $contentKey ?>
+     *                  (2) @{contentKey}@
+     */
     protected function composeContent($content, $viewContents){
 
+        foreach ($this->_keyContents as $contentKey => $statement) {
+                 $content = str_replace($statement, $viewContents[$contentKey], $content);
+        }   
         preg_match_all('/(@({\w*})({\w*})@|@({\w*})@)/', $content, $matches);
 
         foreach ($matches[0] as $idx => $rawKey) {
-                 $tmpKey = str_replace('@{', '', $rawKey);
-                 $contentKey = str_replace('}@', '', $tmpKey);
+                 $contentKey = str_replace('}@', '', str_replace('@{', '', $rawKey));
                  $replaceContent = $viewContents[$contentKey]; 
                  $content = str_replace($rawKey, $replaceContent, $content);
-        }   
-            
+        }             
+        
         return $content;
     }
-    
+
 
     private function getData($url) {
         
@@ -190,5 +204,30 @@ class Layout {
         $this->_variables[$variableName] = $value;
     }
     
+    /**
+     * Array (
+     *		[0] => Array (
+     *       	[0] => <?php   echo    $x1  ?>
+     *       	[1] => <?php   echo    $x2  ?>
+     *   	)
+     *		[1] => Array (
+     *       	[0] => $x1
+     *       	[1] => $x2
+     *   	)
+     *		[2] => Array (
+     *       	[0] => x1
+     *       	[1] => x2
+     *   	)
+	 *	)
+     * @param string $content
+     */
+    public function prepareContent($content) {
+    	preg_match_all('/\<\?php\s+echo\s+(\$(.*))\s?\?\>/isU', $content, $matches, PREG_PATTERN_ORDER);
+    	$keyReplacements = array();
+    	foreach ($matches[2] as $cn => $key) {
+    		$keyReplacements[$matches[2][$cn]] = $matches[0][$cn];
+    	}
+    	$this->_keyContents = $keyReplacements;
+    }
 }
 ?>
