@@ -13,8 +13,9 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-require_once '../html/components/FieldElement.php/FieldElement.php';
-require_once '../../components/InputType.phpnents/InputType.php';
+require_once '../FieldElement.php';
+require_once '../InputType.php';
+
 /**
  * Description of FileElement
  *
