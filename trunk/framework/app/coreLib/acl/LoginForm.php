@@ -19,22 +19,25 @@ class LoginForm extends PostForm{
     protected $_formLayout;
  
 
-    public function __construct($moduleName, $formId = null, $formName= null, $uidLabel = null, $pwdLabel = null, $formLayout = null) {
+    public function __construct($formId = null, $formName= null, $uidLabel = null, $pwdLabel = null, $moduleName = null, $formLayout = null, $loginErrorMsg = null) {
         $formId   = (is_null($formId)) ? "system_login_form" :  $formId;
-        $formName = (is_null($formName)) ? "system_login_form" :  $formName;
+        $formName = (is_null($formName)) ? $formId :  $formName;
         parent::__construct($formId);
-        $signInActionName = Authentication::getSignInAction(MvcReg::getModuleName());
-        $loginControllerName = Authentication::getLoginController(MvcReg::getModuleName());
+        
+        $moduleName = (!is_null($moduleName)) ? $moduleName : MvcReg::getModuleName();
+        $signInActionName = Authentication::getSignInAction($moduleName);
+        $loginControllerName = Authentication::getLoginController($moduleName);
+        
         $formAction = PathService::getInstance()->getFormActionURL($moduleName, $loginControllerName, $signInActionName);
         if (!is_null($uidLabel) && !is_null($pwdLabel)) {
             $this->_uidLabel = $uidLabel;
             $this->_pwdLabel = $pwdLabel;        
         }
         $this->_formLayout = $formLayout;
-        $this->createForm($moduleName, $formAction, $formId, $formName, $formLayout);
+        $this->createForm($formAction, $formId, $formName, $uidLabel, $pwdLabel, $moduleName, $formLayout, $loginErrorMsg);
     }
     
-    protected function createForm ($moduleName, $action, $formId, $formName, $formLayout) {  
+    protected function createForm ($formAction, $formId, $formName, $uidLabel, $pwdLabel, $moduleName, $formLayout, $loginErrorMsg) {  
         $acl = AclUtility::getInstance();
         $tblId = $acl->getTableIdByModule($moduleName);
         $mapFields = $acl->getMappingFieldByTbl($tblId);
@@ -43,7 +46,7 @@ class LoginForm extends PostForm{
         //set form
         $this->setAttribute("name", $formName);
         $this->setAttribute("class", $formName);
-        $this->setAttribute("action", $action);
+        $this->setAttribute("action", $formAction);
         //set form elements
         $uidTxtField = new TextElement($uidField);
         $pwdTxtField = new PasswordElement($pwdField);
