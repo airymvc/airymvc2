@@ -7,5 +7,6 @@ require_once '../core/PathService.php';
     $auth = new Authentication();
     $v = $auth->getAllAllows("default");
     var_dump($v);
+    
 
 ?>

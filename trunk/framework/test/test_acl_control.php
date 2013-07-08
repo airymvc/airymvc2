@@ -30,6 +30,10 @@ echo "======test5==== \n";
 
 var_dump($test_acl->getMapDatabaseId());
 
+echo "======test6======\n";
+
+
+print_r($test_acl->getEncrytion());
 
 
 echo "======done==== \n";

@@ -32,7 +32,7 @@ class AclController extends AbstractController {
     public function initial($params) {
         parent::initial($params);
 
-        $this->_auth = new AuthElement();
+        $this->_auth = new AuthComponent();
         
     }
 

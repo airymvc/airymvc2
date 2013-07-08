@@ -2,24 +2,30 @@
 <access_control>
     <!-- tbis database id is based on the id number from config.ini file -->
     <!-- choose the database which you put the authentication information -->
-    <mapping_database_id>0</mapping_database_id>0    
-    
-<!--authentication data can be distributed in multiple table,
-role information can also be put in each table; role can be used to
-control the access right to module or controller-->
+    <mapping_database_id>0</mapping_database_id>    
+        
+	<!--authentication data can be distributed in multiple table,
+	role information can also be put in each table; role can be used to
+	control the access right to module or controller-->
     <mapping_tables>
         <mapping_table id="1">
             <name>admin</name>
             <mapping_fields>
                 <user_id>account_id</user_id>
-                <pwd>pwd</pwd>
+                <!--<pwd>pwd</pwd>-->
                 <pwd_encrypt>salt</pwd_encrypt>
                 <!--
                 <role>role</role>
                 <role_set>adm, user, superuser</role_set>
                 -->
                 <is_delete>is_delete</is_delete>
+                <is_delete_value>0</is_delete_value>
             </mapping_fields>
+            <use_pwd_encryption>1</use_pwd_encryption>
+            <!-- PHP means using PHP function -->
+            <encrytion_option>PHP</encrytion_option>	
+        	<!-- or put the class name here -->
+    		<encrytion_method>md5</encrytion_method>
         </mapping_table>
 
         <mapping_table id="2">
@@ -68,6 +74,7 @@ control the access right to module or controller-->
             <action>getMemberInfo</action>
             </module>
     </successful_dispatch>
+    
     <before_login_browse_rules>
         <module name = "backend">
             <allow>

@@ -80,9 +80,9 @@ class Dispatcher{
                           Dispatcher::toMVC($controller, $action, $params);  
                           return;
                       } else {
-                          $login_actions = Authentication::getLoginExcludeActions($moduleName);                                    
+                          $loginActions = Authentication::getLoginExcludeActions($moduleName);                                    
                           $allows        = Authentication::getAllAllows($moduleName); 
-                          if (isset($login_actions[$controllerName][$actionName])) {
+                          if (isset($loginActions[$controllerName][$actionName])) {
                               Dispatcher::toMVC($controller, $action, $params); 
                               return;
                           } else {
