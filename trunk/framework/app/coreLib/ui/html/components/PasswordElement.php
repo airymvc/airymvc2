@@ -13,8 +13,7 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-require_once 'FieldElement.php';
-require_once 'InputType.php';
+require_once '../../components/FieldElement.phpts/FieldElement.p../../components/InputType.phponce '../html/components/InputType.php';
 /**
  * Description of passwordElement
  *
