@@ -114,19 +114,37 @@ class AclUtility
     public function getMapDatabaseId() {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $dbId = $xmldom->getElementsByTagName("mapping_database_id")->item(0)->nodeValue;
-//        $tables = array();
-//
-//        for ($i = 0; $i < $tblist->length; $i++) {
-//            $tb = $tblist->item($i);
-//            $tb_id = $tb->getAttribute("id");
-//            $tb_name = $tb->getElementsByTagName("name")->item(0)->nodeValue;
-//            if (!is_null($tb_name)) {
-//                $tables[$tb_id] = $tb_name;
-//            }
-//        }
         return $dbId;
     }
     
+    public function getEncrytion() {
+    	$xmldom = $this->getDOMfromXML($this->_aclxml);
+        $tblist = $xmldom->getElementsByTagName("mapping_table");
+        $tables = array();
+
+        for ($i = 0; $i < $tblist->length; $i++) {
+            $tb = $tblist->item($i);
+            $tb_id = $tb->getAttribute("id");
+            $encryption = array();
+            $use_encrypt = $tb->getElementsByTagName("use_pwd_encryption")->item(0);
+            if (!is_null($use_encrypt)) {
+				$encryption['use_pwd_encryption'] = $use_encrypt->nodeValue;
+            }
+            $encrypt_option = $tb->getElementsByTagName("encrytion_option")->item(0);
+            if (!is_null($encrypt_option)) {
+				$encryption['encrytion_option'] = $encrypt_option->nodeValue;
+            }
+            $enable_method = $tb->getElementsByTagName("encrytion_method")->item(0);
+            if (!is_null($enable_method)) {
+				$encryption['encrytion_method'] = $enable_method->nodeValue;
+            }
+            $tables[$tb_id] = $encryption;
+        }
+        return $tables;
+    	
+    }
+    
+
     public function getMapTables() {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $tblist = $xmldom->getElementsByTagName("mapping_table");
