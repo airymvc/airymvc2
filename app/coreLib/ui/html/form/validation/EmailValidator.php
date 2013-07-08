@@ -13,7 +13,7 @@
  * @author Hung-Fu Aaron Chang
  */
 
-require_once '../../form/validation/AbstractValidator.phpactValidator.php';
+require_once 'AbstractValidator.php';
 
 class EmailValidator extends AbstractValidator{
   

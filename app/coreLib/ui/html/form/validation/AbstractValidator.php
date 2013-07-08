@@ -13,7 +13,7 @@
  * @author Hung-Fu Aaron Chang
  */
 
-require_once '../../html/form/ValidatorInterface.phpValidatorInterface.php';
+require_once 'ValidatorInterface.php';
 
 abstract class AbstractValidator implements ValidatorInterface {
 

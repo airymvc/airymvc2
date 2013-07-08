@@ -13,7 +13,7 @@
  * @author Hung-Fu Aaron Chang
  */
 
-require_once '../../form/validation/RuleInterface.phpuleInterface.php';
+require_once 'RuleInterface.php';
 
 class EmailRule implements RuleInterface{
     //put your code here

@@ -13,7 +13,7 @@
  * @author Hung-Fu Aaron Chang
  */
 
-require_once ('../../form/AbstractForm.phptractForm.php');
+require_once ('AbstractForm.php');
 
 class PostForm extends AbstractForm{
     //put your code here
