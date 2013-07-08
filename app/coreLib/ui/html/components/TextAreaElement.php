@@ -14,8 +14,8 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-require_once 'FieldElement.php';
-require_once 'InputType.php';
+require_once '../html/components/FieldElement.php/FieldElement.php';
+require_once '../../components/InputType.phpnents/InputType.php';
 
 class TextAreaElement extends FieldElement{
     //put your code here
