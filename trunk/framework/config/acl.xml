@@ -55,8 +55,11 @@
         <sign_in_action>signIn</sign_in_action>
         <login_action>userLogin</login_action>
         <login_error_action>userLoginError</login_error_action>
-        <register_action>register</register_action>
-        <loginout>loginout</loginout>
+        <other_exclusive_actions>
+        	<action>register</action>
+        	<action>add</action>
+        </other_exclusive_actions>
+        <logout_action>loginout</logout_action>
         </module>
         <module name="backend">
         <controller>login</controller>
@@ -75,7 +78,7 @@
             </module>
     </successful_dispatch>
     
-    <before_login_browse_rules>
+    <access_control_exclusion>
         <module name = "backend">
             <allow>
                 <controller>admin</controller>
@@ -94,7 +97,7 @@
                     <action>search</action>
             </allow>
         </module>
-    </before_login_browse_rules>
+    </access_control_exclusion>
     
     <module_table_mapping>
         <module name="backend">
@@ -105,7 +108,7 @@
         </module>       
     </module_table_mapping>
     
-    <after_login_access_rules>
+    <access_rules_after_authentication>
         <module name = "backend">
             <ref_map_id>1</ref_map_id>
             <rule>
@@ -141,6 +144,6 @@
             </rule>
         </module>
 
-    </after_login_access_rules>
+    </access_rules_after_authentication>
 
 </access_control>

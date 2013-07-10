@@ -22,7 +22,7 @@ class AbstractFormElement extends UIComponent{
     //put your code here
     protected $_attributes = array();
     protected $_elementText;
-    
+    protected $_decoration = null;
    
     public function setId($id)
     {
@@ -47,6 +47,14 @@ class AbstractFormElement extends UIComponent{
         $this->_attributes['value'] = $value;
     }
     
+    public function setDecoration($decoration) {
+    	$this->_decoration = $decoration;
+    }
+
+    public function getDecoration() {
+    	return $this->_decoration;
+    }    
+    
     /**
      * attributes is a key-value structure that stores all the form attribtes 
      */
@@ -59,16 +67,29 @@ class AbstractFormElement extends UIComponent{
     {
         $this->_attributes = $attributes;
     }    
-    
+    /**
+     * Element Decoration:
+     * array('{elementId}' => array('{openHtml}', '{closeHtml}'))
+     * 
+     * Example of Element Decoration:
+     * array('elementId'   => array('<div class="class1">', '<div>'))
+     */
     protected function renderElements()
-    {
+    {   
         $inputText = "<input";
         foreach ($this->_attributes as $key => $value)
         {
             $inputText = $inputText . " " . $key ."=\"".$value ."\"";
         }
         $inputText = $inputText . ">";
-        $this->_elementText = $inputText;       
+        $openHtml  = "";
+        $closeHtml = "";
+        if (!is_null($this->_decoration)) {
+        	$decoration = $this->_decoration[$this->getId()];
+        	$openHtml  = $decoration[0];
+        	$closeHtml = $decoration[1];
+        }
+        $this->_elementText = $openHtml . $inputText . $closeHtml;       
     }
     
     public function render()

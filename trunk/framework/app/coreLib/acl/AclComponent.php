@@ -111,13 +111,14 @@ class AclComponent {
     }
     
     
-    public function prepareLoginForm($moduleName = null, $formId = null, $formName = null ,$uidLabel = null, $pwdLabel = null, $formLayout = null) {
+    public function prepareLoginForm($moduleName = null, $formId = null, $formName = null ,$uidLabel = null, $pwdLabel = null, $formLayout = null, $loginMsgId = null) {
 
         $moduleName = (is_null($moduleName)) ? MvcReg::getModuleName() : $moduleName;
-        $formName = (is_null($formName)) ? "system_login_form" : $formName;
-        $formId = (is_null($formId)) ? "system_login_form" : $formId;
-        $uidLabel = (is_null($uidLabel)) ? "%{Username}%" : $uidLabel;
-        $pwdLabel = (is_null($uidLabel)) ? "%{Password}%" : $pwdLabel;
+        $formName   = (is_null($formName)) ? "system_login_form" : $formName;
+        $formId     = (is_null($formId)) ? "system_login_form" : $formId;
+        $uidLabel   = (is_null($uidLabel)) ? "%{Username}%" : $uidLabel;
+        $pwdLabel   = (is_null($uidLabel)) ? "%{Password}%" : $pwdLabel;
+        $loginMsgId = (is_null($loginMsgId)) ? "system_login_message" : $loginMsgId; 
         
    		 /**
      	  * FormLayout example:
@@ -130,7 +131,7 @@ class AclComponent {
      	  *      );
      	  *      
      	  */            
-        $loginForm = new LoginForm($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout);
+        $loginForm = new LoginForm($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout, $loginMsgId);
         
         return $loginForm;
     }

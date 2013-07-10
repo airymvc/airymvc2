@@ -34,7 +34,7 @@ class LoginService {
     }
     
     
-    public static function getIdByAccount($accout_id)
+    public static function getIdByAccount($account_id)
     {
         $moduleName = MvcReg::getModuleName();
 
