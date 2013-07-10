@@ -13,9 +13,9 @@
 
 class AppController extends AbstractController
 {
-        public function initial($params)
+        public function initial($params, $viewVariables = null)
         {
-            parent::initial($params);
+            parent::initial($params, $viewVariables);
 
             
         }

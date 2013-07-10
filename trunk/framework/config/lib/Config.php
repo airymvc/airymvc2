@@ -19,8 +19,8 @@ class Config{
     private $_iniFilePath;
     
     const JS_INI_KEY  = 'jsconfig';
-    const CS_INI_SKEY = 'cssconfig';
-    const DB_INI_SKEY = 'dbconfig';
+    const CS_INI_SYS_KEY = 'cssconfig';
+    const DB_INI_SYS_KEY = 'dbconfig';
     
     const JSKEY       = 'script';
     const CSSKEY      = 'css';
@@ -67,12 +67,13 @@ class Config{
          
          $result   = array();
          $parseIni = $this->convertMultiIni($dbArray);
-         foreach ($parseIni[self::DB_INI_SKEY] as $mkey => $kv) {
+         foreach ($parseIni[self::DB_INI_SYS_KEY] as $mkey => $kv) {
              $tmpArray = array();
              foreach ($kv as $key => $value) {
                   $tmpArray[$key] = $value;
              }
              $result[] = $tmpArray;
+             $result[$mkey] = $tmpArray;
          }
          //TODO: now only consider one database situation. Need to consider multiple databases
          return $result;
@@ -206,7 +207,7 @@ class Config{
          $result = array();
          foreach ($ini_array['JS_Plugin'] as $key => $value) {
               $configs = explode('.', $key);
-              if ($configs[0] == self::CS_INI_SKEY) {
+              if ($configs[0] == self::CS_INI_SYS_KEY) {
                   $result[self::CSSKEY][] = $value;
               }
               if ($configs[0] == self::JS_INI_KEY) {

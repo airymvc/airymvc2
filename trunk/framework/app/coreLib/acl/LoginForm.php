@@ -14,15 +14,21 @@
 
 class LoginForm extends PostForm{
     
-    protected $_uidLabel = '%{Username}%';
-    protected $_pwdLabel = '%{Pwd}%';
+	//Default form value
+    const DEFAULT_UID = '%{Username}%';
+    const DEFAULT_PWD = '%{Pwd}%';
+    const DEFAULT_LOGIN_FORM_ID = "system_login_form";
+    const DEFAULT_LOEGIN_MESSAGE_ID = "system_login_message";
+    
     protected $_formDecoration;
+    protected $_formId;
+    protected $_loginMsgId;
  
 
     public function __construct($formId = null, $formName= null, $uidLabel = null, $pwdLabel = null, $moduleName = null, $formDecoration = null, $loginMsgId = null) {
-        $formId   = (is_null($formId)) ? "system_login_form" :  $formId;
-        $formName = (is_null($formName)) ? $formId :  $formName;
-        $loginMsgId = (is_null($loginMsgId)) ? "system_login_message" : $loginMsgId;
+        $this->_formId   = (is_null($formId)) ? self::DEFAULT_LOGIN_FORM_ID : $formId;
+        $formName = (is_null($formName)) ? $this->_formId :  $formName;
+        $this->_loginMsgId = (is_null($loginMsgId)) ? self::DEFAULT_LOEGIN_MESSAGE_ID : $loginMsgId;
         parent::__construct($formId);
         
         $moduleName = (!is_null($moduleName)) ? $moduleName : MvcReg::getModuleName();
@@ -31,19 +37,20 @@ class LoginForm extends PostForm{
         
         $formAction = PathService::getInstance()->getFormActionURL($moduleName, $loginControllerName, $signInActionName);
         if (!is_null($uidLabel) && !is_null($pwdLabel)) {
-            $this->_uidLabel = $uidLabel;
-            $this->_pwdLabel = $pwdLabel;        
+            $uidLabel = self::DEFAULT_UID;
+            $pwdLabel = self::DEFAULT_PWD;        
         }
         $this->_formDecoration = $formDecoration;
-        $this->createForm($formAction, $formId, $formName, $uidLabel, $pwdLabel, $moduleName, $loginMsgId);
+        $this->createForm($formAction, $this->_formId, $formName, $uidLabel, $pwdLabel, $moduleName, $this->_loginMsgId);
     }
     
-    protected function createForm ($formAction, $formId, $formName, $moduleName, $loginMsgId) {  
+    protected function createForm ($formAction, $formId, $formName, $uidLabel, $pwdLabel, $moduleName, $loginMsgId) {  
         $acl = AclUtility::getInstance();
         $tblId = $acl->getTableIdByModule($moduleName);
         $mapFields = $acl->getMappingFieldByTbl($tblId);
         $uidField = $mapFields["user_id"];
         $pwdField = $mapFields["pwd"];
+        
         //set form
         $this->setAttribute("name", $formName);
         $this->setAttribute("class", $formName);
@@ -54,9 +61,9 @@ class LoginForm extends PostForm{
         $submitBtn = new SubmitElement("submit");
         $messageDiv = new DivElement($loginMsgId);
         
-        $uidTxtField->setLabel('uid', $this->_uidLabel, 'uid');
+        $uidTxtField->setLabel('uid', $uidLabel, 'uid');
         $uidTxtField->setAttribute('name', $uidField);
-        $pwdTxtField->setLabel('pwd', $this->_pwdLabel, 'pwd');
+        $pwdTxtField->setLabel('pwd', $pwdLabel, 'pwd');
         $pwdTxtField->setAttribute('name', $pwdField);
         
         //set default form layout here
@@ -67,7 +74,18 @@ class LoginForm extends PostForm{
         $this->setFormLayout($this->_formDecoration);
         $this->setElement($uidTxtField);
         $this->setElement($pwdTxtField);
+        $this->setElement($messageDiv);
         $this->setElement($submitBtn);
+    }
+    
+    
+    public function populateErrorMessage($message) {
+    	$divElement = $this->getElementById($this->_loginMsgId);
+    	$divElement->setHtmlValue($message);
+    }
+    
+    public function getFormId() {
+    	return $this->_formId;
     }
     
 }
