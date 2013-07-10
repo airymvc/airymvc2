@@ -19,7 +19,14 @@ class Authentication {
     const IS_LOGIN = "islogin";
     const UID = "uid";
     const ENCRYPT_UID = "encrypt_uid";
-
+    
+    
+    //Four default login related actions
+    const SIGN_IN = "signIn";
+    const LOGIN = "login";
+    const LOGIN_ERROR = "loginError";
+    const LOGOUT = "logout";
+    
     public static function isLogin($moduleName) {
         /**
          * Use uid and module for now  
@@ -32,9 +39,9 @@ class Authentication {
 
     public static function getSignInAction($module) {
         $auth = AclUtility::getInstance()->getAuthentications();
-        $action = DefaultLoginAction::SIGN_IN;
-        if (isset($auth[$module]["sign_in_action"])) {
-            $action = $auth[$module]["sign_in_action"];
+        $action = self::SIGN_IN;
+        if (isset($auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION])) {
+            $action = $auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION];
         }
         return $action;
     }
@@ -50,30 +57,31 @@ class Authentication {
 
     public static function getLoginAction($module) {
         $auth = AclUtility::getInstance()->getAuthentications();
-        $action = DefaultLoginAction::LOGIN;
-        ;
-        if (isset($auth[$module]["login_action"])) {
-            $action = $auth[$module]["login_action"];
+        $action = self::LOGIN;
+        if (isset($auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION])) {
+            $action = $auth[$module][AclXmlConstant::ACL_LOGIN_ACTION];
         }
         return $action;
     }
 
     public static function getLoginErrorAction($module) {
         $auth = AclUtility::getInstance()->getAuthentications();
-        $action = DefaultLoginAction::LOGIN_ERROR;
-        if (isset($auth[$module]["login_error_action"])) {
-            $action = $auth[$module]["login_error_action"];
+        $action = self::LOGIN_ERROR;
+        if (isset($auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION])) {
+            $action = $auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION];
         }
         return $action;
     }
 
-    public static function getRegisterAction($module) {
+    public static function getOtherExclusiveActions($module) {
         $auth = AclUtility::getInstance()->getAuthentications();
-        $action = DefaultLoginAction::REGISTER;
-        if (isset($auth[$module]["register_action"])) {
-            $action = $auth[$module]["register_action"];
+        $actions = array();
+        if (isset($auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS])) {
+        	foreach ($auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS] as $idx => $exAction) {
+           			 $actions[$idx] = $auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS][$idx];
+        	}
         }
-        return $action;
+	    return $actions;
     }
 
     public static function getLoginExcludeActions($module) {
@@ -83,33 +91,34 @@ class Authentication {
             echo "Acl XML is not defined properly, check your authentication settings";
             return null;
         }
-        if (!isset($auth[$module]["sign_in_action"])) {
-            $loginActions[$auth[$module]["controller"]][DefaultLoginAction::SIGN_IN] = DefaultLoginAction::SIGN_IN;
+        if (!isset($auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION])) {
+            $loginActions[$auth[$module]["controller"]][self::SIGN_IN] = self::SIGN_IN;
         } else {
-            $loginActions[$auth[$module]["controller"]][$auth[$module]["sign_in_action"]] = $auth[$module]["sign_in_action"];
+            $loginActions[$auth[$module]["controller"]][$auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION]] = $auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION];
         }
 
-        if (!isset($auth[$module]["login_action"])) {
-            $loginActions[$auth[$module]["controller"]][DefaultLoginAction::LOGIN] = DefaultLoginAction::LOGIN;
+        if (!isset($auth[$module][AclXmlConstant::ACL_LOGIN_ACTION])) {
+            $loginActions[$auth[$module]["controller"]][self::LOGIN] = self::LOGIN;
         } else {
-            $loginActions[$auth[$module]["controller"]][$auth[$module]["login_action"]] = $auth[$module]["login_action"];
+            $loginActions[$auth[$module]["controller"]][$auth[$module][AclXmlConstant::ACL_LOGIN_ACTION]] = $auth[$module][AclXmlConstant::ACL_LOGIN_ACTION];
         }
 
-        if (!isset($auth[$module]["login_error_action"])) {
-            $loginActions[$auth[$module]["controller"]][DefaultLoginAction::LOGIN_ERROR] = DefaultLoginAction::LOGIN_ERROR;
+        if (!isset($auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION])) {
+            $loginActions[$auth[$module]["controller"]][self::LOGIN_ERROR] = self::LOGIN_ERROR;
         } else {
-            $loginActions[$auth[$module]["controller"]][$auth[$module]["login_error_action"]] = $auth[$module]["login_error_action"];
+            $loginActions[$auth[$module]["controller"]][$auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION]] = $auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION];
         }
-
-        if (!isset($auth[$module]["register_action"])) {
-            $loginActions[$auth[$module]["controller"]][DefaultLoginAction::REGISTER] = DefaultLoginAction::REGISTER;
+        if (!isset($auth[$module][AclXmlConstant::ACL_LOGOUT_ACTION])) {
+            $loginActions[$auth[$module]["controller"]][self::LOGOUT] = self::LOGOUT;
         } else {
-            $loginActions[$auth[$module]["controller"]][$auth[$module]["register_action"]] = $auth[$module]["register_action"];
+            $loginActions[$auth[$module]["controller"]][$auth[$module][AclXmlConstant::ACL_LOGOUT_ACTION]] = $auth[$module][AclXmlConstant::ACL_LOGOUT_ACTION];
         }
-        if (!isset($auth[$module]["loginout"])) {
-            $loginActions[$auth[$module]["controller"]][DefaultLoginAction::LOGOUT] = DefaultLoginAction::LOGOUT;
-        } else {
-            $loginActions[$auth[$module]["controller"]][$auth[$module]["loginout"]] = $auth[$module]["loginout"];
+        
+        //Here we deal with other exclusive actions
+        if (isset($auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS])) {
+        	foreach ($auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS] as $idx => $exAction) {
+           			 $loginActions[$auth[$module]["controller"]][$auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS][$idx]] = $auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS][$idx];
+        	}
         }
 
         return $loginActions;

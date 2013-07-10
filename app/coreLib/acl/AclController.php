@@ -20,26 +20,20 @@
 
 class AclController extends AbstractController {
 
-    protected $_loginForm;
-    protected $_loginFormId;
-    protected $_registerViewName;
-    protected $_uidLabel = null;
-    protected $_pwdLabel = null;
-    protected $_loginErrorMsg;
+//    protected $_loginForm;
+//    protected $_loginFormVariableName;
+//    protected $_loginFormId;
+//    protected $_registerViewName;
+//    protected $_uidLabel = null;
+//    protected $_pwdLabel = null;
+//    protected $_loginMsgId;
 
     protected $_acl;
 
-
-    public function activeAcl ($loginFormId = null, $uidLabel= null, $pwdLabel = null, $loginErrorMsg = null){
-    	$this->_loginFormId   = $loginFormId;
-    	$this->_uidLabel      = $uidLabel;
-    	$this->_pwdLabel      = $pwdLabel;
-    	$this->_loginErrorMsg = $loginErrorMsg; 
-    	  
-        $this->_acl = new AclComponent();
-        //TODO: this loginform needs to have a way to contain the error message.... remove %this->_insertString
-        $this->_loginForm = $this->_acl->prepareLoginForm($this->_uidLabel, $this->_pwdLabel, $this->_insertHtmlString);    	 	    	    	
-    }
+    public function initial($params) {
+    	parent::initial($params);
+    	$this->_acl = new AclComponent();
+    } 
 
     /**
      * signIn, check with the database table with uid, pwd and mapping table
@@ -58,9 +52,8 @@ class AclController extends AbstractController {
     }
 
     public function loginAction() {
-     
-        $loginForm = 
-        $this->login();
+        $this->view->setVariable($this->_loginFormVariableName, $this->_loginForm);
+        $this->view->render();
     }
 
     public function logoutAction() {
@@ -76,28 +69,13 @@ class AclController extends AbstractController {
         $this->_pwdLabel = $pwdLabel;
     }
 
-//    public function setLoginFormInsertHtml($insertHtmlString) {
-//        $this->_insertHtmlString = $insertHtmlString;
-//    }
-
     protected function login($loginFormName = null) {
 
-//        $moduleName = MvcReg::getModuleName();
-//        if (!is_null($viewName)) {
-//            $this->switchView($moduleName, $viewName);
-//        }
-        $this->view->setVariable($loginFormName, $loginForm);
-        $this->view->render();
+
     }
 
     protected function register($viewName = null) {
 
-        /**
-         * @todo: Need to put error log while two view name are both null 
-         */
-        $registerViewName = (is_null($viewName)) ? $this->_registerViewName : $viewName;
-        $moduleName = MvcReg::getModuleName();
-        $this->switchView($moduleName, $registerViewName);
         $this->view->render();
     }
     

@@ -18,7 +18,7 @@ class AbstractForm extends UIComponent{
     protected $_attributes = array();
     protected $_elements = array();
     protected $_formText;
-    protected $_formLayout;
+    protected $_formDecoration;
     
     
     /**
@@ -71,12 +71,12 @@ class AbstractForm extends UIComponent{
         return null;       
     }   
 
-    public function setFormLayout($formLayout) {
-    	$this->_formLayout = $formLayout;
+    public function setDecoration($formDecoration) {
+    	$this->_formDecoration = $formDecoration;
     }
     
-    public function getFormLayout() {
-    	return $this->_formLayout;
+    public function getDecoration() {
+    	return $this->_formDecoration;
     }
     
     public function setElements($elements)
@@ -84,7 +84,7 @@ class AbstractForm extends UIComponent{
         $this->_elements = $elements;
     }
     /**
-     * FormLayout example:
+     * Form Decoration example:
      * 
      * array(formId      => array('<div class="class_selector">', '</div>'),
      *       elementId1  => array('<div class="elememtClass1">', '</div>'),
@@ -124,15 +124,15 @@ class AbstractForm extends UIComponent{
         $openHtml  = $formOpenText;
         $closeHtml = $formCloseText;
         
-        //Insert into formLayout
-        if (!is_null($this->_formLayout)) {
-    		 $openHtml  = $this->_formLayout[$formId][0] . $formOpenText;
-    	     $closeHtml = $formCloseText . $this->_formLayout[$formId][1];
+        //Insert into formDecoration
+        if (!is_null($this->_formDecoration)) {
+    		 $openHtml  = $this->_formDecoration[$formId][0] . $formOpenText;
+    	     $closeHtml = $formCloseText . $this->_formDecoration[$formId][1];
     	     
     		 //prepare for elements inside the form
     		 foreach ($elementTexts as $elementId => $elementText) {
-    		 	      $elementOpenHtml  = (isset($this->_formLayout[$elementId][0])) ? $this->_formLayout[$elementId][0] : "";
-    		 	      $elementCloseHtml = (isset($this->_formLayout[$elementId][1])) ? $this->_formLayout[$elementId][1] : "";
+    		 	      $elementOpenHtml  = (isset($this->_formDecoration[$elementId][0])) ? $this->_formDecoration[$elementId][0] : "";
+    		 	      $elementCloseHtml = (isset($this->_formDecoration[$elementId][1])) ? $this->_formDecoration[$elementId][1] : "";
     				  $elementHtml = $elementOpenHtml 
     			    	           . $elementText
     			        	       . $elementCloseHtml;
