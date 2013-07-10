@@ -38,7 +38,7 @@ abstract class AbstractController{
 
         public function init() {}
         
-        public function initial($params) {
+        public function initial($params, $viewVariables = null) {
             $this->setDefaultModel();
             $this->view = new AppView();
             $this->setDefaultView();
@@ -46,6 +46,13 @@ abstract class AbstractController{
             $this->layout = new Layout();
             $this->layout->setView($this->view);
             $this->prepareVariables();
+            
+            //add view varialbes
+            if (is_array($viewVariables)) {
+            	foreach ($viewVariables as $variableName => $viewVariable) {
+            		$this->view->setVariable($variableName, $viewVariable);
+            	}
+            }
         } 
         
         private function prepareVariables () {
