@@ -20,19 +20,14 @@
 
 class AclController extends AbstractController {
 
-//    protected $_loginForm;
-//    protected $_loginFormVariableName;
-//    protected $_loginFormId;
-//    protected $_registerViewName;
-//    protected $_uidLabel = null;
-//    protected $_pwdLabel = null;
-//    protected $_loginMsgId;
-
+    protected $_loginForm;
+    protected $_loginFormVariableName;
     protected $_acl;
 
-    public function initial($params) {
-    	parent::initial($params);
+    public function initial($params, $viewVariables = null) {
+    	parent::initial($params, $viewVariables);
     	$this->_acl = new AclComponent();
+    	$this->_loginFormVariableName = $this->_loginForm->getFormId();
     } 
 
     /**
@@ -42,58 +37,58 @@ class AclController extends AbstractController {
     public function signInAction() {
         $this->_acl->signIn();
     }
-
-    public function registerAction() {
-        $this->register();
-    }
-
-    public function loginErrorAction() {
-        $this->loginError();
-    }
-
-    public function loginAction() {
-        $this->view->setVariable($this->_loginFormVariableName, $this->_loginForm);
-        $this->view->render();
-    }
-
+    
     public function logoutAction() {
         $this->_acl->loginOut();
     }
-
-    public function setRegisterViewName($viewName) {
-        $this->_registerViewName = $viewName;
+    
+    public function loginErrorAction() {
+        $this->_acl->loginError();
     }
 
-    public function setFormLabels($uidLabel, $pwdLabel) {
-        $this->_uidLabel = $uidLabel;
-        $this->_pwdLabel = $pwdLabel;
+    public function loginAction() {
+        $this->_acl->login();
     }
 
-    protected function login($loginFormName = null) {
 
 
-    }
-
-    protected function register($viewName = null) {
-
-        $this->view->render();
+    
+//    protected function signIn($moduleName = null, $controllerName = null, $actionName = null) {
+//         $this->_acl->signIn($moduleName, $controllerName, $actionName);   	
+//    }
+    
+    
+//    protected function login($loginFormName = null) {
+//    	if (!is_null($loginFormName)) {
+//    		$this->setLoginFormVariableName($loginFormName);
+//    	}
+//    	$this->view->setVariable($this->_loginFormVariableName, $this->_loginForm);
+//    	$this->view->render();
+//    }
+//    
+//    protected function loginError($viewName = null, $errorMessage = null) {
+//        $moduleName = MvcReg::getModuleName();
+//        $this->_loginForm->populateErrorMessage($errorMessage);
+//        
+//        if (!is_null($viewName)) {
+//            $this->switchView($moduleName, $viewName);
+//        }
+//        $errorMessage = is_null($errorMessage) ? "ERROR!!" : $errorMessage;
+//        $this->view->setVariable('loginErrorMessage', $errorMessage);
+//        $this->view->setVariable($this->_loginFormVariableName, $this->_loginForm);
+//        $this->view->render();
+//    }
+    
+    /**
+     * Login Form setter functions
+     */
+    public function setLoginFormVariableName($loginFormVariableName) {
+    	$this->_loginFormVariableName = $loginFormVariableName;
     }
     
-    protected function loginError($viewName = null, $errorMessage = null) {
-        $moduleName = MvcReg::getModuleName();
-        //TODO: this loginform needs to have a way to contain the error message.... remove %this->_insertString
-        $loginForm = new LoginForm($moduleName, "system_login_form", $this->_uidLabel, $this->_pwdLabel, $this->_insertHtmlString);
-        if (!is_null($viewName)) {
-            $this->switchView($moduleName, $viewName);
-        }
-        $error_msg = is_null($errorMessage) ? "ERROR!!" : $errorMessage;
-        $this->view->setVariable('error_msg', $error_msg);
-        $this->view->setVariable("form", $loginForm);
-        $this->view->render();
-    }
-
-
-
+//    public function resetLoginForm($moduleName = null, $formId = null, $formName = null, $uidLabel = null, $pwdLabel = null, $formLayout = null, $loginMsgId = null) {
+//        $this->_acl->resetLoginForm($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout, $loginMsgId);
+//    }
 }
 ?>
 

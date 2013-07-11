@@ -31,33 +31,7 @@ class LoginService {
         }    
         
         return self::$instance;
-    }
-    
-    
-    public static function getIdByAccount($account_id)
-    {
-        $moduleName = MvcReg::getModuleName();
-
-        $table = "member";
-        
-        $where = array("AND"=>array("="=>array('account_id'=>$account_id, 'isdelete' => 0)));
-        $columns[0] = '*';
-
-        $this->db->select($id, $table);
-        $this->db->where($where);
-        $mysql_results = $this->db->execute();	
-        $memberInfo =  $mysql_results;
-        
-        $r = mysql_fetch_array($memberInfo, MYSQL_BOTH);
-        $userid = $r['id'];
-        //set back to original result
-        mysql_data_seek($memberInfo, 0);
-
-        $this->view->setVariable('memberInfo', $memberInfo);
-        $this->view->setVariable('userid',$userid);
-        $this->view->render();
-    }
-    
+    }    
     /**
      *
      * @param String $moduleName

@@ -138,10 +138,9 @@ class Router {
         }else {
             $this->setLanguageCode($defaultLanguageCode);
         }
-        
-        
         $this->params = $this->key_val_pairs;
-        
+        Parameter::unsetAllParams();
+        Parameter::setParams($this->params);    
     }
 
     

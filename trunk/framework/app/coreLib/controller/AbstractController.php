@@ -36,6 +36,7 @@ abstract class AbstractController{
         const VIEW_POSTFIX = 'View';
         const ACTION_POSTFIX = 'Action';
 
+        //The constructor function for the controller
         public function init() {}
         
         public function initial($params, $viewVariables = null) {
@@ -48,7 +49,7 @@ abstract class AbstractController{
             $this->prepareVariables();
             
             //add view varialbes
-            if (is_array($viewVariables)) {
+            if (is_array($viewVariables) && !is_null($viewVariables)) {
             	foreach ($viewVariables as $variableName => $viewVariable) {
             		$this->view->setVariable($variableName, $viewVariable);
             	}
