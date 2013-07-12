@@ -1,6 +1,7 @@
 <?php
 /**
  * AiryMVC Framework
+ * 
  *
  * LICENSE
  *
@@ -12,7 +13,12 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class LoginForm extends PostForm{
+require_once dirname(__FILE__) . '/../ui/html/form/PostForm.php';
+require_once dirname(__FILE__) . '/../ui/html/UIComponent.php';
+require_once dirname(__FILE__) . '/../../../core/MvcReg.php';
+require_once dirname(__FILE__) . '/Authentication.php';
+
+class LoginForm extends PostForm {
     
 	//Default form value
     const DEFAULT_UID = '%{Username}%';
@@ -25,7 +31,7 @@ class LoginForm extends PostForm{
     protected $_loginMsgId;
  
 
-    public function __construct($formId = null, $formName= null, $uidLabel = null, $pwdLabel = null, $moduleName = null, $formDecoration = null, $loginMsgId = null) {
+    public function __construct($formId = null, $formName= null, $uidLabel = null, $pwdLabel = null, $moduleName = null, $formDecoration = null, $loginMsgId = null, $formAction = null) {
         $this->_formId   = (is_null($formId)) ? self::DEFAULT_LOGIN_FORM_ID : $formId;
         $formName = (is_null($formName)) ? $this->_formId :  $formName;
         $this->_loginMsgId = (is_null($loginMsgId)) ? self::DEFAULT_LOEGIN_MESSAGE_ID : $loginMsgId;
@@ -35,7 +41,8 @@ class LoginForm extends PostForm{
         $signInActionName = Authentication::getSignInAction($moduleName);
         $loginControllerName = Authentication::getLoginController($moduleName);
         
-        $formAction = PathService::getInstance()->getFormActionURL($moduleName, $loginControllerName, $signInActionName);
+        $formAction = (is_null($formAction)) ? PathService::getInstance()->getFormActionURL($moduleName, $loginControllerName, $signInActionName) : $formAction;
+        
         if (!is_null($uidLabel) && !is_null($pwdLabel)) {
             $uidLabel = self::DEFAULT_UID;
             $pwdLabel = self::DEFAULT_PWD;        
@@ -52,6 +59,7 @@ class LoginForm extends PostForm{
         $pwdField = $mapFields["pwd"];
         
         //set form
+        $this->setAttribute("id", $formName);
         $this->setAttribute("name", $formName);
         $this->setAttribute("class", $formName);
         $this->setAttribute("action", $formAction);
@@ -71,7 +79,7 @@ class LoginForm extends PostForm{
         	$this->_formDecoration = array($formId => array("<div class='{$formName}' name='{$formId}'", "</div>"));
         }
         
-        $this->setFormLayout($this->_formDecoration);
+        $this->setDecoration($this->_formDecoration);
         $this->setElement($uidTxtField);
         $this->setElement($pwdTxtField);
         $this->setElement($messageDiv);
