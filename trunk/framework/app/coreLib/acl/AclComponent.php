@@ -29,8 +29,16 @@ class AclComponent {
 	private $_pwdLabel; 
 	private $_formLayout = array(); 
 	private $_loginMsgId;
+	protected $_view;
     
 	
+	public function __construct($view) {
+		if ($view instanceof AppView) {
+			$this->_view = $view;
+		}else {
+			throw new Exception("Acl Component does not get correct view object");
+		}
+	}
 
 
 	/**
@@ -159,7 +167,7 @@ class AclComponent {
      	  *      
      	  */ 
         $this->_formLayout = array($this->_formId  => array("<div class='{$this->_formName}' name='{$this->_formName}'", "</div>"));           
-        $loginForm = new LoginForm($this->_moduleName, $this->_formId, $this->_formName, $this->_uidLabel, $this->_pwdLabel, $this->_formLayout, $this->_loginMsgId);
+        $loginForm = new LoginForm($this->_moduleName, $this->_formId, $this->_formName, $this->_uidLabel, $this->_pwdLabel, $this->_formLayout, $this->_loginMsgId, null);
         
         return $loginForm;
     }
@@ -167,13 +175,10 @@ class AclComponent {
     protected function login($loginFormName = null) {
         $this->_loginForm = $this->prepareLoginForm();
     	$loginFormName = (is_null($loginFormName)) ? $this->_loginForm->getFormId() : $loginFormName;
+    	
         //to generate the view
-        $moduleName     = MvcReg::getModuleName();
-        $controllerName = MvcReg::getControllerName();
-        $actionName     = MvcReg::getActionName();
-        $params         = Parameter::getParams();
-        $variables = array($loginFormName => $this->_loginForm);
-        Dispatcher::forward($moduleName, $controllerName, $actionName, $params, $variables);
+        $this->_view->setVariable($loginFormName, $this->_loginForm);
+        $this->_view->render();
     } 
 
     
@@ -181,7 +186,7 @@ class AclComponent {
     
     public function resetLoginForm($moduleName = null, $formId = null, $formName = null, $uidLabel = null, $pwdLabel = null, $formLayout = null, $loginMsgId = null) {
         $this->setLoginFormOptions($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout, $loginMsgId);
-    	$this->_loginForm = $this->prepareLoginForm($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout, $loginMsgId);
+    	$this->_loginForm = $this->prepareLoginForm($this->_moduleName, $this->_formId, $this->_formName, $this->_uidLabel, $this->_pwdLabel, $this->_formLayout, $this->_loginMsgId, null);
         return $this->_loginForm;
     }
     
@@ -193,15 +198,9 @@ class AclComponent {
         $errorMessage = is_null($errorMessage) ? "ERROR!!" : $errorMessage;
         $errorMsgVariableName = is_null($errorMsgVariableName) ? 'loginErrorMessage' : $errorMsgVariableName;
         
-        $variables = array($loginFormName => $this->_loginForm,
-                           $errorMsgVariableName => $errorMessage
-                          );
-        
-        $moduleName     = MvcReg::getModuleName();
-        $controllerName = MvcReg::getControllerName();
-        $actionName     = MvcReg::getActionName();
-        $params         = Parameter::getParams();
-        Dispatcher::forward($moduleName, $controllerName, $actionName, $params, $variables);
+        $this->_view->setVariable($loginFormName, $this->_loginForm);
+        $this->_view->setVariable($errorMsgVariableName, $errorMessage);
+        $this->_view->render();
     }
     
     /**
@@ -337,8 +336,10 @@ class AclComponent {
 		$this->_loginMsgId = $loginMsgId;
 	}
 
-
-
+    public function setViewVariable($variableName, $variable) {
+    	$this->_view->setVariable($variableName, $variable); 
+    }
+     
 	
 }
 

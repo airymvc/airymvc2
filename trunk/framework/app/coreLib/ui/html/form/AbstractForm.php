@@ -13,6 +13,8 @@
  * @author Hung-Fu Aaron Chang
  */
 
+require_once dirname(__FILE__) . '/../UIComponent.php';
+
 class AbstractForm extends UIComponent{
 
     protected $_attributes = array();
