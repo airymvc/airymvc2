@@ -49,8 +49,9 @@ class Authentication {
     public static function getLoginController($module) {
         $auth = AclUtility::getInstance()->getAuthentications();
         if (is_null($auth[$module]["controller"])) {
-            echo "Acl XML is not defined properly, check your authentication settings";
-            return null;
+            $message =  "Login Controller in Acl XML 'authentication' is not defined properly";
+            throw new AiryException($message);
+            return NULL;
         }
         return $auth[$module]["controller"];
     }
@@ -87,9 +88,16 @@ class Authentication {
     public static function getLoginExcludeActions($module) {
         $loginActions = array();
         $auth = AclUtility::getInstance()->getAuthentications();
+        if (!isset($auth[$module])) {
+            $message = "Module {$module} is not defined or mismatched in Acl XML 'authentication' section when use_authentication is enable";       	
+        	throw new AiryException($message);
+            return NULL;
+        }
+        
         if (is_null($auth[$module]["controller"])) {
-            echo "Acl XML is not defined properly, check your authentication settings";
-            return null;
+        	$message = "Acl XML is not defined properly, check your authentication settings for module {$module}";
+        	throw new AiryException($message);
+            return NULL;
         }
         if (!isset($auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION])) {
             $loginActions[$auth[$module]["controller"]][self::SIGN_IN] = self::SIGN_IN;

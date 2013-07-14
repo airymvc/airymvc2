@@ -58,9 +58,8 @@ class Dispatcher{
 		                  . 'controllers'.DIRECTORY_SEPARATOR 
 		                  . $controller .'.php';
          $controllerfile = (is_null($controllerfile)) ? $controllerfile1 : $controllerfile;
-                
-         if (file_exists($controllerfile)) {
-             try {	
+         try {	       
+         	  if (file_exists($controllerfile)) {
                   require_once($controllerfile);
 				
 				  //Check special Authentication controller
@@ -114,37 +113,34 @@ class Dispatcher{
                                Dispatcher::toMVC($loginController, $loginAction, $params);                 
                            }
                        }
-				}else {            
+				} else {            
                        Dispatcher::toMVC($controller, $action, $params) ;
-				}
-			} catch (Exception $e) {
-				$errorMsg = $e->getMessage() . "no such module or controller or action";
-				echo $errorMsg;
-                error_log($errorMsg);
-			}   
-			   
-		}   
+				}     
+		 	} else {
+				$errorMsg = "Controller {$controller} or controller file {$controllerfile} is missing";
+				throw new AiryException($errorMsg);		
+		 	}  
+		} catch (Exception $e) {
+			$errorMsg = "<h3><b>Dispatching ERROR!</b></h3>" . $e->getMessage();
+			echo $errorMsg;
+
+		} 
 	}
     
 	private static function toMVC($controller, $action, $params, $viewVariables = null)  
 	{
-		try {
-        	 global $app;
-        	 $app = new $controller();   
-        	 //This means constructor does not initialize the necessary params
-        	 $app->initial($params, $viewVariables); 
-        	 //init method acts as a constructor after all the variables being set
-        	 $app->init();
-        	 if (method_exists($app, $action)) {
-			 	 $app->$action();
-        	 } else {
-        	 	$errorMsg = "The action - {$action} in {$controller} is missing";
-        	 	throw new Exception($errorMsg);
-        	 }
-		} catch (Exception $e) {
-			 echo $e->getMessage();
-             error_log($e->getMessage());			
-		}      
+       	global $app;
+       	$app = new $controller();   
+       	//This means constructor does not initialize the necessary params
+        $app->initial($params, $viewVariables); 
+        //init method acts as a constructor after all the variables being set
+        $app->init();
+        if (method_exists($app, $action)) {
+			$app->$action();
+        } else {
+        	$errorMsg = "The action {$action} in {$controller} is missing";
+        	throw new AiryException($errorMsg);
+        }    
     }
 
 }
