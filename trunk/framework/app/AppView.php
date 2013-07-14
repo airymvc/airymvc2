@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AiryMVC Framework
+ * AiryMVC Framework - AppView
  *
  * LICENSE
  *
@@ -20,7 +20,7 @@ class AppView extends AbstractView{
          * 
          * @var string 
          */
-	public  $_viewFilePath;
+	    public  $_viewFilePath;
         
         
         /**

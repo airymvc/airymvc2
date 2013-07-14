@@ -1,3 +1,5 @@
+<?php
+
 /**
  * AiryMVC Framework
  *
@@ -11,7 +13,6 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-<?php
 
 class Parameter {
     /**
@@ -117,8 +118,8 @@ class Parameter {
      * set params to Session
      */
     public static function unsetAllParams() {
-    	foreach ($this->_params as $key => $value) {
-    		unset($this->_params[$key]);
+    	foreach (self::$_params as $key => $value) {
+    		unset(self::$_params[$key]);
     	}
     }
 }
