@@ -79,39 +79,81 @@ class Dispatcher{
                           //
                           Dispatcher::toMVC($controller, $action, $params);  
                           return;
-                      } else {
-                          $loginActions = Authentication::getLoginExcludeActions($moduleName);                                    
+                      } else {                                   
                           $allows        = Authentication::getAllAllows($moduleName); 
+                          //Dispatch sequence - checking allowing actions before checking login related actions
+                          //Check acl access exclusions
+                          //Case #1: allow all controllers in the module
+                          if ($allows == self::ALL_CONTROLLERS) {
+                              Dispatcher::toMVC($controller, $action, $params); 
+                              return;
+                          }                         
+                          
+                          //Case #2: allow all actions in a specific controller
+                          if (isset ($allows[$controllerName]) && ($allows[$controllerName] == self::ALL_ACTIONS)){ 
+                              Dispatcher::toMVC($controller, $action, $params); 
+                              return;
+                          } 
+                          
+                          //Case #3: allow a specific action in a specific controller
+                          if (isset($allows[$controllerName])) {
+                              $allowActions = $allows[$controllerName];
+                              foreach ($allowActions as $idx=>$allowAction) {
+                                       if ($allowAction == $actionName) {
+                                           Dispatcher::toMVC($controller, $action, $params);
+                                           return;
+                                       }
+                              } 
+                          } 
+                          
+                          //Check login related actions
+                          $loginActions = Authentication::getLoginExcludeActions($moduleName); 
                           if (isset($loginActions[$controllerName][$actionName])) {
                               Dispatcher::toMVC($controller, $action, $params); 
                               return;
-                          } else {
-                              if ($allows == self::ALL_CONTROLLERS) {
-                                  Dispatcher::toMVC($controller, $action, $params); 
-                                  return;
-                              } elseif (isset ($allows[$controllerName])&& ($allows[$controllerName] == self::ALL_ACTIONS)){ 
-                                        Dispatcher::toMVC($controller, $action, $params); 
-                                        return;
-                              } 
-                              if (isset($allows[$controllerName])) {
-                                  $allowActions = $allows[$controllerName];
-                                  foreach ($allowActions as $idx=>$allowAction) {
-                                           if ($allowAction == $actionName) {
-                                               Dispatcher::toMVC($controller, $action, $params);
-                                               return;
-                                           }
-                                  } 
-                               } 
-                               $loginControllerName = Authentication::getLoginController($moduleName);
-                               $loginController     = Authentication::getLoginController($moduleName).self::CONTROLLER_POSTFIX;
-                               $loginAction         = Authentication::getLoginAction($moduleName).self::ACTION_POSTFIX;
-                               
-                               $router = new Router();
-                               $router->removeDefaultActionView();
-                               $router->setDefaultModelView($loginControllerName);
-                               $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
-                               Dispatcher::toMVC($loginController, $loginAction, $params);                 
-                           }
+                          }
+                          
+                          //None of above satisfies, forward to login controller action
+                          $loginControllerName = Authentication::getLoginController($moduleName);
+                          $loginController     = Authentication::getLoginController($moduleName).self::CONTROLLER_POSTFIX;
+                          $loginAction         = Authentication::getLoginAction($moduleName).self::ACTION_POSTFIX;
+                          
+                          $router = new Router();
+                          $router->removeDefaultActionView();
+                          $router->setDefaultModelView($loginControllerName);
+                          $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
+                          Dispatcher::toMVC($loginController, $loginAction, $params);
+                          
+//                          if (isset($loginActions[$controllerName][$actionName])) {
+//                              Dispatcher::toMVC($controller, $action, $params); 
+//                              return;
+//                          } else {
+//                              if ($allows == self::ALL_CONTROLLERS) {
+//                                  Dispatcher::toMVC($controller, $action, $params); 
+//                                  return;
+//                              } elseif (isset ($allows[$controllerName])&& ($allows[$controllerName] == self::ALL_ACTIONS)){ 
+//                                        Dispatcher::toMVC($controller, $action, $params); 
+//                                        return;
+//                              } 
+//                              if (isset($allows[$controllerName])) {
+//                                  $allowActions = $allows[$controllerName];
+//                                  foreach ($allowActions as $idx=>$allowAction) {
+//                                           if ($allowAction == $actionName) {
+//                                               Dispatcher::toMVC($controller, $action, $params);
+//                                               return;
+//                                           }
+//                                  } 
+//                               } 
+//                               $loginControllerName = Authentication::getLoginController($moduleName);
+//                               $loginController     = Authentication::getLoginController($moduleName).self::CONTROLLER_POSTFIX;
+//                               $loginAction         = Authentication::getLoginAction($moduleName).self::ACTION_POSTFIX;
+//                               
+//                               $router = new Router();
+//                               $router->removeDefaultActionView();
+//                               $router->setDefaultModelView($loginControllerName);
+//                               $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
+//                               Dispatcher::toMVC($loginController, $loginAction, $params);                 
+//                           }
                        }
 				} else {            
                        Dispatcher::toMVC($controller, $action, $params) ;
