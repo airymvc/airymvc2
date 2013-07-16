@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <access_control>
+    <access_control_exclusion>
+        <module name = "backend">
+            <allow>
+                <controller>admin</controller>
+                    <action>add</action>
+                    <action>getTitle</action>
+            </allow> 
+            <allow>
+                <controller>event</controller>
+            </allow>
+        </module>
+        <module name = "default">
+            <allow>
+                <controller>index</controller>
+                    <action>index</action>
+                    <action>eventDetail</action>
+                    <action>search</action>
+            </allow>
+        </module>
+        <module name = "demo">
+            <allow>
+                <controller>index</controller>
+            </allow>
+        </module>
+    </access_control_exclusion>
+    
     <!-- tbis database id is based on the id number from config.ini file -->
     <!-- choose the database which you put the authentication information -->
     <mapping_database_id>db1</mapping_database_id>    
@@ -78,26 +104,6 @@
             </module>
     </successful_dispatch>
     
-    <access_control_exclusion>
-        <module name = "backend">
-            <allow>
-                <controller>admin</controller>
-                    <action>add</action>
-                    <action>getTitle</action>
-            </allow> 
-            <allow>
-                <controller>event</controller>
-            </allow>
-        </module>
-        <module name = "default">
-            <allow>
-                <controller>index</controller>
-                    <action>index</action>
-                    <action>eventDetail</action>
-                    <action>search</action>
-            </allow>
-        </module>
-    </access_control_exclusion>
     
     <module_table_mapping>
         <module name="backend">
