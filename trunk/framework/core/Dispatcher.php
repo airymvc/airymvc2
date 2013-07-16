@@ -116,10 +116,12 @@ class Dispatcher{
                           //(3) None of above satisfies, forward to login controller action
                           $loginControllerName = Authentication::getLoginController($moduleName);
                           $loginController     = Authentication::getLoginController($moduleName).self::CONTROLLER_POSTFIX;
+                          $loginActionName     = Authentication::getLoginAction($moduleName);
                           $loginAction         = Authentication::getLoginAction($moduleName).self::ACTION_POSTFIX;
                           
                           $router = new Router();
                           $router->removeDefaultActionView();
+                          $router->setDefaultActionView($loginControllerName, $loginActionName);
                           $router->setDefaultModelView($loginControllerName);
                           $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
                           Dispatcher::toMVC($loginController, $loginAction, $params);
