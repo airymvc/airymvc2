@@ -82,7 +82,7 @@ class Dispatcher{
                       } else {                                   
                           $allows        = Authentication::getAllAllows($moduleName); 
                           //Dispatch sequence - checking allowing actions before checking login related actions
-                          //Check acl access exclusions
+                          //(1) Check acl access exclusions
                           //Case #1: allow all controllers in the module
                           if ($allows == self::ALL_CONTROLLERS) {
                               Dispatcher::toMVC($controller, $action, $params); 
@@ -106,14 +106,14 @@ class Dispatcher{
                               } 
                           } 
                           
-                          //Check login related actions
+                          //(2) Check login related actions
                           $loginActions = Authentication::getLoginExcludeActions($moduleName); 
                           if (isset($loginActions[$controllerName][$actionName])) {
                               Dispatcher::toMVC($controller, $action, $params); 
                               return;
                           }
                           
-                          //None of above satisfies, forward to login controller action
+                          //(3) None of above satisfies, forward to login controller action
                           $loginControllerName = Authentication::getLoginController($moduleName);
                           $loginController     = Authentication::getLoginController($moduleName).self::CONTROLLER_POSTFIX;
                           $loginAction         = Authentication::getLoginAction($moduleName).self::ACTION_POSTFIX;
