@@ -43,8 +43,10 @@ class LoginForm extends PostForm {
         
         $formAction = (is_null($formAction)) ? PathService::getInstance()->getFormActionURL($moduleName, $loginControllerName, $signInActionName) : $formAction;
         
-        if (!is_null($uidLabel) && !is_null($pwdLabel)) {
-            $uidLabel = self::DEFAULT_UID;
+        if (is_null($uidLabel) || $uidLabel == "") {
+            $uidLabel = self::DEFAULT_UID;      
+        }
+        if (is_null($pwdLabel) || $pwdLabel == "") {
             $pwdLabel = self::DEFAULT_PWD;        
         }
         $this->_formDecoration = $formDecoration;
@@ -76,7 +78,7 @@ class LoginForm extends PostForm {
         
         //set default form layout here
         if (is_null($this->_formDecoration)) {
-        	$this->_formDecoration = array($formId => array("<div class='{$formName}' name='{$formId}'", "</div>"));
+        	$this->_formDecoration = array($formId => array("<div class='{$formName}' name='{$formId}'>", "</div>"));
         }
         
         $this->setDecoration($this->_formDecoration);
