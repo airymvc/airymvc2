@@ -188,7 +188,7 @@ class Router {
     public function setDefaultModelView($controllerName)
     {
         $modelClassName = $controllerName . self::MODEL_POSTFIX;
-	$viewClassName = $controllerName . self::VIEW_POSTFIX;
+		$viewClassName = $controllerName . self::VIEW_POSTFIX;
         $modelFile = "project". DIRECTORY_SEPARATOR. "modules" .DIRECTORY_SEPARATOR. $this->moduleName .DIRECTORY_SEPARATOR."models" .DIRECTORY_SEPARATOR. $modelClassName.".php";
         $viewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $viewClassName .".php";
 
