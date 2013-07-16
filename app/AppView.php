@@ -114,7 +114,7 @@ class AppView extends AbstractView{
                     }
                     
                 } else {
-                    throw new Exception('No View File Existed!');
+                    throw new Exception("No View File {$this->_viewFilePath} Existed!");
                 }
             } catch (Exception $e) {
                 echo 'Exception: ',  $e->getMessage(), "\n";
