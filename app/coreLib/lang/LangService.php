@@ -66,7 +66,7 @@ class LangService {
     public function getWord($key, $langCode)
     {
         $words = $this->getLangaugeWord();
-        if(!isset($words[$langCode][$key])) {
+        if(!isset($words[$langCode][$key]) || !isset($words[$langCode])) {
            return null;
         }
         
@@ -114,7 +114,9 @@ class LangService {
                 $tmpWdKey = str_replace('%{', '', $rawWdKey);
                 $wdKey = str_replace('}%', '', $tmpWdKey);
                 $toReplaceWord = $this->getWord($wdKey, LangReg::getLanguageCode()); 
-                $buffer = str_replace($rawWdKey, $toReplaceWord, $buffer);
+                if ($toReplaceWord != "" || !is_null($toReplaceWord)) {
+                	$buffer = str_replace($rawWdKey, $toReplaceWord, $buffer);
+                }
         }   
             
         return $buffer;
