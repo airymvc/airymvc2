@@ -120,7 +120,6 @@ class AbstractForm extends UIComponent{
             $elementTexts[$element->getId()] = $element->render();
             $elementHtml .= $element->render();
         }
-        
         $formCloseText = "</form>";
         
         $openHtml  = $formOpenText;
@@ -128,6 +127,8 @@ class AbstractForm extends UIComponent{
         
         //Insert into formDecoration
         if (!is_null($this->_formDecoration)) {
+        	 //reset the elementHtml here
+        	 $elementHtml = "";
     		 $openHtml  = $this->_formDecoration[$formId][0] . $formOpenText;
     	     $closeHtml = $formCloseText . $this->_formDecoration[$formId][1];
     	     
@@ -135,7 +136,7 @@ class AbstractForm extends UIComponent{
     		 foreach ($elementTexts as $elementId => $elementText) {
     		 	      $elementOpenHtml  = (isset($this->_formDecoration[$elementId][0])) ? $this->_formDecoration[$elementId][0] : "";
     		 	      $elementCloseHtml = (isset($this->_formDecoration[$elementId][1])) ? $this->_formDecoration[$elementId][1] : "";
-    				  $elementHtml = $elementOpenHtml 
+    				  $elementHtml .= $elementOpenHtml 
     			    	           . $elementText
     			        	       . $elementCloseHtml;
     		 }
