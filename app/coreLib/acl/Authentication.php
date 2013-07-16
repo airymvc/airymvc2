@@ -89,7 +89,7 @@ class Authentication {
         $loginActions = array();
         $auth = AclUtility::getInstance()->getAuthentications();
         if (!isset($auth[$module])) {
-            $message = "Module {$module} is not defined or mismatched in Acl XML 'authentication' section when use_authentication is enable";       	
+            $message = "Module {$module} is not defined or mismatched in Acl XML 'authentication' section when config setting use_authentication is enable";       	
         	throw new AiryException($message);
             return NULL;
         }
