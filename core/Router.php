@@ -200,15 +200,19 @@ class Router {
     
     public function setDefaultActionView($controllerName, $actionName)
     {
-        $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
-        $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
-        $absActionViewFile = $this->root . DIRECTORY_SEPARATOR . $actionViewFile;
+    	$actionViewArray = PathService::getInstance()->getActionViewData($this->moduleName, $controllerName, $actionName);
+        $actionViewClassName = $actionViewArray[0];
+        $actionViewFile = $actionViewArray[1];
         
-        if (!file_exists($absActionViewFile)) {
-            $name = $controllerName . "_" . $actionName;
-            $actionViewClassName = $name . self::VIEW_POSTFIX;
-            $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
-        }
+//        $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
+//        $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
+//        $absActionViewFile = $this->root . DIRECTORY_SEPARATOR . $actionViewFile;
+//        
+//        if (!file_exists($absActionViewFile)) {
+//            $name = $controllerName . "_" . $actionName;
+//            $actionViewClassName = $name . self::VIEW_POSTFIX;
+//            $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
+//        }
         MvcReg::setActionViewClassName($actionViewClassName);
         MvcReg::setActionViewFile($actionViewFile);  
     }

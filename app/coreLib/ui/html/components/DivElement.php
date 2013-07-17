@@ -25,7 +25,7 @@ class DivElement extends AbstractFormElement{
         
     public function setHtmlValue($innerHtml)
     {
-        $this->_innerHtml = $inHtml;
+        $this->_innerHtml = $innerHtml;
     }
     
     public function getHtmlValue() 

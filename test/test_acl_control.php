@@ -2,6 +2,7 @@
 
 require_once '../config/lib/AclUtility.php';
 require_once '../core/PathService.php';
+require_once '../app/coreLib/acl/AclXmlConstant.php';
 
 $test_acl = new AclUtility();
 

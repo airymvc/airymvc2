@@ -13,12 +13,14 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-require_once ('AcDb.php');
 require_once ('AclUtility.php');
+require_once('MysqlAccess.php');
+
 
 class AclComponent {
 	
 	const MD5 = "MD5";
+	const ACTION_POSTFIX = "Action";
 	
 	public $_loginForm;
 	//put form varriable here
@@ -30,16 +32,32 @@ class AclComponent {
 	private $_formLayout = array(); 
 	private $_loginMsgId;
 	protected $_view;
+	public $params = array();
+	
+	protected $acDb;
     
 	
 	public function __construct($view) {
+		//prepare db
+		$this->initialDB();
+		
 		if ($view instanceof AppView) {
 			$this->_view = $view;
 		}else {
 			throw new Exception("Acl Component does not get correct view object");
 		}
+		$this->params = Parameter::getParams();
+		
 	}
-
+	
+    public function initialDB() {
+        $multiDb = DbConfig::getConfig();
+        $acl           = new AclUtility();
+        $aclDbId       = $acl->getMapDatabaseId();
+        $this->acDb      = $multiDb[$aclDbId];
+        
+        return $this->acDb; 
+    }
 
 	/**
      * signIn, check with the database table with uid, pwd and mapping table
@@ -53,16 +71,18 @@ class AclComponent {
         
         $acl = AclUtility::getInstance();
         $tbl_id = $acl->getTableIdByModule($moduleName);
-        $AcDb = new AcDb();
+        //$AcDb = new AcDb();
 
         $tableName = $acl->getTableById($tbl_id);
         $mapFields = $acl->getMappingFieldByTbl($tbl_id);
         
         //prepare encryption setting
-        $encrytion = $acl->getEncrytion();
-        $useEcryption = $encrytion['$use_pwd_encryption'];
-        $encrytionOption = $encrytion['encrytion_option'];
-        $encrytionMethod = $encrytion['encrytion_method'];        
+        $encrytionArray = $acl->getEncrytion();
+        $encrytion = $encrytionArray[$tbl_id];
+        $useEcryption = (isset($encrytion['use_pwd_encryption'])) ? $encrytion['use_pwd_encryption'] : NULL;
+        //This sets the default method to PHP MD5 encryption
+        $encrytionOption = (isset($encrytion['encrytion_option'])) ? $encrytion['encrytion_option'] : "PHP";
+        $encrytionMethod = (isset($encrytion['encrytion_method'])) ? $encrytion['encrytion_method'] : "MD5";        
 
         $dbUid = $mapFields["user_id"];
         $dbPwd = (isset($mapFields["pwd"])) ? $mapFields["pwd"] : null;
@@ -76,7 +96,7 @@ class AclComponent {
 
         $mysql_results = null;
         //determine use encryption for password or not 
-        if (!is_null($useEcryption) && ($useEcryption == 1)) {
+        if (!is_null($useEcryption) && (($useEcryption == 1) || (strtoupper($useEcryption) == "TRUE"))) {
         	$salt = "";
         	if (strtoupper($encrytionOption) == "PHP") {
         		/**
@@ -89,23 +109,25 @@ class AclComponent {
         		$encryObj = new $encrytionOption();
         		$salt = $encryObj->$encrytionMethod(trim($pwd));
         	}
-            $mysql_results = $AcDb->getUserByUidPwd($tableName, $dbUid, $uid, $dbSalt, $dbIsdelete, $dbIsdeleteValue);
+            $mysql_results = $this->getUserByUid($tableName, $dbUid, $uid, $dbIsdelete, $dbIsdeleteValue);
         } else {
-            $mysql_results = $AcDb->getUserByUidPwd($tableName, $dbUid, $uid, $dbPwd, $dbIsdelete, $dbIsdeleteValue);
+            $mysql_results = $this->getUserByUid($tableName, $dbUid, $uid, $dbIsdelete, $dbIsdeleteValue);
         }
         $rows = mysql_fetch_array($mysql_results, MYSQL_ASSOC);
         $bLogin = false;
         
-        if (!is_null($useEcryption) && ($useEcryption == 1)) {
-            if ($rows[$dbSalt] == $salt) {
-                $bLogin = true;
-            }
-        } else {
-            if ($rows[$dbPwd] == $pwd) {
-                $bLogin = true;
-            }
+        if (is_array($rows)) {
+        	if (!is_null($useEcryption) && (($useEcryption == 1) || (strtoupper($useEcryption) == "TRUE"))) {
+            	if ($rows[$dbSalt] == $salt) {
+                	$bLogin = true;
+            	}
+       		} else {
+            	if ($rows[$dbPwd] == $pwd) {
+                	$bLogin = true;
+            	}
+        	}
         }
-
+        
         if ($bLogin) {
             $_SESSION[$moduleName][Authentication::UID] = $uid;
             $_SESSION[$moduleName][Authentication::ENCRYPT_UID] = Base64UrlCode::encrypt($uid);
@@ -122,17 +144,16 @@ class AclComponent {
             Dispatcher::forward($moduleName, $successfulController, $successfulAction, $params);
         } else {
             $authArray = $acl->getAuthentications();
-            $loginErrorAction = "loginErrorAction";
+            $loginErrorActionName = "loginErrorAction";
             if (isset($authArray[$moduleName]['login_error_action'])) {
                 $loginErrorActionName = $authArray[$moduleName]['login_error_action'];
-                $loginErrorAction = $loginErrorActionName . self::ACTION_POSTFIX;
             } 
             //forward to login error action
-            Dispatcher::forward($moduleName, $controllerName, $actionName, $this->params);
+            Dispatcher::forward($moduleName, $controllerName, $loginErrorActionName, $params);
         }
     }
     
-    public function loginOut() {
+    public function loginOut($forwardView = NULL) {
         $moduleName = MvcReg::getModuleName();
         unset($_SESSION[$moduleName][Authentication::UID]);
         unset($_SESSION[$moduleName][Authentication::ENCRYPT_UID]);
@@ -166,13 +187,12 @@ class AclComponent {
      	  *      );
      	  *      
      	  */ 
-        $this->_formLayout = array($this->_formId  => array("<div class='{$this->_formName}' name='{$this->_formName}'", "</div>"));           
-        $loginForm = new LoginForm($this->_moduleName, $this->_formId, $this->_formName, $this->_uidLabel, $this->_pwdLabel, $this->_formLayout, $this->_loginMsgId, null);
-        
+        $this->_formLayout = array($this->_formId  => array("<div class='{$this->_formName}' name='{$this->_formName}'>", "</div>"));           
+        $loginForm = new LoginForm($this->_formId, $this->_formName, $this->_uidLabel, $this->_pwdLabel, $this->_moduleName, $this->_formLayout, $this->_loginMsgId, null);
         return $loginForm;
     }
     
-    protected function login($loginFormName = null) {
+    public function login($loginFormName = null) {
         $this->_loginForm = $this->prepareLoginForm();
     	$loginFormName = (is_null($loginFormName)) ? $this->_loginForm->getFormId() : $loginFormName;
     	
@@ -186,12 +206,15 @@ class AclComponent {
     
     public function resetLoginForm($moduleName = null, $formId = null, $formName = null, $uidLabel = null, $pwdLabel = null, $formLayout = null, $loginMsgId = null) {
         $this->setLoginFormOptions($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout, $loginMsgId);
-    	$this->_loginForm = $this->prepareLoginForm($this->_moduleName, $this->_formId, $this->_formName, $this->_uidLabel, $this->_pwdLabel, $this->_formLayout, $this->_loginMsgId, null);
+    	$this->_loginForm = $this->prepareLoginForm();
         return $this->_loginForm;
     }
     
     
-    protected function loginError($errorMessage = null, $errorMsgVariableName = null, $loginFormName = null) {
+    public function loginError($errorMessage = null, $errorMsgVariableName = null, $loginFormName = null) {
+    	if (is_null($this->_loginForm)) {
+    		$this->_loginForm = $this->prepareLoginForm();
+    	}
         $this->_loginForm->populateErrorMessage($errorMessage);
         $loginFormName = (is_null($loginFormName)) ? $this->_loginForm->getFormId() : $loginFormName;
         
@@ -338,6 +361,21 @@ class AclComponent {
 
     public function setViewVariable($variableName, $variable) {
     	$this->_view->setVariable($variableName, $variable); 
+    }
+    
+    private function getUserByUid($table_name, $uid_field, $uid, $isdelete_field = null, $isdelete= null) {
+
+		$columns = array('*');
+        if (is_null($isdelete_field) || is_null($isdelete)) {
+            $where = array("AND"=>array("="=>array( $uid_field  => $uid)));
+        } else {
+            $where = array("AND"=>array("="=>array( $uid_field  => $uid),
+                                        "!="=>array( $isdelete_field => $isdelete)));            
+        }
+        $this->acDb->select($columns, $table_name);
+        $this->acDb->where($where);
+        $mysql_results = $this->acDb->execute();	
+        return $mysql_results;
     }
      
 	

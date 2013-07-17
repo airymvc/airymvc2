@@ -72,7 +72,7 @@ abstract class AbstractController{
                 $this->view->setViewFilePath(MvcReg::getViewFile());
             }
         }
-        //public function activateAcl(){}    
+
         
         protected function setDefaultModel()
         {
@@ -118,33 +118,41 @@ abstract class AbstractController{
 
 
         /**
-            * @param field_type $view
+            * @param AppView $view
             */
         public function setView($view) {
             $this->view = $view;
         }
-        
-        
-        public function switchView($moduleName, $viewName){
+
+        /**
+         * 
+         * This function can change to any view file name
+         * @param string $moduleName
+         * @param string $viewName
+         * @param string $controllerName
+         */
+        public function switchView($moduleName, $viewName, $controllerName = NULL){
             $viewClassName = $viewName . self::VIEW_POSTFIX;
-            $viewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR
-                        . "views".DIRECTORY_SEPARATOR . $viewClassName .".php";
+            if (is_null($controllerName)) {         
+            	$viewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR
+                      	  . "views". DIRECTORY_SEPARATOR . $viewClassName .".php";
+            } else {
+            	$viewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR
+                      	  . "views". DIRECTORY_SEPARATOR . $controllerName. DIRECTORY_SEPARATOR . $viewClassName .".php";            	
+            }
             $this->view->setViewFilePath($viewFile);
         }
         
-        public function switchToCallAction($actionName){
+        /**
+         * Call another action within the same controller 
+         * @param string $actionName
+         */
+        public function callAction($actionName){
             $controllerName = MvcReg::getControllerName();
             $moduleName = MvcReg::getModuleName();
-
-            $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
-            $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
-            $absActionViewFile = PathService::getInstance()->getRootDir() . DIRECTORY_SEPARATOR . $actionViewFile;
-        
-            if (!file_exists($absActionViewFile)) {
-                $name = $controllerName . "_" . $actionName;
-                $actionViewClassName = $name . self::VIEW_POSTFIX;
-                $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
-            }
+            
+            $actionViewClassName = $this->getActionViewClassName($moduleName, $controllerName, $actionName);
+            $actionViewFile = $this->getActionViewFile($moduleName, $controllerName, $actionName);
             
             MvcReg::setActionViewClassName($actionViewClassName);
             MvcReg::setActionViewFile($actionViewFile); 
@@ -175,6 +183,18 @@ abstract class AbstractController{
         protected function getModelDir(){
             return $this->_modelDir;
         }
+        
+        private function getActionViewClassName($moduleName, $controllerName, $actionName) {
+            $viewArray = PathService::getInstance()->getActionViewData($moduleName, $controllerName, $actionName);
+            return $viewArray[0];
+        }
+        
+        private function getActionViewFile($moduleName, $controllerName, $actionName) {
+            $viewArray = PathService::getInstance()->getActionViewData($moduleName, $controllerName, $actionName);
+            return $viewArray[1];
+        }
+        
+
 }
 
 ?>
