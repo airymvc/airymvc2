@@ -118,8 +118,10 @@ class Parameter {
      * set params to Session
      */
     public static function unsetAllParams() {
-    	foreach (self::$_params as $key => $value) {
-    		unset(self::$_params[$key]);
+    	if (is_array(self::$_params)) {
+    		foreach (self::$_params as $key => $value) {
+    			unset(self::$_params[$key]);
+    		}
     	}
     }
 }

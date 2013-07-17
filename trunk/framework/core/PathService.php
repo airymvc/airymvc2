@@ -22,6 +22,8 @@ class PathService {
     //put your code here
     private static $instance;
     
+    const VIEW_POSTFIX = 'View';
+    
     public static function getInstance()
     {
         if(is_null(self::$instance)) {
@@ -85,6 +87,22 @@ class PathService {
         $modulesDir = $projDir . DIRECTORY_SEPARATOR . "modules";
         return $modulesDir;
                       
+    }
+    
+    public function getActionViewData($moduleName, $controllerName, $actionName) {
+            $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
+            $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
+            $absActionViewFile = PathService::getInstance()->getRootDir() . DIRECTORY_SEPARATOR . $actionViewFile;
+        
+            if (!file_exists($absActionViewFile)) {
+                $name = $controllerName . "_" . ucwords($actionName);
+                $actionViewClassName = $name . self::VIEW_POSTFIX;
+                $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
+                $absActionViewFile = PathService::getInstance()->getRootDir() . DIRECTORY_SEPARATOR . $actionViewFile;
+            }
+            return array(0 => $actionViewClassName,
+            			 1 => $actionViewFile, 
+                         2 => $absActionViewFile);        	
     }
 
 }

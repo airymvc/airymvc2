@@ -26,8 +26,8 @@ class AclController extends AbstractController {
 
     public function initial($params, $viewVariables = null) {
     	parent::initial($params, $viewVariables);
-    	$this->_acl = new AclComponent();
-    	$this->_loginFormVariableName = $this->_loginForm->getFormId();
+    	$this->_acl = new AclComponent($this->view);
+    	//$this->_loginFormVariableName = $this->_loginForm->getFormId();
     } 
 
     /**

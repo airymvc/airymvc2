@@ -35,10 +35,10 @@
 	control the access right to module or controller-->
     <mapping_tables>
         <mapping_table id="1">
-            <name>admin</name>
+            <name>account</name>
             <mapping_fields>
                 <user_id>account_id</user_id>
-                <!--<pwd>pwd</pwd>-->
+                <pwd>pwd</pwd>
                 <pwd_encrypt>salt</pwd_encrypt>
                 <!--
                 <role>role</role>
@@ -69,7 +69,7 @@
     </mapping_tables>
     <!-- This one should be a component for users to inherit -->
     <authentication>
-        <module name="default">
+        <module name="demo">
         <controller>userLogin</controller>
 <!--         Four kinds of actions regarding to authentication
              (1) check if login 
@@ -84,6 +84,7 @@
         <other_exclusive_actions>
         	<action>register</action>
         	<action>add</action>
+        	<action>sendemail</action>
         </other_exclusive_actions>
         <logout_action>loginout</logout_action>
         </module>
@@ -98,9 +99,9 @@
             <controller>admin</controller>
             <action>getAdm</action>
             </module>
-            <module name ="default">
-            <controller>memberInfo</controller>
-            <action>getMemberInfo</action>
+            <module name ="demo">
+            <controller>test</controller>
+            <action>sucessfulLogin</action>
             </module>
     </successful_dispatch>
     
@@ -109,8 +110,8 @@
         <module name="backend">
             <ref_map_id>1</ref_map_id>
         </module>
-         <module name="default">
-            <ref_map_id>2</ref_map_id>
+         <module name="demo">
+            <ref_map_id>1</ref_map_id>
         </module>       
     </module_table_mapping>
     
