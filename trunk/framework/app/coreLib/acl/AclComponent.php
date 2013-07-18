@@ -35,6 +35,7 @@ class AclComponent {
 	public $params = array();
 	
 	protected $acDb;
+	protected $acDbArray;
     
 	
 	public function __construct($view) {
@@ -52,11 +53,22 @@ class AclComponent {
 	
     public function initialDB() {
         $multiDb = DbConfig::getConfig();
-        $acl           = new AclUtility();
-        $aclDbId       = $acl->getMapDatabaseId();
-        $this->acDb      = $multiDb[$aclDbId];
+        $acl              = AclUtility::getInstance();
+        $this->acDbArray  = $multiDb; 
         
-        return $this->acDb; 
+        //set a default value for acDb
+        $moduleName = MvcReg::getModuleName();
+        $mapTableId = $acl->getTableIdByModule($moduleName);
+        $mapDbId    = $acl->getMapDatabaseId($mapTableId);
+        if (isset($this->acDbArray[$mapDbId])) {
+        	$this->acDb = $this->acDbArray[$mapDbId];
+        } else {
+        	throw new AiryException("Acl Xml database mapping is wrong, check 'mapping_database_id' value or your config.ini");
+        }
+    }
+    
+    public function setDb($mapDbId) {
+    	$this->acDb = $this->acDbArray[$mapDbId];
     }
 
 	/**
@@ -71,8 +83,13 @@ class AclComponent {
         
         $acl = AclUtility::getInstance();
         $tbl_id = $acl->getTableIdByModule($moduleName);
-        //$AcDb = new AcDb();
-
+        
+        //if the module is not from MvcReg or different from MvcReg, need to get the mapDbId again for reset the acDb
+        if (!is_null($moduleName) || ($moduleName == MvcReg::getModuleName())) {
+        	$mapDbId    = $acl->getMapDatabaseId($tbl_id);
+        	$this->setDb($mapDbId);
+        }
+        
         $tableName = $acl->getTableById($tbl_id);
         $mapFields = $acl->getMappingFieldByTbl($tbl_id);
         
@@ -91,8 +108,12 @@ class AclComponent {
         $dbIsdeleteValue = (isset($mapFields["is_delete_value"]) && !is_null($dbIsdelete)) ? $mapFields["is_delete_value"] : null;
 
         $params = Parameter::getParams();
-        $uid = $params["{$dbUid}"];
-        $pwd = $params["{$dbPwd}"];
+        if (isset($params["{$dbUid}"]) && isset($params["{$dbPwd}"])) {
+        	$uid = $params["{$dbUid}"];
+        	$pwd = $params["{$dbPwd}"];
+        } else {
+        	throw new AiryException("Not passing the user id and password from the login form");
+        }
 
         $mysql_results = null;
         //determine use encryption for password or not 

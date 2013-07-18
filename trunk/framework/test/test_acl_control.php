@@ -2,7 +2,7 @@
 
 require_once '../config/lib/AclUtility.php';
 require_once '../core/PathService.php';
-require_once '../app/coreLib/acl/AclXmlConstant.php';
+require_once '../config/lib/AclXmlConstant.php';
 
 $test_acl = new AclUtility();
 
@@ -29,7 +29,11 @@ var_dump($X3);
 
 echo "======test5==== \n";
 
-var_dump($test_acl->getMapDatabaseId());
+var_dump($test_acl->getMapDatabaseIds());
+
+echo "======test5.1==== \n";
+
+var_dump($test_acl->getMapDatabaseId(1));
 
 echo "======test6======\n";
 
