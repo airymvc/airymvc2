@@ -11,6 +11,8 @@
  * @author: Hung-Fu Aaron Chang
  */
 
+require_once 'AclXmlConstant.php';
+
 class AclUtility 
 {
     private static $instance;
@@ -114,13 +116,28 @@ class AclUtility
     public function getTableById($tbl_id){
         $tbls =  $this->getMapTables();
         return $tbls[$tbl_id];
+    }  
+
+    public function getMapDatabaseId($mapTableId) {
+        $mapDbIds = $this->getMapDatabaseIds();
+        return $mapDbIds[$mapTableId][AclXmlConstant::ACL_MAPPING_DB_ID];
     }
     
-    public function getMapDatabaseId() {
+    public function getMapDatabaseIds() {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
-        $dbId = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_DB_ID)->item(0)->nodeValue;
-        return $dbId;
+        $mapTbls = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_TABLE);
+        $mapDbs = array();
+        $tmp_types = null;
+        for ($i = 0; $i < $mapTbls->length; $i++) {
+            $node = $mapTbls->item($i);
+            $tbId = $node->getAttribute('id');
+            $dbId = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_DB_ID)->item(0)->nodeValue;
+            $mapDbs[$tbId] = array(AclXmlConstant::ACL_MAPPING_DB_ID => $dbId);
+        }
+        
+        return $mapDbs;
     }
+
     
     public function getEncrytion() {
     	$xmldom = $this->getDOMfromXML($this->_aclxml);

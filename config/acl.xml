@@ -25,16 +25,16 @@
             </allow>
         </module>
     </access_control_exclusion>
-    
-    <!-- tbis database id is based on the id number from config.ini file -->
-    <!-- choose the database which you put the authentication information -->
-    <mapping_database_id>db1</mapping_database_id>    
+ 
         
 	<!--authentication data can be distributed in multiple table,
 	role information can also be put in each table; role can be used to
 	control the access right to module or controller-->
     <mapping_tables>
         <mapping_table id="1">
+            <!-- tbis database id is based on the id number from config.ini file -->
+    		<!-- choose the database which you put the authentication information -->
+            <mapping_database_id>db1</mapping_database_id>
             <name>account</name>
             <mapping_fields>
                 <user_id>account_id</user_id>
@@ -55,6 +55,7 @@
         </mapping_table>
 
         <mapping_table id="2">
+            <mapping_database_id>db1</mapping_database_id>
             <name>member</name>
             <mapping_fields>
                 <user_id>account_id</user_id>

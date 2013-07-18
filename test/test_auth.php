@@ -3,7 +3,7 @@
 require_once '../app/coreLib/acl/Authentication.php';
 require_once '../config/lib/AclUtility.php';
 require_once '../core/PathService.php';
-require_once '../app/coreLib/acl/AclXmlConstant.php';
+require_once '../config/lib/AclXmlConstant.php';
 
     echo "=====test 0=====\n";
     $auth = new Authentication();
