@@ -166,8 +166,10 @@ class Dispatcher{
 		 	}  
 		} catch (Exception $e) {
 			$errorMsg = "<h3><b>Dispatching ERROR!</b></h3>" . $e->getMessage();
-			echo $errorMsg;
-
+			$ifDisplayError = $Config = Config::getInstance()->getDisplayError();
+			if ($ifDisplayError == "enable") {
+				echo $errorMsg;
+			}
 		} 
 	}
     

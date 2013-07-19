@@ -42,10 +42,10 @@ class Initializer {
             set_include_path(get_include_path() . PATH_SEPARATOR . $f);
         }
         $Config = Config::getInstance();
-        //set time zone
-        if (!is_null($Config->getTimezone())) {
-            date_default_timezone_set($Config->getTimezone());
-        }
+//        //set time zone
+//        if (!is_null($Config->getTimezone())) {
+//            date_default_timezone_set($Config->getTimezone());
+//        }
         
         /**
          * include folders under project, coreLib, plug-in

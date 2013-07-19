@@ -75,26 +75,35 @@ class Config{
              $result[] = $tmpArray;
              $result[$mkey] = $tmpArray;
          }
-         //TODO: now only consider one database situation. Need to consider multiple databases
+
          return $result;
      }
      
-     public function getTimezone()
-     {
-     	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
-         if (!isset($iniArray['Time_Zone']) || !isset($iniArray['Time_Zone']['timezone'])) {
-             return null;
-         }       
-         $tzArray = $iniArray['Time_Zone'];
-         
-         return $tzArray['timezone'];
-     }
+//     public function getTimezone()
+//     {
+//     	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
+//         if (!isset($iniArray['Time_Zone']) || !isset($iniArray['Time_Zone']['timezone'])) {
+//             return null;
+//         }       
+//         $tzArray = $iniArray['Time_Zone'];
+//         
+//         return $tzArray['timezone'];
+//     }
      public function getAuthenticationConfig()
      {
      	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
-         $auArray = $iniArray['Authentication'];
-         
-         return $auArray;
+     	 if (!isset($iniArray['Authentication'])) {
+     	 	 return null;
+     	 }
+     	 if (strtolower($iniArray['Authentication']['use_authentication']) == "true" ||
+     	     strtolower($iniArray['Authentication']['use_authentication']) == "on") {
+     	     strtolower($iniArray['Authentication']['use_authentication']) == "enable";	
+     	 }
+         if (strtolower($iniArray['Authentication']['use_authentication']) == "false" ||
+     	     strtolower($iniArray['Authentication']['use_authentication']) == "off") {
+     	     strtolower($iniArray['Authentication']['use_authentication']) == "disable";	
+     	 }     	 
+         return  $iniArray['Authentication'];
      }
      public function getMVCKeyword()
      {
@@ -217,6 +226,51 @@ class Config{
     
          return $result;         
      }
+     
+     public function getErrorSetting() {
+         $iniArray = parse_ini_file ($this->_iniFilePath, true);
+     	 if (!isset($iniArray['Error'])) {
+     	 	 return null;
+     	 }     	
+     	 return $iniArray['Error'];
+     }
+     
+     public function getDisplayError()
+     {
+         $errorArray = $this->getErrorSetting();
+         if (!isset($errorArray['display_error'])) {
+         	return null;
+         }
+     	 
+     	 if (strtolower($errorArray['display_error']) == "true" ||
+     	     strtolower($errorArray['display_error']) == "on") {
+     	     strtolower($errorArray['display_error']) == "enable";	
+     	 }
+         if (strtolower($errorArray['display_error']) == "false" ||
+     	     strtolower($errorArray['display_error']) == "off") {
+     	     strtolower($errorArray['display_error']) == "disable";	
+     	 }     	 
+         return  $errorArray['display_error'];
+     }
+     
+//     public function getErrorForwarding()
+//     {
+//         $errorArray = $this->getErrorSetting();
+//         if (!isset($errorArray['error_forwarding'])) {
+//         	return null;
+//         }
+//     	 
+//     	 if (strtolower($errorArray['error_forwarding']) == "true" ||
+//     	     strtolower($errorArray['error_forwarding']) == "on") {
+//     	     strtolower($errorArray['error_forwarding']) == "enable";	
+//     	 }
+//         if (strtolower($errorArray['error_forwarding']) == "false" ||
+//     	     strtolower($errorArray['error_forwarding']) == "off") {
+//     	     strtolower($errorArray['error_forwarding']) == "disable";	
+//     	 }     	 
+//         return  $errorArray['error_forwarding'];
+//     }
+     
      
      /**
       * Construct the array of ini array
