@@ -72,6 +72,7 @@ class DatePickerElement extends JUIComponent{
          */
         $datePickerText = $datePickerText . $this->appendJs($this->_id);
         $this->_elementText = $datePickerText;
+		$this->attachJs();
         return $this->_elementText;
     }
     

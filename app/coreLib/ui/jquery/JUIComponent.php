@@ -18,12 +18,14 @@
  *
  * @author Hung-Fu Aaron Chang
  */
-class JUIComponent {
+class JUIComponent implements JsUIComponentInterface {
     
     protected $_id;
     protected $_attributes = array();
     protected $_elements = array();
     protected $_elementText;
+    protected $_javascriptText;
+    protected $_javascript = array();
     
     /**
      * attributes is a key-value structure that stores all the form attribtes 
@@ -48,7 +50,25 @@ class JUIComponent {
         $this->_elements[$tabLink] = $elements;
     }
         
+    public function appendJavascript($javascript) {
+    	$this->_javascript[] = $javascript;
+    }
+    
+    public function renderJs() {
+    	$this->_javascriptText = "";
+        foreach ($this->_javascript as $jsText) {
+    		$this->_javascriptText .= $jsText;
+    	}
+    	return $this->_javascriptText;
+    }
+    
+    protected function attachJs() {
+        $this->renderJs();
+        $this->_elementText .= $this->_javascriptText;
+    }
+    
     public function render(){
+		$this->attachJs();
         return $this->_elementText;
     }
      

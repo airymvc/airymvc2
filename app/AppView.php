@@ -40,14 +40,18 @@ class AppView extends AbstractView{
         
         protected $_isInLayout = false;
         
-	
         protected $_path;
         
         protected $_languageService;
         
+        protected $_noDoctype = false;
+        
+        protected $_doctype = NULL;
+        
+        
 		public function __construct()
 		{
-          	$this->_viewFilePath = null;
+          	$this->_viewFilePath = NULL;
           	$this->_path   = PathService::getInstance();
           	$this->_languageService = LangService::getInstance();
 			
@@ -69,7 +73,7 @@ class AppView extends AbstractView{
                     if (!is_null($this->_variables)) {
                         foreach ($this->_variables as $name=>$value)
                         {
-                            if ($value instanceof UIComponent || $value instanceof JUIComponent) {
+                            if ($value instanceof UIComponent || $value instanceof JsUIComponentInterface) {
                                 $htmlValue        = $value->render();
                                 $newHtmlValue     = $this->_languageService->replaceWordByKey($htmlValue);
                                 ${$name}          = $newHtmlValue; 
@@ -100,8 +104,18 @@ class AppView extends AbstractView{
                         //add plugins
                         $viewContent = $this->addPluginLib($viewContent);                       
                     }
-                    
+                      
                     $viewContent = $this->_languageService->replaceWordByKey($viewContent);
+                    
+                    //Check if inserting doctype at the beginning of the view content
+                    if (!$this->_isInLayout) {
+                        if (!$this->_noDoctype) {
+                    		if (is_null($this->_doctype)) {
+                    			$this->setDoctype();
+                    		}
+                    		$viewContent = $this->_doctype . $viewContent;
+                    	}  
+                    } 
                     
                     $fp = fopen("airy.view://view_content", "r+");                    
                     fwrite($fp, $viewContent);
@@ -217,6 +231,16 @@ class AppView extends AbstractView{
         
         public function getViewVariables() {
             return $this->_variables;
+        }
+        
+        
+        public function setDoctype($doctype = NULL) {
+        	$doctypeHandler = new Doctype();
+        	$this->_doctype = $doctypeHandler->getDoctype($doctype);
+        }
+        
+        public function noDoctype() {
+			$this->_noDoctype = true;
         }
         
 	

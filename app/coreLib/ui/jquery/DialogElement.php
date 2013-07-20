@@ -43,6 +43,7 @@ class DialogElement extends JUIComponent{
         $dialogDiv = $this->composeDiv(); 
         $dialogText = $dialogDiv . $this->appendJs($this->_id);
         $this->_elementText = $dialogText;
+        $this->attachJs();
         return $this->_elementText;
     }
     
