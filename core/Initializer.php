@@ -23,7 +23,7 @@ class Initializer {
         set_include_path(get_include_path() . PATH_SEPARATOR . "config");
         set_include_path(get_include_path() . PATH_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "lib");
         set_include_path(get_include_path() . PATH_SEPARATOR . "app");
-        set_include_path(get_include_path() . PATH_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "coreLib");
+        set_include_path(get_include_path() . PATH_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "library");
         set_include_path(get_include_path() . PATH_SEPARATOR . "project");
         set_include_path(get_include_path() . PATH_SEPARATOR . "project" . DIRECTORY_SEPARATOR . "share");
         set_include_path(get_include_path() . PATH_SEPARATOR . "project" . DIRECTORY_SEPARATOR . "modules");
@@ -48,11 +48,11 @@ class Initializer {
 //        }
         
         /**
-         * include folders under project, coreLib, plug-in
+         * include folders under project, library, plug-in
          *  
          */
         $plugIn = $root . DIRECTORY_SEPARATOR . "plugin";
-        $coreLib = $root . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "coreLib";
+        $coreLib = $root . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "library";
         $project = $root . DIRECTORY_SEPARATOR . "project";
 
         $plugInFolders = Initializer::getDirectory($plugIn, TRUE);
@@ -70,7 +70,7 @@ class Initializer {
         {
             $fd = trim($folder1);
             $rp = trim($coreLib) . DIRECTORY_SEPARATOR;
-            $f = "app" . DIRECTORY_SEPARATOR . "coreLib" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
+            $f = "app" . DIRECTORY_SEPARATOR . "library" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
             set_include_path(get_include_path() . PATH_SEPARATOR . $f);
         }
         
