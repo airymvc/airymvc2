@@ -23,6 +23,10 @@ class Layout {
     
     protected $_keyContents = array();
     
+    protected $_noDoctype = false;
+        
+    protected $_doctype = NULL;
+    
     
     /**
      * Variables that have been set to this layout are saved in an array
@@ -77,12 +81,12 @@ class Layout {
                      if (isset($viewComponent[self::CONTROLLER])){
                          $controllerName = $viewComponent[self::CONTROLLER];
                      } else {
-                         throw new Exception('Layout is missing controller');
+                         throw new AiryException('Layout is missing controller');
                      }
                      if (isset($viewComponent[self::ACTION])){
                          $actionName = $viewComponent[self::ACTION];
                      } else {
-                         throw new Exception('Layout is missing controller');
+                         throw new AiryException('Layout is missing controller');
                      }
                      $paramString = "";
                      if (isset($viewComponent[self::PARAMS])) {
@@ -105,7 +109,8 @@ class Layout {
                     $viewContent = $this->getData($url);
                     $viewContents[$contentKey] = $viewContent;
                  } catch(Exception $e) {
-                     echo sprintf("View Exception: %s", $e->getMessage());
+                     $errorMsg = sprintf("View Exception: %s", $e->getMessage());
+                     throw new AiryException ($errorMsg);
                  }
              } else if ($viewComponent instanceof AppView){
                  //Use $this->_view->render();
@@ -138,7 +143,15 @@ class Layout {
          
          //Loop through each contents
          //Replace view components with keywords
-         $layoutContent = $this->composeContent($layoutContent, $viewContents);         
+         $layoutContent = $this->composeContent($layoutContent, $viewContents);  
+
+         //Check if inserting doctype at the beginning of the view content
+         if (!$this->_noDoctype) {
+             if (is_null($this->_doctype)) {
+                 $this->setDoctype();
+             }
+         }
+         $layoutContent = $this->_doctype . $layoutContent;
          
          //Stream output
          $existed = in_array("airy.layout", stream_get_wrappers());
@@ -228,6 +241,15 @@ class Layout {
     		$keyReplacements[$matches[2][$cn]] = $matches[0][$cn];
     	}
     	$this->_keyContents = $keyReplacements;
+    }
+    
+    public function setDoctype($doctype = NULL) {
+        $doctypeHandler = new Doctype();
+        $this->_doctype = $doctypeHandler->getDoctype($doctype);
+    }
+        
+    public function noDoctype() {
+		$this->_noDoctype = true;
     }
 }
 ?>

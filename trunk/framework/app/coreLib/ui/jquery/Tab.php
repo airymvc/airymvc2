@@ -47,7 +47,7 @@ class Tab extends JUIComponent{
          */
         $tabText = $tabText . $this->appendTabJs($this->_id);        
         $this->_elementText = $tabText;
-   
+   		$this->attachJs();
         return $this->_elementText;
     }
     
