@@ -40,7 +40,7 @@ class AppView extends AbstractView{
         
         protected $_isInLayout = false;
         
-        protected $_path;
+        //protected $_path;
         
         protected $_languageService;
         
@@ -52,8 +52,8 @@ class AppView extends AbstractView{
 		public function __construct()
 		{
           	$this->_viewFilePath = NULL;
-          	$this->_path   = PathService::getInstance();
-          	$this->_languageService = LangService::getInstance();
+          	//$this->_path   = PathService::getInstance();
+          	$this->_languageService = Language::getInstance();
 			
           	$existed = in_array("airy.view", stream_get_wrappers());
 		  	if ($existed) {
@@ -87,11 +87,11 @@ class AppView extends AbstractView{
                      * Deprecated
                      * @TODO: change to all upper case variables 
                      */                        
-                    $httpServerHost   = $this->_path->getAbsoluteHostURL();
-                    $serverHost       = $this->_path->getAbsoluteHostPath();
+                    $httpServerHost   = PathService::getAbsoluteHostURL();
+                    $serverHost       = PathService::getAbsoluteHostPath();
                     
-                    $ABSOLUTE_URL     = $this->_path->getAbsoluteHostURL();
-                    $SERVER_HOST      = $this->_path->getAbsoluteHostPath();
+                    $ABSOLUTE_URL     = PathService::getAbsoluteHostURL();
+                    $SERVER_HOST      = PathService::getAbsoluteHostPath();
                     $LEAD_FILENAME    = Config::getInstance()->getLeadFileName();
                                                                  
                     $viewContent = file_get_contents($this->_viewFilePath);

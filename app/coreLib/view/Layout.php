@@ -93,7 +93,7 @@ class Layout {
                          $paramString =$this->getParamString($viewComponent[self::PARAMS]);
                      }
                      
-                    $HttpServerHost = PathService::getInstance()->getAbsoluteHostURL();
+                    $HttpServerHost = PathService::getAbsoluteHostURL();
                     $config         = Config::getInstance();
                     $LeadingUrl     = $HttpServerHost . "/" . $config->getLeadFileName();
                     $mvcKeywords    = $config->getMVCKeyword();
@@ -119,7 +119,7 @@ class Layout {
                  $viewContents[$contentKey] = $viewContent;
              } else {
                  $viewContent = file_get_contents($viewComponent);
-                 $viewContent = LangService::getInstance()->replaceWordByKey($viewContent);
+                 $viewContent = Language::getInstance()->replaceWordByKey($viewContent);
                  $viewContents[$contentKey] = $viewContent;  
                  
              }
@@ -133,7 +133,7 @@ class Layout {
              {
                   if ($value instanceof UIComponent || $value instanceof JUIComponent) {
                       $htmlValue    = $value->render();
-                      $newHtmlValue = LangService::getInstance()->replaceWordByKey($htmlValue);
+                      $newHtmlValue = Language::getInstance()->replaceWordByKey($htmlValue);
                       ${$name}      = $newHtmlValue; 
                   } else {
                       ${$name} = $value;

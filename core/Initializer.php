@@ -31,7 +31,7 @@ class Initializer {
 
 
         //set module paths
-        $root = PathService::getInstance()->getRootDir();
+        $root = PathService::getRootDir();
         $modulePath = $root . DIRECTORY_SEPARATOR . "project" .DIRECTORY_SEPARATOR . "modules";
         $moduleFolders = Initializer::getDirectory($modulePath, TRUE);
         foreach ($moduleFolders as $i => $mfolder)

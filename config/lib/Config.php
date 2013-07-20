@@ -25,29 +25,31 @@ class Config{
     const JSKEY       = 'script';
     const CSSKEY      = 'css';
     
-    function __construct($iniFilePath = null) 
+    function __construct() 
     {
-        $root = PathService::getInstance()->getRootDir();
-        if (is_null($iniFilePath)) {
-            $this->_iniFilePath = $root . DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini';
-            //Fallback config path to framework's level config folder's config.ini
-            $frameworkConfig = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini';
-            if (!file_exists($this->_iniFilePath)) {
-                $this->_iniFilePath = $frameworkConfig;    
-            }
-             
-        } else {
-            $this->_iniFilePath = $iniFilePath;
+        $root = PathService::getRootDir();
+        //Read the project's config first
+		//This is the project's config
+        $this->_iniFilePath = $root . DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini';
+        //Fallback config path to framework's level config folder's config.ini
+        //This is the framework's config
+        $frameworkConfig = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini';
+        if (!file_exists($this->_iniFilePath)) {
+        	if (file_exists($frameworkConfig)) {
+            	$this->_iniFilePath = $frameworkConfig;
+        	} else {
+        		throw AiryException("No config file in {$frameworkConfig} error!!");
+        	}   
         }
     }
     
     /**
      *  Use Singleton pattern here
      */
-    public static function getInstance($iniFilePath = null)
+    public static function getInstance()
     {
         if(is_null(self::$instance)) {
-            self::$instance = new self($iniFilePath);
+            self::$instance = new self();
         }    
         
         return self::$instance;

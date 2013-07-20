@@ -57,7 +57,7 @@ abstract class AbstractController{
         } 
         
         private function prepareVariables () {
-            $modulesDir = PathService::getInstance()->getModulesDir();
+            $modulesDir = PathService::getModulesDir();
             $moduleName = MvcReg::getModuleName();
             $this->_modelDir      = $modulesDir . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . "models"; 
             $this->_controllerDir = $modulesDir . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . "controllers";
@@ -167,7 +167,7 @@ abstract class AbstractController{
             $moduleName = MvcReg::getModuleName();
             $controllerName = MvcReg::getControllerName();
             $actionName = MvcReg::getActionName();
-            $url = PathService::getInstance()->getFormActionURL($moduleName, $controllerName, $actionName);
+            $url = PathService::getFormActionURL($moduleName, $controllerName, $actionName);
             return $url;
         }
     
@@ -185,12 +185,12 @@ abstract class AbstractController{
         }
         
         private function getActionViewClassName($moduleName, $controllerName, $actionName) {
-            $viewArray = PathService::getInstance()->getActionViewData($moduleName, $controllerName, $actionName);
+            $viewArray = PathService::getActionViewData($moduleName, $controllerName, $actionName);
             return $viewArray[0];
         }
         
         private function getActionViewFile($moduleName, $controllerName, $actionName) {
-            $viewArray = PathService::getInstance()->getActionViewData($moduleName, $controllerName, $actionName);
+            $viewArray = PathService::getActionViewData($moduleName, $controllerName, $actionName);
             return $viewArray[1];
         }
         

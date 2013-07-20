@@ -19,7 +19,7 @@ class AclUtility
     private $_aclxml = null;
         
     function __construct($aclxml = null) {
-        $root = PathService::getInstance()->getRootDir();
+        $root = PathService::getRootDir();
         if (is_null($aclxml)) {
             $this->_aclxml = $root .DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';
             //Fallback to framework level's aclxml file
