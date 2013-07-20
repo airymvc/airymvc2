@@ -13,34 +13,44 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class LangService {
-    //put your code here
+class Language {
+
     private $_config;
     private static $instance;
     
-    function __construct($iniFilePath = null) {
-        $this->_config = Config::getInstance($iniFilePath);
+    function __construct() {
+        $this->_config = Config::getInstance();
     }
     
-    public static function getInstance($iniFilePath = null)
+    public static function getInstance()
     {
         if(is_null(self::$instance)) {
-            self::$instance = new self($iniFilePath);
+            self::$instance = new self();
         }    
         
         return self::$instance;
     }
+    
+    /**
+     * Static method for user
+     */
+    public static function translation($word, $fromLanguageCode, $toLanguageCode){
+    	$instance = self::getInstance();
+        return $instance->getTranslation($word, $fromLanguageCode, $toLanguageCode);
+    }
+    
+    
     /**
      * Get the words from each language
      * @return array 
      */
     public function getLangaugeWord(){
         $langPath = $this->_config->getLanguageFolder();
-        $root = PathService::getInstance()->getRootDir();
+        $root = PathService::getRootDir();
         $absLangPath = $root . DIRECTORY_SEPARATOR . $langPath;
         $ignore = array('.', '..', '.svn', '.DS_Store');
         $langArray = array();
-	if ($handle = opendir($absLangPath)) {
+		if ($handle = opendir($absLangPath)) {
             while (false !== ($file = readdir($handle))) {
                    $absFile = $absLangPath.DIRECTORY_SEPARATOR.$file;
                    $tLangArr = array();

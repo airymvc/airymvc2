@@ -41,7 +41,7 @@ class LoginForm extends PostForm {
         $signInActionName = Authentication::getSignInAction($moduleName);
         $loginControllerName = Authentication::getLoginController($moduleName);
         
-        $formAction = (is_null($formAction)) ? PathService::getInstance()->getFormActionURL($moduleName, $loginControllerName, $signInActionName) : $formAction;
+        $formAction = (is_null($formAction)) ? PathService::getFormActionURL($moduleName, $loginControllerName, $signInActionName) : $formAction;
         
         if (is_null($uidLabel) || $uidLabel == "") {
             $uidLabel = self::DEFAULT_UID;      

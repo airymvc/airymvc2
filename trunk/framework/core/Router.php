@@ -37,7 +37,7 @@ class Router {
 
     function __construct() {
         
-        $this->root = PathService::getInstance()->getRootDir();        
+        $this->root = PathService::getRootDir();        
         $config = Config::getInstance();
         $mvc_array = $config->getMVCKeyword();
         $moduleKeyword = "module";
@@ -200,7 +200,7 @@ class Router {
     
     public function setDefaultActionView($controllerName, $actionName)
     {
-    	$actionViewArray = PathService::getInstance()->getActionViewData($this->moduleName, $controllerName, $actionName);
+    	$actionViewArray = PathService::getActionViewData($this->moduleName, $controllerName, $actionName);
         $actionViewClassName = $actionViewArray[0];
         $actionViewFile = $actionViewArray[1];
         

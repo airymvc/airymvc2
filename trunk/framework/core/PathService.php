@@ -32,14 +32,53 @@ class PathService {
         
         return self::$instance;
     }
+    /**
+     * Static method
+     */
+    public static function getAbsoluteHostURL() {
+    	$instance = self::getInstance();
+    	return $instance->getAbsoluteHostURLData();
+    }
+
+    public static function getAbsoluteHostPath() {
+    	$instance = self::getInstance();
+    	return $instance->getAbsoluteHostPathData();
+    }    
     
+    public static function getFormActionURL($moduleName, $controllerName, $actionName, $params = null) {
+    	$instance = self::getInstance();
+    	return $instance->getFormActionURLData($moduleName, $controllerName, $actionName, $params = null);
+    }    
+        
+    public static function getRootDir() {
+    	$instance = self::getInstance();
+    	return $instance->getRootDirData();
+    }     
     
-    public function getAbsoluteHostURL() {
+    public static function getProjectDir() {
+    	$instance = self::getInstance();
+    	return $instance->getProjectDirData();
+    }
+    
+    public static function getModulesDir() {
+    	$instance = self::getInstance();
+    	return $instance->getModulesDirData();
+    }    
+
+    public static function getActionViewData($moduleName, $controllerName, $actionName) {
+    	$instance = self::getInstance();
+    	return $instance->composeActionViewData($moduleName, $controllerName, $actionName);
+    }       
+
+    /*
+     * Object methods
+     */
+    private function getAbsoluteHostURLData() {
           $url = 'http://' . $this->getAbsoluteHostPath();
           return $url;
     }
     
-    public function getAbsoluteHostPath() {
+    private function getAbsoluteHostPathData() {
           $serverName = $_SERVER['SERVER_NAME'];
           $serverPort = $_SERVER['SERVER_PORT'];
           $indexRelativePath = $_SERVER['SCRIPT_NAME'];
@@ -50,7 +89,7 @@ class PathService {
           $serverHost = $serverName. ":" . $serverPort . $vfolder;
           return $serverHost;
     }
-    public function getFormActionURL($moduleName, $controllerName, $actionName, $params = null) {
+    private function getFormActionURLData($moduleName, $controllerName, $actionName, $params = null) {
                 $config = Config::getInstance();
                 $mkey = $config->getModuleKeyword();
                 $ckey = $config->getControllerKeyword();
@@ -67,13 +106,13 @@ class PathService {
                 return $url;
     }   
     
-    public function getRootDir()
+    private function getRootDirData()
     {
         $dir = dirname(dirname(__FILE__));
         return $dir;
     }
     
-    public function getProjectDir()
+    private function getProjectDirData()
     {
         $rootDir = $this->getRootDir();
         $projDir = $rootDir . DIRECTORY_SEPARATOR . "project";
@@ -81,7 +120,7 @@ class PathService {
                       
     }
     
-    public function getModulesDir()
+    private function getModulesDirData()
     {
         $projDir = $this->getProjectDir();
         $modulesDir = $projDir . DIRECTORY_SEPARATOR . "modules";
@@ -89,7 +128,7 @@ class PathService {
                       
     }
     
-    public function getActionViewData($moduleName, $controllerName, $actionName) {
+    private function composeActionViewData($moduleName, $controllerName, $actionName) {
             $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
             $actionViewFile = "project". DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
             $absActionViewFile = PathService::getInstance()->getRootDir() . DIRECTORY_SEPARATOR . $actionViewFile;
