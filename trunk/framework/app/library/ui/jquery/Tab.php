@@ -21,7 +21,6 @@
 class Tab extends JUIComponent{
     
     protected $_tabs;
-    protected $_elementText;
     
     public function __construct($id, $class = null) {
         $this->_id = $id;

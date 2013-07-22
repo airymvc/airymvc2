@@ -12,7 +12,7 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class DatePickerElement extends JUIComponent{
+class DatePicker extends JUIComponent{
     
     private $_inputElement;
     private $_number        = 1;

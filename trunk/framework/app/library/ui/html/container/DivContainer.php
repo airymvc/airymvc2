@@ -15,7 +15,7 @@
 
 
 class DivContainer extends AbstractContainer{
-    //put your code here
+
     protected $_divText;
     
     public function render()
@@ -23,19 +23,19 @@ class DivContainer extends AbstractContainer{
         $divText = "<div ";
         foreach ($this->_attributes as $key => $value)
         {
-            $divText = $divText . " " . $key ."=\"".$value ."\"";
+            $divText .=  " " . $key ."=\"".$value ."\"";
         }
-        $divText = $divText . ">";
+        $divText .= ">";
         
         /**
          * Render the form elements here 
          */
         foreach ($this->_elements as $key => $element)
         {
-            $divText = $divText . $element->render();
+            $divText .= $element->render();
         }
         
-        $divText = $divText . "</div>";
+        $divText .= "</div>";
         $this->_divText = $divText;
         return $this->_divText;
     }

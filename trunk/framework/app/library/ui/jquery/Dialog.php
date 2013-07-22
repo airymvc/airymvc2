@@ -12,7 +12,7 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class DialogElement extends JUIComponent{
+class Dialog extends JUIComponent{
     
 	private $_title;
 	private $_message;
