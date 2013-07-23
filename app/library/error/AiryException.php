@@ -15,12 +15,12 @@
 
 
 class AiryException extends Exception{
-		
-	public function __construct($message = '', $code = 0, Exception $previous = NULL) {
+
+	//Do not use $code = 0, Exception $previous = NULL for avoiding windows errors
+	public function __construct($message = '') {
 		$htmlMessage = "<b>Exception:</b><div>$message</div></br>";
 		error_log($message);
-		//print_r($message);
-		parent::__construct($htmlMessage, $code, $previous);
+		parent::__construct($htmlMessage);
 	}
 	
 }

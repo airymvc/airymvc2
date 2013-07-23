@@ -85,13 +85,12 @@ class Router {
         if ($moduleKeyword == $controllerKeyword ||
             $actionKeyword == $controllerKeyword ||
             $moduleKeyword == $actionKeyword) {
-            echo "Duplicate MVC Keywords \n\t";
-            throw Exception;
+            throw AiryException("Duplicate MVC Keywords");
         }
 
         // setup module first
         if  (!empty($this->key_val_pairs[$moduleKeyword])) {
-            $this->moduleName = $this->key_val_pairs[$moduleKeyword]; //module name
+            $this->moduleName = $this->fromHyphenToCamelCase($this->key_val_pairs[$moduleKeyword]); //module name
             $this->setModule($this->moduleName);
             unset($this->key_val_pairs[$moduleKeyword]);
         }else {
@@ -101,11 +100,11 @@ class Router {
 
         //Set Controller Name; also set the default model and view here
         if (!empty($this->key_val_pairs[$controllerKeyword])) {
-            $this->controllerName = $this->key_val_pairs[$controllerKeyword];
+            $this->controllerName = $this->fromHyphenToCamelCase($this->key_val_pairs[$controllerKeyword]);
             $this->setDefaultModelView($this->controllerName);
             MvcReg::setControllerName($this->controllerName); 
             
-            $this->controller = $this->key_val_pairs[$controllerKeyword].self::CONTROLLER_POSTFIX;//controller name
+            $this->controller = $this->fromHyphenToCamelCase($this->key_val_pairs[$controllerKeyword]).self::CONTROLLER_POSTFIX;//controller name
             unset($this->key_val_pairs[$controllerKeyword]);
 
         }else {
@@ -114,12 +113,13 @@ class Router {
             $this->setDefaultModelView(self::DEFAULT_PREFIX);
             MvcReg::setControllerName($this->controllerName);
         }
+        
         //Setting action 
         if  (!empty($this->key_val_pairs[$actionKeyword])) {
-            $this->actionName = $this->key_val_pairs[$actionKeyword];
+            $this->actionName = $this->fromHyphenToCamelCase($this->key_val_pairs[$actionKeyword]);
             MvcReg::setActionName($this->actionName);
             
-            $this->action = $this->key_val_pairs[$actionKeyword].self::ACTION_POSTFIX; //action name
+            $this->action = $this->fromHyphenToCamelCase($this->key_val_pairs[$actionKeyword]).self::ACTION_POSTFIX; //action name
             unset($this->key_val_pairs[$actionKeyword]);
         }else {
             $this->actionName = self::DEFAULT_PREFIX;
@@ -204,15 +204,6 @@ class Router {
         $actionViewClassName = $actionViewArray[0];
         $actionViewFile = $actionViewArray[1];
         
-//        $actionViewClassName = ucwords($actionName) . self::VIEW_POSTFIX;
-//        $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR .$controllerName. DIRECTORY_SEPARATOR. $actionViewClassName .".php";
-//        $absActionViewFile = $this->root . DIRECTORY_SEPARATOR . $actionViewFile;
-//        
-//        if (!file_exists($absActionViewFile)) {
-//            $name = $controllerName . "_" . $actionName;
-//            $actionViewClassName = $name . self::VIEW_POSTFIX;
-//            $actionViewFile = "project". DIRECTORY_SEPARATOR. "modules".DIRECTORY_SEPARATOR.$this->moduleName .DIRECTORY_SEPARATOR. "views".DIRECTORY_SEPARATOR . $actionViewClassName .".php";
-//        }
         MvcReg::setActionViewClassName($actionViewClassName);
         MvcReg::setActionViewFile($actionViewFile);  
     }
@@ -235,5 +226,42 @@ class Router {
         LangReg::setLanguageCode($languageCode);
     }
     
+    /**
+     * 
+     * Change hyphen name into camel case
+     * @param String $name
+     */
+	private function fromHyphenToCamelCase($name, $hasFirstUppercase = FALSE) {
+		$words = explode('-', strtolower($name));
+		if (count($words) == 1) {
+			return $name;
+		}
+		
+		$camelCaseName = '';
+		$index = 0;
+		foreach ($words as $word) {
+			if (!$hasFirstUppercase && $index ==0) {
+				$camelCaseName .= trim($word);
+			} else {
+				$camelCaseName .= ucfirst(trim($word));
+			}
+			$index++;
+		}
+		return $camelCaseName;
+	}
+	
+	private function fromCamelCaseToHyphen($name) {
+		$name = preg_replace('/(?<=\\w)(?=[A-Z])/','_$1', $name);
+		$name = strtolower($name);
+    	$words = explode('-', strtolower($name));
+    	$camelCaseName = '';
+    	
+    	foreach ($words as $word) {
+    		$camelCaseName .= ucfirst(trim($word));
+    	}
+    	$name = $camelCaseName;
+    	
+    	return $name;
+	}
 }
 ?>
