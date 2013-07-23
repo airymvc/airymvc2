@@ -16,11 +16,16 @@
 
 class AiryException extends Exception{
 
-	//Do not use $code = 0, Exception $previous = NULL for avoiding windows errors
-	public function __construct($message = '') {
+	public function __construct($message = '', $code = 0, Exception $previous = null) {
 		$htmlMessage = "<b>Exception:</b><div>$message</div></br>";
 		error_log($message);
-		parent::__construct($htmlMessage);
+		
+	    if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+	        parent::__construct($htmlMessage, (int)$code);
+        } else {
+        	parent::__construct($htmlMessage, (int) $code, $previous);
+        }
 	}
+
 	
 }
