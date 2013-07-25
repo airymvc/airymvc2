@@ -21,7 +21,6 @@ class Initializer {
         
         set_include_path(get_include_path() . PATH_SEPARATOR . "core");
         set_include_path(get_include_path() . PATH_SEPARATOR . "config");
-        set_include_path(get_include_path() . PATH_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "lib");
         set_include_path(get_include_path() . PATH_SEPARATOR . "app");
         set_include_path(get_include_path() . PATH_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "library");
         set_include_path(get_include_path() . PATH_SEPARATOR . "project");
