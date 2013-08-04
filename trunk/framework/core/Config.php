@@ -296,5 +296,22 @@ class Config{
 
         return $result; 
      }
+     
+     public function getCacheConfig()
+     {
+     	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
+         $cache = $iniArray['Cache'];
+
+         return $cache;
+     }
+     
+     public function getCacheFolder()
+     {
+         $cacheArray = $this->getCacheConfig();
+         if (isset($cacheArray['folder']) && !empty($cacheArray['folder'])) {
+             return $cacheArray['folder'];
+         }
+         return 'data'.DIRECTORY_SEPARATOR.'cache';        
+     }
 }
 ?>

@@ -48,6 +48,7 @@ class AppView extends AbstractView{
         
         protected $_doctype = NULL;
         
+        protected $_viewScripts;
         
 		public function __construct()
 		{
@@ -124,7 +125,8 @@ class AppView extends AbstractView{
                     if (!$this->_isInLayout) {
                         include "airy.view://view_content";   
                     } else {
-                        return file_get_contents("airy.view://view_content");
+                    	$this->_viewScripts = file_get_contents("airy.view://view_content");
+                        return $this->_viewScripts;
                     }
                     
                 } else {
@@ -241,6 +243,10 @@ class AppView extends AbstractView{
         
         public function noDoctype() {
 			$this->_noDoctype = true;
+        }
+        
+        public function getViewScripts() {
+        	return $this->_viewScripts;
         }
         
 	

@@ -52,6 +52,11 @@ class AclUtility
     }
 
     public function getAuthentications() {
+    	$loginRelatedActions = array("sign_in_action", 
+    								 "login_action", 
+    								 "login_error_action", 
+    								 "logout_action"
+    								);
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $authdom = $xmldom->getElementsByTagName(AclXmlConstant::ACL_AUTHENTICATION)->item(0);
         $auth_list = $authdom->getElementsByTagName(AclXmlConstant::MODULE);
@@ -62,12 +67,21 @@ class AclUtility
             foreach ($node->childNodes as $child) {
                  if ($child->nodeType == 1) {
                  	if ($child->nodeName != AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS) {
-                        $auth[$module_name][trim($child->nodeName)] = trim($child->nodeValue);
+                 		$value = trim($child->nodeValue);
+                 		if (trim($child->nodeName) == "controller") {
+                 			$value = RouterHelper::hyphenToCamelCase($value, TRUE);
+                 		}
+                 		if (in_array(trim($child->nodeName), $loginRelatedActions)) {
+                  			$value = RouterHelper::hyphenToCamelCase($value);                			
+                 		}
+                        $auth[$module_name][trim($child->nodeName)] = $value;
                  	} else {
                  		$ex_action_nodes = $child->getElementsByTagName(AclXmlConstant::ACTION);
                  		foreach ($ex_action_nodes as $ex_action_node) {
                  			if ($ex_action_node->nodeType == 1) {
-                         		$auth[$module_name][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS][] = trim($ex_action_node->nodeValue);               				
+                 				$exValue = trim($ex_action_node->nodeValue);
+                 				$exValue = RouterHelper::hyphenToCamelCase($exValue);  
+                         		$auth[$module_name][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS][] = $exValue;               				
                  			}
                  		}
                  	}
@@ -89,7 +103,14 @@ class AclUtility
             $module_name = $node->getAttribute(AclXmlConstant::NAME);
             foreach ($node->childNodes as $child) {
                  if ($child->nodeType == 1) {
-                        $resp[$module_name][trim($child->nodeName)] = trim($child->nodeValue);
+                 	 $value = trim($child->nodeValue);
+                 	 if (trim($child->nodeName) == "controller") {
+                 		 $value = RouterHelper::hyphenToCamelCase($value, TRUE);
+                 	 }
+                 	 if (trim($child->nodeName) == "action") {
+                 	 	 $value = RouterHelper::hyphenToCamelCase($value);
+                 	 }
+                        $resp[$module_name][trim($child->nodeName)] = $value;
                  }
             }   
            
@@ -332,12 +353,13 @@ class AclUtility
                       $controller_node = $adom->getElementsByTagName(AclXmlConstant::CONTROLLER)->item(0);
                        if (!is_null($controller_node)) {
                           if ($controller_node->nodeType == 1) {
-                              $controller_name = $controller_node->nodeValue;
+                              $controllerName = $controller_node->nodeValue;
+                              $controllerName = RouterHelper::hyphenToCamelCase($controllerName, TRUE);
                           }
                       }             
                       $act_node = $adom->getElementsByTagName(AclXmlConstant::ACTION);
                       if ($act_node->length == 0) {
-                          $rules[$module_name][$controller_name] = AclXmlConstant::ALL_ACTIONS;
+                          $rules[$module_name][$controllerName] = AclXmlConstant::ALL_ACTIONS;
                           continue;  
                       }
                       $action_rules = array();
@@ -345,11 +367,13 @@ class AclUtility
                            $action = $act_node->item($k);
                            if (!is_null($action)) {
                                 if ($action->nodeType == 1) {
-                                    $action_rules[$k] = $action->nodeValue;
+                                	$actionName = $action->nodeValue;
+                                	$actionName = RouterHelper::hyphenToCamelCase($actionName);
+                                    $action_rules[$k] = $actionName;
                                 }
                            }       
                       }
-                      $rules[$module_name][$controller_name] = $action_rules;
+                      $rules[$module_name][$controllerName] = $action_rules;
                }
              
           }
@@ -357,4 +381,5 @@ class AclUtility
         
         return $rules;
     }
+    
 }

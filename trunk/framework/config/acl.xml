@@ -5,7 +5,7 @@
             <allow>
                 <controller>admin</controller>
                     <action>add</action>
-                    <action>getTitle</action>
+                    <action>get-title</action>
             </allow> 
             <allow>
                 <controller>event</controller>
@@ -21,7 +21,15 @@
         </module>
         <module name = "demo">
             <allow>
+                <controller>demo</controller>
+				<!--<action>content</action>-->
+				<!--<action>testHelloWorld</action>-->
+            </allow>
+            <allow>
                 <controller>index</controller>
+                    <action>index</action>
+                    <action>eventDetail</action>
+                    <action>search</action>
             </allow>
         </module>
     </access_control_exclusion>
@@ -71,7 +79,7 @@
     <!-- This one should be a component for users to inherit -->
     <authentication>
         <module name="demo">
-        <controller>userLogin</controller>
+        <controller>user-login</controller>
 <!--         Four kinds of actions regarding to authentication
              (1) check if login 
              (2) if login error 
@@ -79,7 +87,7 @@
              (4) popup login menu  -->
                      <!-- if not set, use default actions for that module-->
                      <!-- in the future, this part should be set in the browse -->
-        <sign_in_action>signIn</sign_in_action>
+        <sign_in_action>sign-in</sign_in_action>
         <login_action>userLogin</login_action>
         <login_error_action>userLoginError</login_error_action>
         <other_exclusive_actions>
@@ -98,7 +106,7 @@
     <successful_dispatch><!--if login successful, setup the module, controller and action you forward to ..usually the entry page for the web-->      
             <module name ="backend">
             <controller>admin</controller>
-            <action>getAdm</action>
+            <action>get-adm</action>
             </module>
             <module name ="demo">
             <controller>test</controller>
