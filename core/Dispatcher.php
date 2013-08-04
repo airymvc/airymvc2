@@ -22,42 +22,31 @@ class Dispatcher{
     const ACTION_POSTFIX = 'Action';
     const MODEL_POSTFIX = 'Model';
     const VIEW_POSTFIX = 'View';
+    
+    private static $theController;
         
 	public static function dispatch($Router)  
 	{     		
-
-		$controller = $Router->getController();  
 		$moduleName = $Router->getModuleName();  
-		$action = $Router->getAction();
 		$params = $Router->getParams(); 
 		$controllerName = $Router->getControllerName();   //the name without 'Controller'
         $actionName = $Router->getActionName();
-		//$controller = $moduleName . '_' . $controller;
-		
-        //The default module name must be set in config.ini
-		$controllerfile = 'project'. DIRECTORY_SEPARATOR
-						 .'modules'.DIRECTORY_SEPARATOR 
-						 . $moduleName .DIRECTORY_SEPARATOR
-						 .'controllers'.DIRECTORY_SEPARATOR 
-						 . $controller .'.php';
+
         session_start();
-        Dispatcher::forward($moduleName, $controllerName, $actionName, $params, $controller, $controllerfile, $action);  
+        Dispatcher::forward($moduleName, $controllerName, $actionName, $params); 
+        session_write_close(); 
 	}
 
-	public static function forward($moduleName, $controllerName, $actionName, $params, $controller = null, $controllerfile = null, $action = null)  
+	public static function forward($moduleName, $controllerName, $actionName, $params)  
 	{  
          $Router = new Router();
          $Router->setDefaultModelView($controllerName); 
-		 
-         $controller = (is_null($controller)) ? $controllerName.self::CONTROLLER_POSTFIX : $controller;
-         $action     = (is_null($action)) ? $actionName.self::ACTION_POSTFIX : $action;
-                
-		 $controllerfile1 = 'project'. DIRECTORY_SEPARATOR
-		                  . 'modules'.DIRECTORY_SEPARATOR 
-		                  . $moduleName .DIRECTORY_SEPARATOR
-		                  . 'controllers'.DIRECTORY_SEPARATOR 
-		                  . $controller .'.php';
-         $controllerfile = (is_null($controllerfile)) ? $controllerfile1 : $controllerfile;
+
+         $controller = $controllerName.self::CONTROLLER_POSTFIX;
+         $action     = $actionName.self::ACTION_POSTFIX;         
+
+         $controllerfile = RouterHelper::getControllerFile($moduleName, $controller);
+
          try {	       
          	  if (file_exists($controllerfile)) {
                   require_once($controllerfile);
@@ -79,8 +68,10 @@ class Dispatcher{
                           //
                           Dispatcher::toMVC($controller, $action, $params);  
                           return;
-                      } else {                                   
-                          $allows        = Authentication::getAllAllows($moduleName); 
+                      } else {      
+                          //all allowed actions that are defined in acl.xml
+                          $allows = Authentication::getAllAllows($moduleName);
+                          
                           //Dispatch sequence - checking allowing actions before checking login related actions
                           //(1) Check acl access exclusions
                           //Case #1: allow all controllers in the module
@@ -98,13 +89,28 @@ class Dispatcher{
                           //Case #3: allow a specific action in a specific controller
                           if (isset($allows[$controllerName])) {
                               $allowActions = $allows[$controllerName];
-                              foreach ($allowActions as $idx=>$allowAction) {
+                              foreach ($allowActions as $idx => $allowAction) {
+                              	//echo "{$allowAction}=={$actionName}";
                                        if ($allowAction == $actionName) {
                                            Dispatcher::toMVC($controller, $action, $params);
                                            return;
                                        }
                               } 
                           } 
+                          
+                          //Case #4: Special cases, passing the actions in layout (due to using http request to get view)
+                          if (isset(Authentication::$layoutAllows[$moduleName][$controllerName])) {
+                              $allowActions = Authentication::$layoutAllows[$moduleName][$controllerName];
+                              foreach ($allowActions as $idx=>$allowAction) {
+                                       if ($allowAction == $actionName) {
+                                       	   //unset the action
+                                       	   Authentication::removeLayoutAllowAction($moduleName, $controllerName, $actionName);
+                                       	   Dispatcher::toMVC($controller, $action, $params);
+                                           return;
+                                       }
+                              } 
+                          } 
+                          
                           
                           //(2) Check login related actions
                           $loginActions = Authentication::getLoginExcludeActions($moduleName); 
@@ -125,40 +131,9 @@ class Dispatcher{
                           $router->setDefaultModelView($loginControllerName);
                           $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
                           Dispatcher::toMVC($loginController, $loginAction, $params);
-                          
-//                          if (isset($loginActions[$controllerName][$actionName])) {
-//                              Dispatcher::toMVC($controller, $action, $params); 
-//                              return;
-//                          } else {
-//                              if ($allows == self::ALL_CONTROLLERS) {
-//                                  Dispatcher::toMVC($controller, $action, $params); 
-//                                  return;
-//                              } elseif (isset ($allows[$controllerName])&& ($allows[$controllerName] == self::ALL_ACTIONS)){ 
-//                                        Dispatcher::toMVC($controller, $action, $params); 
-//                                        return;
-//                              } 
-//                              if (isset($allows[$controllerName])) {
-//                                  $allowActions = $allows[$controllerName];
-//                                  foreach ($allowActions as $idx=>$allowAction) {
-//                                           if ($allowAction == $actionName) {
-//                                               Dispatcher::toMVC($controller, $action, $params);
-//                                               return;
-//                                           }
-//                                  } 
-//                               } 
-//                               $loginControllerName = Authentication::getLoginController($moduleName);
-//                               $loginController     = Authentication::getLoginController($moduleName).self::CONTROLLER_POSTFIX;
-//                               $loginAction         = Authentication::getLoginAction($moduleName).self::ACTION_POSTFIX;
-//                               
-//                               $router = new Router();
-//                               $router->removeDefaultActionView();
-//                               $router->setDefaultModelView($loginControllerName);
-//                               $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
-//                               Dispatcher::toMVC($loginController, $loginAction, $params);                 
-//                           }
                        }
 				} else {            
-                       Dispatcher::toMVC($controller, $action, $params) ;
+                       Dispatcher::toMVC($controller, $action, $params);
 				}     
 		 	} else {
 				$errorMsg = "Controller {$controller} or controller file {$controllerfile} is missing";
@@ -172,22 +147,27 @@ class Dispatcher{
 			}
 		} 
 	}
-    
-	private static function toMVC($controller, $action, $params, $viewVariables = null)  
+	        
+	private static function toMVC($controller, $action, $params, $viewVariables = null, $inLayout = FALSE)  
 	{
-       	global $app;
-       	$app = new $controller();   
+		//Take out global, not use
+       	self::$theController = new $controller();   
        	//This means constructor does not initialize the necessary params
-        $app->initial($params, $viewVariables); 
+        self::$theController->initial($params, $viewVariables); 
         //init method acts as a constructor after all the variables being set
-        $app->init();
-        if (method_exists($app, $action)) {
-			$app->$action();
+        self::$theController->init();
+        if ($inLayout) {
+        	$view = self::$theController->getView();
+        	$view->isInLayout(true);
+        	self::$theController->setView($view);
+        }
+        if (method_exists(self::$theController, $action)) {
+			self::$theController->$action();
         } else {
         	$errorMsg = "The action {$action} in {$controller} is missing";
         	throw new AiryException($errorMsg);
         }    
+        return self::$theController;
     }
-
 }
 ?>

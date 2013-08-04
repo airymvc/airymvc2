@@ -185,12 +185,12 @@ abstract class AbstractController{
         }
         
         private function getActionViewClassName($moduleName, $controllerName, $actionName) {
-            $viewArray = PathService::getActionViewData($moduleName, $controllerName, $actionName);
+            $viewArray = RouterHelper::getActionViewData($moduleName, $controllerName, $actionName);
             return $viewArray[0];
         }
         
         private function getActionViewFile($moduleName, $controllerName, $actionName) {
-            $viewArray = PathService::getActionViewData($moduleName, $controllerName, $actionName);
+            $viewArray = RouterHelper::getActionViewData($moduleName, $controllerName, $actionName);
             return $viewArray[1];
         }
         

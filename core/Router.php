@@ -22,6 +22,7 @@ class Router {
     const MODEL_POSTFIX = 'Model';
     const VIEW_POSTFIX = 'View';
     const DEFAULT_PREFIX = 'index';
+    const ALLOW_THIS_ACTION = 'inlayout_mca';
 
     private $controller;
     private $action;
@@ -35,9 +36,45 @@ class Router {
     private $root;
 
 
-    function __construct() {
+    function __construct($moduleName = NULL, $controllerName = NULL, $actionName = NULL, $params = NULL) {
+    	if (is_null($moduleName) && 
+    		is_null($controllerName) && 
+    		is_null($actionName) && 
+    		is_null($params) ) {
+            $this->prepare();
+    	} else {
+    		$this->setAll($moduleName, $controllerName, $actionName, $params);
+    	}
+    }
+    
+    private function setAll($moduleName, $controllerName, $actionName, $params) {
+    	// setup module first
+        $this->moduleName = RouterHelper::hyphenToCamelCase($moduleName); //module name
+        $this->setModule($this->moduleName);
+
+        //Set Controller Name; also set the default model and view here
+        $this->controllerName = RouterHelper::hyphenToCamelCase($controllerName, TRUE);
+        $this->setDefaultModelView($this->controllerName);
+        MvcReg::setControllerName($this->controllerName); 
+        $this->controller = RouterHelper::hyphenToCamelCase($controllerName, TRUE).self::CONTROLLER_POSTFIX;//controller name
+
         
-        $this->root = PathService::getRootDir();        
+        //Setting action 
+        $this->actionName = RouterHelper::hyphenToCamelCase($actionName);
+        MvcReg::setActionName($this->actionName);
+        $this->action = RouterHelper::hyphenToCamelCase($actionName).self::ACTION_POSTFIX; //action name
+        
+        $this->setDefaultActionView($this->controllerName, $this->actionName);
+        $this->setModuleControllerAction($this->moduleName, $this->controllerName, $this->actionName);
+        
+        $this->params = $params;
+        Parameter::unsetAllParams();
+        Parameter::setParams($this->params);  
+    }
+    
+    
+    private function prepare() {
+    	$this->root = PathService::getRootDir();        
         $config = Config::getInstance();
         $mvc_array = $config->getMVCKeyword();
         $moduleKeyword = "module";
@@ -64,7 +101,7 @@ class Router {
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 //make to lower case
                 $this->key_val_pairs[strtolower($value)] = $_GET[$value];
-            }else {
+            } else {
                 //make to lower case
                 $this->key_val_pairs[strtolower($value)] = $_POST[$value];
             }
@@ -85,12 +122,12 @@ class Router {
         if ($moduleKeyword == $controllerKeyword ||
             $actionKeyword == $controllerKeyword ||
             $moduleKeyword == $actionKeyword) {
-            throw AiryException("Duplicate MVC Keywords");
+            throw new AiryException("Duplicate MVC Keywords. Module's, Controller's and Action's keywords should be unique.");
         }
 
         // setup module first
         if  (!empty($this->key_val_pairs[$moduleKeyword])) {
-            $this->moduleName = $this->fromHyphenToCamelCase($this->key_val_pairs[$moduleKeyword]); //module name
+            $this->moduleName = RouterHelper::hyphenToCamelCase($this->key_val_pairs[$moduleKeyword]); //module name
             $this->setModule($this->moduleName);
             unset($this->key_val_pairs[$moduleKeyword]);
         }else {
@@ -100,11 +137,11 @@ class Router {
 
         //Set Controller Name; also set the default model and view here
         if (!empty($this->key_val_pairs[$controllerKeyword])) {
-            $this->controllerName = $this->fromHyphenToCamelCase($this->key_val_pairs[$controllerKeyword]);
+            $this->controllerName = RouterHelper::hyphenToCamelCase($this->key_val_pairs[$controllerKeyword], TRUE);
             $this->setDefaultModelView($this->controllerName);
             MvcReg::setControllerName($this->controllerName); 
             
-            $this->controller = $this->fromHyphenToCamelCase($this->key_val_pairs[$controllerKeyword]).self::CONTROLLER_POSTFIX;//controller name
+            $this->controller = RouterHelper::hyphenToCamelCase($this->key_val_pairs[$controllerKeyword], TRUE).self::CONTROLLER_POSTFIX;//controller name
             unset($this->key_val_pairs[$controllerKeyword]);
 
         }else {
@@ -116,10 +153,10 @@ class Router {
         
         //Setting action 
         if  (!empty($this->key_val_pairs[$actionKeyword])) {
-            $this->actionName = $this->fromHyphenToCamelCase($this->key_val_pairs[$actionKeyword]);
+            $this->actionName = RouterHelper::hyphenToCamelCase($this->key_val_pairs[$actionKeyword]);
             MvcReg::setActionName($this->actionName);
             
-            $this->action = $this->fromHyphenToCamelCase($this->key_val_pairs[$actionKeyword]).self::ACTION_POSTFIX; //action name
+            $this->action = RouterHelper::hyphenToCamelCase($this->key_val_pairs[$actionKeyword]).self::ACTION_POSTFIX; //action name
             unset($this->key_val_pairs[$actionKeyword]);
         }else {
             $this->actionName = self::DEFAULT_PREFIX;
@@ -135,9 +172,24 @@ class Router {
             $this->languageCode = $this->key_val_pairs[$languageKeyword];
             $this->setLanguageCode($this->languageCode);
             unset($this->key_val_pairs[$languageKeyword]);
-        }else {
+        } else {
             $this->setLanguageCode($defaultLanguageCode);
         }
+        
+        //Getting serialize data for setting authentication allowing actions
+        if  (!empty($this->key_val_pairs[self::ALLOW_THIS_ACTION])) {
+             if (isset($this->key_val_pairs[self::ALLOW_THIS_ACTION])) {
+             	 $filename = $this->key_val_pairs[self::ALLOW_THIS_ACTION];
+             	 $checkContent = $this->moduleName .";" .$this->controllerName .";".$this->actionName;
+             	 $checkContent = md5($checkContent);
+             	 if (trim(FileCache::getFile($filename)) == trim($checkContent)) {
+            	 	 Authentication::addLayoutAllowAction($this->moduleName, $this->controllerName,  $this->actionName);
+            	 	 FileCache::removeFile($filename);
+             	 }
+             }
+             unset($this->key_val_pairs[self::ALLOW_THIS_ACTION]);
+        }        
+        
         $this->params = $this->key_val_pairs;
         Parameter::unsetAllParams();
         Parameter::setParams($this->params);    
@@ -200,7 +252,7 @@ class Router {
     
     public function setDefaultActionView($controllerName, $actionName)
     {
-    	$actionViewArray = PathService::getActionViewData($this->moduleName, $controllerName, $actionName);
+    	$actionViewArray = RouterHelper::getActionViewData($this->moduleName, $controllerName, $actionName);
         $actionViewClassName = $actionViewArray[0];
         $actionViewFile = $actionViewArray[1];
         
@@ -226,42 +278,5 @@ class Router {
         LangReg::setLanguageCode($languageCode);
     }
     
-    /**
-     * 
-     * Change hyphen name into camel case
-     * @param String $name
-     */
-	private function fromHyphenToCamelCase($name, $hasFirstUppercase = FALSE) {
-		$words = explode('-', strtolower($name));
-		if (count($words) == 1) {
-			return $name;
-		}
-		
-		$camelCaseName = '';
-		$index = 0;
-		foreach ($words as $word) {
-			if (!$hasFirstUppercase && $index ==0) {
-				$camelCaseName .= trim($word);
-			} else {
-				$camelCaseName .= ucfirst(trim($word));
-			}
-			$index++;
-		}
-		return $camelCaseName;
-	}
-	
-	private function fromCamelCaseToHyphen($name) {
-		$name = preg_replace('/(?<=\\w)(?=[A-Z])/','_$1', $name);
-		$name = strtolower($name);
-    	$words = explode('-', strtolower($name));
-    	$camelCaseName = '';
-    	
-    	foreach ($words as $word) {
-    		$camelCaseName .= ucfirst(trim($word));
-    	}
-    	$name = $camelCaseName;
-    	
-    	return $name;
-	}
 }
 ?>

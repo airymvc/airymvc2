@@ -39,6 +39,7 @@ class Layout {
     const CONTROLLER = "controller";
     const ACTION     = "action";
     const PARAMS     = "params";
+    const ALLOW_THIS_ACTION = 'inlayout_mca';
         
     
     public function setView($view) {
@@ -101,11 +102,27 @@ class Layout {
                     $controllerKey  = $mvcKeywords['controller'];
                     $actionKey      = $mvcKeywords['action'];
                     
+                    $moduleName     = RouterHelper::hyphenToCamelCase($moduleName);
+                    $controllerName = RouterHelper::hyphenToCamelCase($controllerName, TRUE);
+                    $actionName     = RouterHelper::hyphenToCamelCase($actionName);
+                    
                     $actionPath = $moduleKey ."=". $moduleName ."&". 
                                   $controllerKey ."=". $controllerName ."&".
                                   $actionKey ."=". $actionName;
                     
                     $url = $LeadingUrl . "?" . $actionPath . $paramString;
+                    
+                    //check if it is already signed in
+                    //if yes, add current action into allow action query string
+                    if (Authentication::isLogin($moduleName)) {
+                    	$filename = "mca_file" . microtime(true);
+                    	$md5Filename = md5($filename);
+                    	$content = $moduleName . ";" . $controllerName . ";" . $actionName;
+                    	$content = md5($content);
+                    	FileCache::saveFile($md5Filename, $content);
+                    	$url = $url . '&'. self::ALLOW_THIS_ACTION .'=' . $md5Filename;
+                    }
+                   
                     $viewContent = $this->getData($url);
                     $viewContents[$contentKey] = $viewContent;
                  } catch(Exception $e) {
@@ -199,13 +216,12 @@ class Layout {
         
         return $content;
     }
-
-
+    
     private function getData($url) {
         
         $httpClient = new HttpClient();
         
-        return$httpClient->getData($url);
+        return $httpClient->getData($url);
     }
     
     public function setVariable($variableName, $value) {

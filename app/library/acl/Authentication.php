@@ -27,6 +27,8 @@ class Authentication {
     const LOGIN_ERROR = "loginError";
     const LOGOUT = "logout";
     
+    public static $layoutAllows = array();
+    
     public static function isLogin($moduleName) {
         /**
          * Use uid and module for now  
@@ -138,6 +140,25 @@ class Authentication {
         $allows = (isset($rules[$module]))? $rules[$module]: null;
         return $allows;
     }
+    
+    public static function addLayoutAllowAction($module, $controllerName, $actionName) {
+    	self::$layoutAllows[$module][$controllerName][] = $actionName;
+    }
+    
+    public static function removeLayoutAllowAction($module, $controllerName, $actionName) {
+    	foreach (self::$layoutAllows[$module][$controllerName] as $idx => $allowActionName) {
+    		if ($actionName == $allowActionName) {
+    			unset(self::$layoutAllows[$module][$controllerName][$idx]);
+    		}
+    	}
+    	if (count(self::$layoutAllows[$module][$controllerName]) == 0) {
+    		unset(self::$layoutAllows[$module][$controllerName]);
+    	}
+    	if (count(self::$layoutAllows[$module]) == 0) {
+    		unset(self::$layoutAllows[$module]);
+    	}
+    }
+    
 
 }
 
