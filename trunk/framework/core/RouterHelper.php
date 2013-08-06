@@ -173,7 +173,11 @@ class RouterHelper {
 				$hyphenNameParts[0] = ucfirst($hyphenNameParts[0]);
 				$oneName = join("", $hyphenNameParts);
 			} else {
-				$hyphenNameParts[0] = lcfirst($hyphenNameParts[0]);
+				if(false === function_exists('lcfirst')) {
+				   $hyphenNameParts[0] = $this->lcFirst($hyphenNameParts[0]);
+				} else {
+				   $hyphenNameParts[0] = lcfirst($hyphenNameParts[0]);
+				}
 				$oneName = join("", $hyphenNameParts);				
 			}
 			return $oneName;
@@ -230,6 +234,11 @@ class RouterHelper {
 						 . $controller .'.php';	
         return 	$controllerfile;
 	}
+	
+    private function lcFirst($str) {
+       	$str[0] = strtolower($str[0]);
+       	return (string)$str;
+   	}
 
 }
 
