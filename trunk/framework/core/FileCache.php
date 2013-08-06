@@ -23,9 +23,8 @@ class FileCache {
         $config = Config::getInstance();
         $root = PathService::getRootDir();
 		$this->_cacheFolder = $root . DIRECTORY_SEPARATOR . $config->getCacheFolder();
-		$this->_lifetime = 60*10; //seconds
+		$this->_lifetime = 60*5;
     }
-    
     
     public static function getInstance()
     {
@@ -48,10 +47,14 @@ class FileCache {
     public static function get($key){
     	$instance = self::getInstance();
      	$key = md5($key);
-     	$filename = $this->_cacheFolder . DIRECTORY_SEPARATOR .$filename; 
-     	$cache = null;  	
-     	if (filemtime($filename) > (time() - 60*10)) {
-     		$instance->getFileData($key);
+     	$filename = $instance->_cacheFolder . DIRECTORY_SEPARATOR .$key; 
+     	$cache = null;  
+     	if (file_exists($filename)) {	
+     		if (time() - filemtime($filename) < ($instance->_lifetime)) {
+     			$cache = $instance->getFileData($key);
+     		} else {
+     			$instance->removeFileData($key);
+     		}
      	}
         return $cache;
     }
