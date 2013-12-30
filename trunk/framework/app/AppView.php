@@ -38,7 +38,7 @@ class AppView extends AbstractView{
          */
         protected $_hasScript  = false;
         
-        protected $_isInLayout = false;
+        protected $_inLayout = false;
         
         //protected $_path;
         
@@ -109,7 +109,7 @@ class AppView extends AbstractView{
                     $viewContent = $this->_languageService->replaceWordByKey($viewContent);
                     
                     //Check if inserting doctype at the beginning of the view content
-                    if (!$this->_isInLayout) {
+                    if (!$this->_inLayout) {
                         if (!$this->_noDoctype) {
                     		if (is_null($this->_doctype)) {
                     			$this->setDoctype();
@@ -122,7 +122,7 @@ class AppView extends AbstractView{
                     fwrite($fp, $viewContent);
                     fclose($fp);
 
-                    if (!$this->_isInLayout) {
+                    if (!$this->_inLayout) {
                         include "airy.view://view_content";   
                     } else {
                     	$this->_viewScripts = file_get_contents("airy.view://view_content");
@@ -226,8 +226,8 @@ class AppView extends AbstractView{
             return $content;
         }
         
-        public function isInLayout($boolFlag) {
-            $this->_isInLayout = $boolFlag;
+        public function setInLayout($boolFlag) {
+            $this->_inLayout = $boolFlag;
         }
         
         
