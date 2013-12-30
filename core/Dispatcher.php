@@ -158,7 +158,7 @@ class Dispatcher{
         self::$theController->init();
         if ($inLayout) {
         	$view = self::$theController->getView();
-        	$view->isInLayout(true);
+        	$view->setInLayout(true);
         	self::$theController->setView($view);
         }
         if (method_exists(self::$theController, $action)) {

@@ -131,7 +131,7 @@ class Layout {
                  }
              } else if ($viewComponent instanceof AppView){
                  //Use $this->_view->render();
-                 $viewComponent->isInLayout(true);
+                 $viewComponent->setInLayout(true);
                  $viewContent = $viewComponent->render();
                  $viewContents[$contentKey] = $viewContent;
              } else {
