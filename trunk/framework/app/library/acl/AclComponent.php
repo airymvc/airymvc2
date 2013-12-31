@@ -174,7 +174,7 @@ class AclComponent {
         }
     }
     
-    public function loginOut($forwardView = NULL) {
+    public function loginOut() {
         $moduleName = MvcReg::getModuleName();
         unset($_SESSION[$moduleName][Authentication::UID]);
         unset($_SESSION[$moduleName][Authentication::ENCRYPT_UID]);
@@ -384,19 +384,19 @@ class AclComponent {
     	$this->_view->setVariable($variableName, $variable); 
     }
     
-    private function getUserByUid($table_name, $uid_field, $uid, $isdelete_field = null, $isdelete= null) {
+    private function getUserByUid($tableName, $uidField, $uid, $isDeleteField = null, $isDelete= null) {
 
 		$columns = array('*');
-        if (is_null($isdelete_field) || is_null($isdelete)) {
-            $where = array("AND"=>array("="=>array( $uid_field  => $uid)));
+        if (is_null($isDeleteField) || is_null($isDelete)) {
+            $where = array("AND"=>array("="=>array( $uidField  => $uid)));
         } else {
-            $where = array("AND"=>array("="=>array( $uid_field  => $uid),
-                                        "!="=>array( $isdelete_field => $isdelete)));            
+            $where = array("AND"=>array("="=>array( $uidField  => $uid),
+                                        "!="=>array( $isDeleteField => $isDelete)));            
         }
-        $this->acDb->select($columns, $table_name);
+        $this->acDb->select($columns, $tableName);
         $this->acDb->where($where);
-        $mysql_results = $this->acDb->execute();	
-        return $mysql_results;
+        $mysqlResults = $this->acDb->execute();	
+        return $mysqlResults;
     }
      
 	
