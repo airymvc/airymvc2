@@ -55,6 +55,10 @@ class Config{
         return self::$instance;
     }
 	
+    public function setIniFilePath($path) {
+    	$this->_iniFilePath = $path;
+    }
+    
     /**
      * The result depends on multiple databases
      * [0] => array of database #1 setting
@@ -69,6 +73,14 @@ class Config{
          
          $result   = array();
          $parseIni = $this->convertMultiIni($dbArray);
+         //Single database setting
+         //Just one layer key-value structure
+         if (!isset($parseIni[self::DB_INI_SYS_KEY])) {
+         	 return $dbArray;
+         }
+         
+         //For multiple database setting
+         //Multiple layer structure
          foreach ($parseIni[self::DB_INI_SYS_KEY] as $mkey => $kv) {
              $tmpArray = array();
              foreach ($kv as $key => $value) {
