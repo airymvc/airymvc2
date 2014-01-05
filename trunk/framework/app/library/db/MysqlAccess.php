@@ -49,77 +49,111 @@ class MysqlAccess implements DbAccessInterface{
      */
 
     public function where($condition) {
-        $this->wherePart = " WHERE ";
+
+    	$this->wherePart = " WHERE ";
+        if (is_array($condition)) {
+        	$this->wherePart .= $this->composeWhereByArray($condition);
+        } else {
+        	$this->wherePart .= $this->composeWhereByString($condition);
+        }
+        return $this;
+
+    }
+    
+    protected function composeWhereByString($condition) {
+    	$condition = $this->mysqlEscape($condition);
+    	return "({$condition})";
+    }
+    
+    protected function composeWhereByArray($condition) {
+    	$wherePart = "";
         $ops = array_keys($condition);
         if (empty($ops[0])) {
             //NO "AND", "OR" 
             $keys = array_keys($condition[$ops[0]]);
             $opr = $keys[0];
-            $field_array = $condition[$ops[0]][$opr];
-            $sub_keys = array_keys($field_array);
-            $pos = strpos($sub_keys[0], '.');
-            if ($pos == false){
-                $this->wherePart = $this->wherePart
-                     . " `" . $sub_keys[0] . "` " . $opr . " '" . $condition[$ops[0]][$opr][$sub_keys[0]] . "' ";
-            } else {
-                $tf = explode (".", $sub_keys[0]);
-                $this->wherePart = $this->wherePart
-                     . " `{$tf[0]}`.`{$tf[1]}` " . $opr . " '" . $condition[$ops[0]][$opr][$sub_keys[0]] . "' ";
-            }
-        } else {   //Multiple Join Conditions
-            $first_one = TRUE;
+            $fieldArray = $condition[$ops[0]][$opr];
+            $sub_keys = array_keys($fieldArray);
+            
+            $wherePart = $this->attachWhere($wherePart, $sub_keys[0], $fieldArray, $opr);
+            
+        } else {   
+        	//Multiple Join Conditions
+            $firstOne = TRUE;
             foreach ($ops as $index => $op) {
                 foreach ($condition[$op] as $mopr => $fv_pair) {
                     if (is_array($fv_pair)) {
                         $mkeys = array_keys($fv_pair);
                         foreach ($mkeys as $idx => $mfield) {
-                            if ($first_one) {
-                                $pos = strpos($mfield, '.');
-                                if ($pos == false){
-                                    $this->wherePart = $this->wherePart
-                                           . " `" . $mfield . "` " . $mopr . " '" . $fv_pair[$mfield] . "' ";
-                                } else {
-                                    $tf = explode (".", $mfield);
-                                    $this->wherePart = $this->wherePart
-                                           . " `{$tf[0]}`.`{$tf[1]}` " . $mopr . " '" . $fv_pair[$mfield] . "' ";                               
-                                }
-                                $first_one = FALSE;
+                            if ($firstOne) {
+                            	$oprator = null;
+                                $firstOne = FALSE;
                             } else {
-                                $pos = strpos($mfield, '.');
-                                if ($pos == false){
-                                    $this->wherePart = $this->wherePart . strtoupper($op)
-                                           . " `" . $mfield . "` " . $mopr . " '" . $fv_pair[$mfield] . "' ";
-                                } else {
-                                    $tf = explode (".", $mfield);
-                                    $this->wherePart = $this->wherePart . strtoupper($op)
-                                           . " `{$tf[0]}`.`{$tf[1]}` " . $mopr . " '" . $fv_pair[$mfield] . "' ";                              
-                                }
-                            
+                            	$oprator = $op;
                             }
+                            $wherePart = $this->attachWhere($wherePart, $mfield, $fv_pair, $mopr, $oprator);
                         }
                     } else {
                         //@TODO: to consider if the error log is necessary here
                         //log the error
-                        $message = "JOIN condition is not an array";
-                        error_log($message, 0);
+                        $message = "JOIN condition uses array but not a correct array";
+                        throw new AiryException($message, 0);
                     }
                 }
             }
         }
+        return $wherePart;    	
+    }
+    
+    
+    private function attachWhere($whereString, $fieldKey, $fieldArray, $relationalOperator, $operator = null) {
+        $pos = strpos($fieldKey, '.');
+        $operator = is_null($operator) ? "" : strtoupper($operator);
+        $key = "`{$fieldKey}`";
+        if ($pos != false){
+            $tf = explode (".", $fieldKey);
+            $key = "`{$tf[0]}`.`{$tf[1]}`";
+        }
+        $whereString .= "{$operator} {$key} {$relationalOperator} '{$fieldArray[$fieldKey]}' ";
+        return $whereString;    	
+    }
+    
+    
+    public function andWhere($opString) {
+    	$opString = $this->mysqlEscape($opString);
+    	$opString = " AND ({$opString})";
+    	$this->wherePart .= $opString; 
+    	return $this;  	
+    }
+    
+    public function orWhere($opString) {
+    	$opString = $this->mysqlEscape($opString);
+    	$opString = " OR ({$opString})";
+    	$this->wherePart .= $opString; 
+    	return $this;    	
+    }
+
+    public function InWhere($in) {
+    	$in = $this->mysqlEscape($in);
+    	$opString = " IN ({$in})";
+    	$this->wherePart .= $opString; 
+    	return $this;    	
     }
 
     public function innerJoin($tables) {
         //INNER JOIN messages INNER JOIN languages
-        $tables = $this->mysql_escape($tables);
+        $tables = $this->mysqlEscape($tables);
 
         foreach ($tables as $index => $tbl) {
-            if ($index == 0) {
-                $this->joinPart = " INNER JOIN `" . $tbl . "`";
-            } else {
-                $this->joinPart = $this->joinPart . " INNER JOIN `" . $tbl . "`";
+        	$addon = "";
+            if ($index != 0) {
+            	$addon = $this->joinPart;
             }
+            $this->joinPart = "{$addon} INNER JOIN `{$tbl}`";
         }
+        return $this;
     }
+    
 
     /*
      * conditions represent 
@@ -138,108 +172,117 @@ class MysqlAccess implements DbAccessInterface{
 
     public function joinOn($condition) {
         $this->joinOnPart = " ON ";
+        if (is_array($condition)) {
+        	$this->joinOnPart = $this->composeJoinOnByArray($this->joinOnPart, $condition);
+        } else {
+        	$this->joinOnPart = $this->composeJoinOnByString($this->joinOnPart, $condition);
+        }
+        return $this;
+    }
+    
+    public function andJoinOn($condition) {
+        $this->joinOnPart .= " AND {$condition}";
+        return $this;
+    }
+    
+    public function orJoinOn($condition) {
+        $this->joinOnPart .= " OR {$condition}";
+        return $this;
+    }
+    
+    private function composeJoinOnByString($joinOnString, $conditionString) {
+    	$joinOnString .= $conditionString;
+    	return $joinOnString;
+    }
+    
+    private function composeJoinOnByArray($joinOnString, $condition) {
         $ops = array_keys($condition);
         
         if (empty($ops[0])) {
             //NO "AND", "OR" 
-            $keys = array_keys($condition[$ops[0]][0]);
-            $opr = $condition[$ops[0]][0][0];
-            $table1 = $keys[1];
-            $table2 = $keys[2];
-            $this->joinOnPart = $this->joinOnPart
-                    . " `" . $table1 . "`.`" . $condition[$ops[0]][0][$table1] . "` " . $opr
-                    . " `" . $table2 . "`.`" . $condition[$ops[0]][0][$table2] . "`";
-        } else {   //Multiple Join Conditions
+            $joinOnString = $this->attachJoinOn($joinOnString, $condition[$ops[0]][0]);
+        } else {   
+        	//Multiple Join Conditions
             if ((count($ops) == 1))  {
                 $op = $ops[0];
-                $tf_pairs = $condition[$op];
-                if (count($tf_pairs) == 1)
-                {
-                         $tf_pair = $tf_pairs[0];
-                         $mkeys = array_keys($tf_pair);
-                         $mopr = $tf_pair[0];
-                         $mtable1 = $mkeys[1];
-                         $mtable2 = $mkeys[2];
-                         $this->joinOnPart = $this->joinOnPart 
-                               . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
-                               . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";  
-                         return $this->joinOnPart;
+                $tfPairs = $condition[$op];
+                if (count($tfPairs) == 1) {
+                    $tfPair = $tfPairs[0];
+                    $joinOnString = $this->attachJoinOn($joinOnString, $tfPair);      
+                    return $joinOnString;
                 }
-                foreach ($tf_pairs as $idx => $tf_pair) {
-                         if (count($tf_pairs) - 1 == $idx) {
-                             $mkeys = array_keys($tf_pair);
-                             $mopr = $tf_pair[0];
-                             $mtable1 = $mkeys[1];
-                             $mtable2 = $mkeys[2];
-                             $this->joinOnPart = $this->joinOnPart 
-                                   . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
-                                   . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";                           
-                         } else {
-                             $mkeys = array_keys($tf_pair);
-                             $mopr = $tf_pair[0];
-                             $mtable1 = $mkeys[1];
-                             $mtable2 = $mkeys[2];
-                             $this->joinOnPart = $this->joinOnPart 
-                                    . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
-                                    . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`" . $op;   
-                         }
-                }
-                return $this->joinOnPart;
+				$joinOnString = $this->attachPairs($joinOnString, $tfPairs, $op);
+                return $joinOnString;
             }
             foreach ($ops as $index => $op) {
-                $tf_pairs = $condition[$op]; 
-                if (count($tf_pairs) == 1 && $index > 0) { 
-                          $tf_pair = $tf_pairs[0]; 
-                          $mkeys = array_keys($tf_pair);
-                          $mopr = $tf_pair[0];
-                          $mtable1 = $mkeys[1];
-                          $mtable2 = $mkeys[2];
-                          $this->joinOnPart = $this->joinOnPart . $op
-                               . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
-                               . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";  
-                } elseif (count($tf_pairs) > 1) {
-                     foreach ($tf_pairs as $idx => $tf_pair) {
-                          if (count($tf_pairs) - 1 == $idx) {
-                              $mkeys = array_keys($tf_pair);
-                              $mopr = $tf_pair[0];
-                              $mtable1 = $mkeys[1];
-                              $mtable2 = $mkeys[2];
-                              $this->joinOnPart = $this->joinOnPart 
-                                   . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
-                                   . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`";                           
-                          } else {
-                              $mkeys = array_keys($tf_pair);
-                              $mopr = $tf_pair[0];
-                              $mtable1 = $mkeys[1];
-                              $mtable2 = $mkeys[2];
-                              $this->joinOnPart = $this->joinOnPart 
-                                    . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr
-                                    . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "`" . $op;   
-                          }
-                    }
+                $tfPairs = $condition[$op]; 
+                if (count($tfPairs) == 1 && $index > 0) { 
+                    $tfPair = $tfPairs[0]; 
+                    $joinOnString = $this->attachJoinOn($joinOnString, $tfPair, null, $op);   
+                } elseif (count($tfPairs) > 1) {
+					$joinOnString = $this->attachPairs($joinOnString, $tfPairs, $op);
                 }              
             }
             
+        }  
+        return $joinOnString;  	
+    }
+    
+    private function attachPairs($joinOnString, $tfPairs, $op) {
+        foreach ($tfPairs as $idx => $tfPair) {
+                 $operation = $op;
+                 if (count($tfPairs) - 1 == $idx) {
+                     $operation = null;  
+                 }
+                 $joinOnString = $this->attachJoinOn($joinOnString, $tfPair, $operation);
         }
+        return $joinOnString;    	
+    }
+    
+    private function attachJoinOn($joinOnString, $tf_pair, $op = null, $leadingOp = null) {
+        $op = is_null($op) ? "" : $op;
+        $leadingOp = is_null($leadingOp) ? "" : (" " . $leadingOp);	
+        $mkeys = array_keys($tf_pair);
+        $mopr = $tf_pair[0];
+        $mtable1 = $mkeys[1];
+        $mtable2 = $mkeys[2];
+        $joinOnString .= $leadingOp . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "` ". $op;
+        
+        return $joinOnString;    	
     }
 
-    public function select($columns, $table, $distinct = 0) {
+    public function select($columns, $table, $distinct = null) {
         $this->queryType = "SELECT";
-        if ($distinct == 0) {
-            $this->selectPart = 'SELECT ';
+        if (is_null($distinct)) {
+            $selectString = 'SELECT ';
         } else {
-            $this->selectPart = 'SELECT DISTINCT ';         
+            $selectString = 'SELECT DISTINCT ';         
         }
-        $columns = $this->mysql_escape($columns);
-        $table = $this->mysql_escape($table);
-
+        
+        if (is_array($columns)) {
+        	$this->selectPart = $this->composeSelectByArray($selectString, $columns, $table);
+        } else {
+        	$this->selectPart = $this->composeSelectByString($selectString, $columns, $table);
+        }
+        
+        return $this;
+    }
+    
+    private function composeSelectByArray($selectString, $columns, $table) {
+    	$selectPart = $selectString;
         foreach ($columns as $index => $col) {
             if ($index == count($columns) - 1) {
-                $this->selectPart = $this->selectPart . $col . " FROM `" . $table . "`";
+                $selectPart .= $col . " FROM `" . $table . "`";
             } else {
-                $this->selectPart = $this->selectPart . $col . ", ";
+                $selectPart .= $col . ", ";
             }
-        }
+        }  
+        return $selectPart;  	
+    }
+    
+    private function composeSelectByString($selectString, $columnString, $table) {
+    	$selectPart = $selectString . $columnString ." FROM `" . $table . "`";
+    	return $selectPart;
     }
 
     /*
@@ -248,21 +291,20 @@ class MysqlAccess implements DbAccessInterface{
      */
 
     public function update($columns, $table) {
-        $columns = $this->mysql_escape($columns);
-        $table = $this->mysql_escape($table);
         $this->queryType = "UPDATE";
         $this->updatePart = "UPDATE `" . $table . "` SET ";
         $size = count($columns) - 1;
         $n = 0;
         foreach ($columns as $column_index => $column_value) {
+        	$lastAppend = "', ";
             if ($n == $size) {
-                $this->updatePart = $this->updatePart . "`" . $column_index . "`='" . $column_value . "'";
-            } else {
-                $this->updatePart = $this->updatePart . "`" . $column_index . "`='" . $column_value . "', ";
+                $lastAppend = "'";
             }
+            $this->updatePart .= "`" . $column_index . "`='" . $column_value . $lastAppend;
             $n++;
         }
-        
+
+        return $this;
     }
 
     /*
@@ -273,38 +315,36 @@ class MysqlAccess implements DbAccessInterface{
      */
 
     public function insert($columns, $table) {
-        $columns = $this->mysql_escape($columns);
-        $table = $this->mysql_escape($table);
         $this->queryType = "INSERT";
         $this->insertPart = "INSERT INTO " . $table . " ( ";
         $size = count($columns) - 1;
         $n = 0;
         foreach ($columns as $column_index => $column_value) {
+        	$attach = "`, ";
             if ($n == $size) {
-                $this->insertPart = $this->insertPart . "`" . $column_index . "`) VALUES (";
-            } else {
-                $this->insertPart = $this->insertPart . "`" . $column_index . "`, ";
+            	$attach = "`) VALUES (";
             }
+            $this->insertPart = $this->insertPart . "`" . $column_index . $attach;
             $n++;
         }
 
         $n = 0;
         foreach ($columns as $column_index => $column_value) {
+        	$middle = "'";
+            $last = "', ";
             if ($n == $size) {
-                if (array_key_exists($column_value, $this->keywords)) {
-                    $this->insertPart = $this->insertPart . $column_value . ")";
-                } else {
-                    $this->insertPart = $this->insertPart . "'" . $column_value . "')";
-                }
-            } else {
-                if (array_key_exists($column_value, $this->keywords)) {
-                    $this->insertPart = $this->insertPart . $column_value . ", ";
-                } else {
-                    $this->insertPart = $this->insertPart . "'" . $column_value . "', ";
-                }
+            	$middle = "'";
+            	$last = "')";
             }
+            if (array_key_exists($column_value, $this->keywords)) {
+            	$middle = "";
+            	$last = "";
+            }
+            $this->insertPart = $this->insertPart . $middle . $column_value . $last;
             $n++;
         }
+
+        return $this;
     }
 
     /*
@@ -312,9 +352,10 @@ class MysqlAccess implements DbAccessInterface{
      */
 
     public function delete($table) {
-        $table = $this->mysql_escape($table);
+        $table = $this->mysqlEscape($table);
         $this->queryType = "DELETE";
         $this->deletePart = "DELETE FROM " . $table;
+        return $this;
     }
 
     /*
@@ -323,14 +364,15 @@ class MysqlAccess implements DbAccessInterface{
      */
 
     public function limit($offset, $interval) {
-        
-        $offset = (!is_null($offset)) ? $this->mysql_escape($offset) : $offset;
-        $interval = $this->mysql_escape($interval);
+        $this->limitPart = "";
+        $offset = (!is_null($offset)) ? $this->mysqlEscape($offset) : $offset;
+        $interval = $this->mysqlEscape($interval);
+        $insert = "";
         if (!is_null($offset)) {
-            $this->limitPart = $this->limitPart . " LIMIT " . trim($offset) . ", " . trim($interval);   
-        } else {
-            $this->limitPart = $this->limitPart . " LIMIT " . trim($interval);            
+        	$insert = trim($offset);         
         }
+        $this->limitPart = " LIMIT " . $insert . ", " . trim($interval);
+        return $this;
     }
 
     /*
@@ -338,28 +380,30 @@ class MysqlAccess implements DbAccessInterface{
      *  $if_desc @int: null or 1
      */
 
-    public function orderBy($column, $if_desc = NULL) {
-        $column = $this->mysql_escape($column);
-        if ($if_desc == NULL) {
-            $this->orderPart = $this->orderPart . " ORDER BY " . $column;
-        } else {
-            $this->orderPart = $this->orderPart . " ORDER BY " . $column . " DESC";
+    public function orderBy($column, $ifDesc = NULL) {
+    	$this->orderPart = "";
+        $column = $this->mysqlEscape($column);
+        $desc = "";
+        if ($ifDesc != NULL) {
+        	$desc = " DESC";
         }
+        $this->orderPart .= " ORDER BY " . $column . $desc;
+        return $this;
     }
     
     /*
      *  $column @string: column name in the database
      */
     public function groupBy($column) {
-        $column = $this->mysql_escape($column);
-        $this->groupPart = $this->groupPart . " GROUP BY " . $column;
+    	$this->groupPart = "";
+        $column = $this->mysqlEscape($column);
+        $this->groupPart = " GROUP BY " . $column;
+        return $this;
     }
     
     
     public function execute() {
 
-        $queryStmt = $this->getStatement();
-        
         $con = mysql_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
         mysql_set_charset($this->dbConfigArray['encoding'] ,$con);
                 
@@ -367,7 +411,7 @@ class MysqlAccess implements DbAccessInterface{
             die('Could not connect: ' . mysql_error());
         }
         mysql_select_db($this->dbConfigArray['database'], $con);
-        $mysql_results = mysql_query($queryStmt);
+        $mysql_results = mysql_query($this->getStatement());
         
         if (!$mysql_results) {
             die('Could not query:' . mysql_error());
@@ -454,7 +498,7 @@ class MysqlAccess implements DbAccessInterface{
         $this->keywords['CURRENT_TIMESTAMP'] = "CURRENT_TIMESTAMP";
     }
 
-    function mysql_escape($content) {
+    function mysqlEscape($content) {
         /**
          * Need to add connection in order to avoid ODBC errors here 
          */
@@ -467,11 +511,84 @@ class MysqlAccess implements DbAccessInterface{
             }
         } else {
             //check if $content is not an array
-            mysql_real_escape_string($content);
+            $content = mysql_real_escape_string($content);
         }
         mysql_close($con);
         return $content;
     }
+    
+    //The following getter is for unit tests
+    
+	/**
+	 * @return the $selectPart
+	 */
+	public function getSelectPart() {
+		return $this->selectPart;
+	}
+
+	/**
+	 * @return the $updatePart
+	 */
+	public function getUpdatePart() {
+		return $this->updatePart;
+	}
+
+	/**
+	 * @return the $deletePart
+	 */
+	public function getDeletePart() {
+		return $this->deletePart;
+	}
+
+	/**
+	 * @return the $insertPart
+	 */
+	public function getInsertPart() {
+		return $this->insertPart;
+	}
+
+	/**
+	 * @return the $joinPart
+	 */
+	public function getJoinPart() {
+		return $this->joinPart;
+	}
+
+	/**
+	 * @return the $joinOnPart
+	 */
+	public function getJoinOnPart() {
+		return $this->joinOnPart;
+	}
+
+	/**
+	 * @return the $wherePart
+	 */
+	public function getWherePart() {
+		return $this->wherePart;
+	}
+
+	/**
+	 * @return the $orderPart
+	 */
+	public function getOrderPart() {
+		return $this->orderPart;
+	}
+
+	/**
+	 * @return the $groupPart
+	 */
+	public function getGroupPart() {
+		return $this->groupPart;
+	}
+
+	/**
+	 * @return the $limitPart
+	 */
+	public function getLimitPart() {
+		return $this->limitPart;
+	}
+
 
  
 
