@@ -18,38 +18,37 @@ class AclUtility
     private static $instance;
     private $_aclxml = null;
         
-    function __construct($aclxml = null) {
+    function __construct() {
         $root = PathService::getRootDir();
-        if (is_null($aclxml)) {
-            $this->_aclxml = $root .DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';
-            //Fallback to framework level's aclxml file
-            $frameworkAclXml = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';
-            if (!file_exists($this->_aclxml)) {
-                $this->_aclxml = $frameworkAclXml;
-            }
-            
-        } else {
-            $this->_aclxml = $aclxml;
+        $this->_aclxml = $root .DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';
+        //Fallback to framework level's aclxml file
+        $frameworkAclXml = $root . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'acl.xml';
+        
+        if (!file_exists($this->_aclxml)) {
+            $this->_aclxml = $frameworkAclXml;
         }
-
     }
     
     /**
      *  Use Singleton pattern here
      */
-    public static function getInstance($iniFilePath = null)
+    public static function getInstance()
     {
         if(is_null(self::$instance)) {
-            self::$instance = new self($iniFilePath);
+            self::$instance = new self();
         }    
         
         return self::$instance;
     }
-
-    public function loadXMLtoDOM($file) {
-
-        $this->_xmldom->load($file);
+    
+    public function setAclXml($aclxml) {
+    	$this->_aclxml = $aclxml;
     }
+
+//    public function loadXMLtoDOM($file) {
+//
+//        $this->_xmldom->load($file);
+//    }
 
     public function getAuthentications() {
     	$loginRelatedActions = array("sign_in_action", 
