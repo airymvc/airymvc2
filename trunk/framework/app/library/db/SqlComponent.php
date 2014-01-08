@@ -13,7 +13,8 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-abstract class MysqlDbAccess implements DbAccessInterface{
+abstract class SqlComponent {
+
 
     protected $dbConfigArray;
     protected $queryStmt;
@@ -61,7 +62,7 @@ abstract class MysqlDbAccess implements DbAccessInterface{
     }
     
     protected function composeWhereByString($condition) {
-    	$condition = $this->mysqlEscape($condition);
+    	$condition = $this->sqlEscape($condition);
     	return "({$condition})";
     }
     
@@ -120,21 +121,21 @@ abstract class MysqlDbAccess implements DbAccessInterface{
     
     
     public function andWhere($opString) {
-    	$opString = $this->mysqlEscape($opString);
+    	$opString = $this->sqlEscape($opString);
     	$opString = " AND ({$opString})";
     	$this->wherePart .= $opString; 
     	return $this;  	
     }
     
     public function orWhere($opString) {
-    	$opString = $this->mysqlEscape($opString);
+    	$opString = $this->sqlEscape($opString);
     	$opString = " OR ({$opString})";
     	$this->wherePart .= $opString; 
     	return $this;    	
     }
 
     public function InWhere($in) {
-    	$in = $this->mysqlEscape($in);
+    	$in = $this->sqlEscape($in);
     	$opString = " IN ({$in})";
     	$this->wherePart .= $opString; 
     	return $this;    	
@@ -142,7 +143,7 @@ abstract class MysqlDbAccess implements DbAccessInterface{
 
     public function innerJoin($tables) {
         //INNER JOIN messages INNER JOIN languages
-        $tables = $this->mysqlEscape($tables);
+        $tables = $this->sqlEscape($tables);
 
         foreach ($tables as $index => $tbl) {
         	$addon = "";
@@ -352,7 +353,7 @@ abstract class MysqlDbAccess implements DbAccessInterface{
      */
 
     public function delete($table) {
-        $table = $this->mysqlEscape($table);
+        $table = $this->sqlEscape($table);
         $this->queryType = "DELETE";
         $this->deletePart = "DELETE FROM " . $table;
         return $this;
@@ -365,8 +366,8 @@ abstract class MysqlDbAccess implements DbAccessInterface{
 
     public function limit($offset, $interval) {
         $this->limitPart = "";
-        $offset = (!is_null($offset)) ? $this->mysqlEscape($offset) : $offset;
-        $interval = $this->mysqlEscape($interval);
+        $offset = (!is_null($offset)) ? $this->sqlEscape($offset) : $offset;
+        $interval = $this->sqlEscape($interval);
         $insert = "";
         if (!is_null($offset)) {
         	$insert = trim($offset);         
@@ -382,7 +383,7 @@ abstract class MysqlDbAccess implements DbAccessInterface{
 
     public function orderBy($column, $ifDesc = NULL) {
     	$this->orderPart = "";
-        $column = $this->mysqlEscape($column);
+        $column = $this->sqlEscape($column);
         $desc = "";
         if ($ifDesc != NULL) {
         	$desc = " DESC";
@@ -396,31 +397,13 @@ abstract class MysqlDbAccess implements DbAccessInterface{
      */
     public function groupBy($column) {
     	$this->groupPart = "";
-        $column = $this->mysqlEscape($column);
+        $column = $this->sqlEscape($column);
         $this->groupPart = " GROUP BY " . $column;
         return $this;
     }
     
     
-    public function execute() {
-//
-//        $con = mysql_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
-//        mysql_set_charset($this->dbConfigArray['encoding'] ,$con);
-//                
-//        if (!$con) {
-//            die('Could not connect: ' . mysql_error());
-//        }
-//        mysql_select_db($this->dbConfigArray['database'], $con);
-//        $mysql_results = mysql_query($this->getStatement());
-//        
-//        if (!$mysql_results) {
-//            die('Could not query:' . mysql_error());
-//        }
-//        mysql_close($con);
-//        $this->cleanAll();
-//        
-//        return $mysql_results;
-    }
+    public function execute() {}
 
     /**
      * @return the $dbConfigArray
@@ -467,17 +450,17 @@ abstract class MysqlDbAccess implements DbAccessInterface{
     }
     
     public function cleanAll(){
-        $this->queryType = "";
+        $this->queryType  = "";
         $this->selectPart = "";
-        $this->joinPart = "";
+        $this->joinPart   = "";
         $this->joinOnPart = "";
-        $this->wherePart = "";
-        $this->orderPart = "";
-        $this->limitPart = "";
+        $this->wherePart  = "";
+        $this->orderPart  = "";
+        $this->limitPart  = "";
         $this->updatePart = "";
         $this->insertPart = "";
         $this->deletePart = "";
-        $this->groupPart = "";
+        $this->groupPart  = "";
     }
 
     /**
@@ -498,24 +481,7 @@ abstract class MysqlDbAccess implements DbAccessInterface{
         $this->keywords['CURRENT_TIMESTAMP'] = "CURRENT_TIMESTAMP";
     }
 
-    function mysqlEscape($content) {
-        /**
-         * Need to add connection in order to avoid ODBC errors here 
-         */
-        $con = mysql_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
-        mysql_set_charset($this->dbConfigArray['encoding'] ,$con);
-        //check if $content is an array
-        if (is_array($content)) {
-            foreach ($content as $key => $value) {
-                $content[$key] = mysql_real_escape_string($value);
-            }
-        } else {
-            //check if $content is not an array
-            $content = mysql_real_escape_string($content);
-        }
-        mysql_close($con);
-        return $content;
-    }
+    function sqlEscape($content) {}
     
     //The following getter is for unit tests
     
