@@ -115,17 +115,6 @@ class PdoMysqlComponent extends PdoSqlComponent {
     }
 
     function sqlEscape($content) {
-
-        //check if $content is an array
-        if (is_array($content)) {
-            foreach ($content as $key => $value) {
-                $content[$key] = $this->quote($value);
-            }
-        } else {
-            //check if $content is not an array
-            $content = $this->quote($content);
-        }
-
         return $content;
     }    
 }
