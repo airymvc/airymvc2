@@ -135,7 +135,6 @@ abstract class SqlComponent {
     }
 
     public function InWhere($in) {
-    	$in = $this->sqlEscape($in);
     	$opString = " IN ({$in})";
     	$this->wherePart .= $opString; 
     	return $this;    	
@@ -143,7 +142,6 @@ abstract class SqlComponent {
 
     public function innerJoin($tables) {
         //INNER JOIN messages INNER JOIN languages
-        $tables = $this->sqlEscape($tables);
 
         foreach ($tables as $index => $tbl) {
         	$addon = "";
@@ -366,8 +364,8 @@ abstract class SqlComponent {
 
     public function limit($offset, $interval) {
         $this->limitPart = "";
-        $offset = (!is_null($offset)) ? $this->sqlEscape($offset) : $offset;
-        $interval = $this->sqlEscape($interval);
+        $offset = (!is_null($offset)) ? $offset : 0;
+
         $insert = "";
         if (!is_null($offset)) {
         	$insert = trim($offset);         
@@ -383,7 +381,6 @@ abstract class SqlComponent {
 
     public function orderBy($column, $ifDesc = NULL) {
     	$this->orderPart = "";
-        $column = $this->sqlEscape($column);
         $desc = "";
         if ($ifDesc != NULL) {
         	$desc = " DESC";
@@ -397,7 +394,6 @@ abstract class SqlComponent {
      */
     public function groupBy($column) {
     	$this->groupPart = "";
-        $column = $this->sqlEscape($column);
         $this->groupPart = " GROUP BY " . $column;
         return $this;
     }

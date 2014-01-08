@@ -15,16 +15,22 @@
 
 class MysqliComponent extends SqlComponent {
 
+	private $port = 3306;
+	private $host;
+	
     function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
     }
 
     public function execute() {
-
-        $con = new mysqli($this->dbConfigArray['host'], 
+		$hostArray = explode(":", $this->dbConfigArray['host']);    	
+		$this->host = $hostArray[0];
+		$this->port = $hostArray[1];
+        $con = new mysqli($this->host, 
         				  $this->dbConfigArray['id'], 
         				  $this->dbConfigArray['pwd'], 
-        				  $this->dbConfigArray['database']);
+        				  $this->dbConfigArray['database'],
+        				  $this->port);
         				  
 		$result = $con->query($this->getStatement());
         $con->close();
@@ -38,16 +44,20 @@ class MysqliComponent extends SqlComponent {
         /**
          * Need to add connection in order to avoid ODBC errors here 
          */
-        $con = mysqli_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
-        mysqli_set_charset($this->dbConfigArray['encoding'] ,$con);
+        $con = new mysqli($this->host, 
+        				  $this->dbConfigArray['id'], 
+        				  $this->dbConfigArray['pwd'], 
+        				  $this->dbConfigArray['database'],
+        				  $this->port);
+        mysqli_set_charset($con, strtolower($this->dbConfigArray['encoding']));
         //check if $content is an array
         if (is_array($content)) {
             foreach ($content as $key => $value) {
-                $content[$key] = mysqli_real_escape_string($value);
+                $content[$key] = mysqli_real_escape_string($con, $value);
             }
         } else {
             //check if $content is not an array
-            $content = mysqli_real_escape_string($content);
+            $content = mysqli_real_escape_string($con, $content);
         }
         mysqli_close($con);
         return $content;

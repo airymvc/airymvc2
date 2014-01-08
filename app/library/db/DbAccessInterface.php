@@ -28,7 +28,7 @@ interface DbAccessInterface {
     
     public function orJoinOn($condition);
     
-    public function addJoinOn($condition);
+    public function andJoinOn($condition);
 
     public function update($columns, $table);
     

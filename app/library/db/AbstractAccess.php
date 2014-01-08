@@ -18,7 +18,7 @@ abstract class AbstractAccess {
 	protected $_dbComponent;
 
 	
-   	public function select($columns, $table, $distinct = 0) {
+   	public function select($columns, $table, $distinct = null) {
    		$this->_dbComponent->select($columns, $table, $distinct);
    		return $this;
    	}
@@ -53,8 +53,8 @@ abstract class AbstractAccess {
    		return $this;    	
     }
     
-    public function addJoinOn($condition) {
-    	$this->_dbComponent->addJoinOn($condition);
+    public function andJoinOn($condition) {
+    	$this->_dbComponent->andJoinOn($condition);
    		return $this;    	
     }
 
@@ -97,7 +97,7 @@ abstract class AbstractAccess {
     }
 
     public function orderBy($column, $ifDesc = NULL) {
-    	$this->_dbComponent->aorderBy($column, $ifDesc);
+    	$this->_dbComponent->orderBy($column, $ifDesc);
    		return $this;
     }
     
