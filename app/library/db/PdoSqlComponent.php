@@ -13,7 +13,7 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class PdoMysqlComponent extends PdoSqlComponent {
+class PdoSqlComponent extends SqlComponent {
 	
 	protected $pdoConn;
 	protected $host;
