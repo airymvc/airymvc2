@@ -16,9 +16,10 @@
 class PdoAccess extends AbstractAccess implements DbAccessInterface  {
 	
 	//passing config here for unit test convenience
-    function __construct($databaseId = 0, $config = null) {
-    	if (is_null($config)) {
-        	$config = Config::getInstance();
+    function __construct($databaseId = 0, $iniFile = null) {
+    	$config = Config::getInstance();
+    	if (is_null($iniFile)) {
+        	$config->setIniFilePath($iniFile);
     	}
         $configArray = $config->getDBConfig();
         $this->dbConfigArray = $configArray[$databaseId];

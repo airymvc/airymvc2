@@ -16,14 +16,18 @@
 class PdoMysqlComponent extends SqlComponent {
 	
 	protected $pdoConn;
+	protected $host;
+	protected $port = 3306;
 
     function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
-		$dsn = $this->dbConfigArray['dbtype'] . 
-			   ':host=' . $this->dbConfigArray['host'] . 
-			   ';dbname=' . $this->dbConfigArray['database'] . 
-			   '&charset=' . $this->dbConfigArray['encoding'];
-    	$this->pdoConn = new PDO($dsn, $$this->dbConfigArray['id'], $$this->dbConfigArray['pwd']);		
+		
+		$hostArray = explode(":", $this->dbConfigArray['host']);	
+		$this->host = $hostArray[0];
+		$this->port = $hostArray[1]; 
+		$dsn = "{$this->dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$this->dbConfigArray['database']};charset={$this->dbConfigArray['encoding']}";
+
+    	$this->pdoConn = new PDO($dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);		
     }
     
     public function beginTransaction() {
@@ -110,6 +114,20 @@ class PdoMysqlComponent extends SqlComponent {
         return $results;
     }
 
+    function sqlEscape($content) {
+
+        //check if $content is an array
+        if (is_array($content)) {
+            foreach ($content as $key => $value) {
+                $content[$key] = $this->quote($value);
+            }
+        } else {
+            //check if $content is not an array
+            $content = $this->quote($content);
+        }
+
+        return $content;
+    }    
 }
 
 ?>
