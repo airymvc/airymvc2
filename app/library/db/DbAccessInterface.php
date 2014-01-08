@@ -15,6 +15,20 @@
 interface DbAccessInterface {
 	
     public function select($columns, $table, $distinct = 0);
+    
+    public function where($condition);
+    
+    public function andWhere($opString);
+    
+    public function orWhere($opString);
+    
+    public function InWhere($in);
+    
+    public function innerJoin($tables);
+    
+    public function orJoinOn($condition);
+    
+    public function addJoinOn($condition);
 
     public function update($columns, $table);
     

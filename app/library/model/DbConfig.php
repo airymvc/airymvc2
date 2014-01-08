@@ -21,9 +21,15 @@ class DbConfig {
         $dbConfigs = array();
 
         foreach ($dbConfigArray as $idx => $configArray) {
-            $databaseType = strtolower($configArray['dbtype']);
-            if ($databaseType == "mysql") {
-                $dbConfigs[$idx] = new MysqlAccess($idx);
+        	if (!isset($configArray['dbtype'])) {
+        		throw new AiryException("no dbtype setting in the config.ini");
+        	}
+        	//pdo is the default connection type
+        	$connectionType = isset($configArray['connection_type']) ? $configArray['connection_type'] : "pdo";
+            if (strtolower($connectionType) == "pdo") {
+            	$dbConfigs[$idx] = new PdoAccess($idx);
+            } else {
+            	$dbConfigs[$idx] = new DbAccess($idx);
             }
         }
         return $dbConfigs;

@@ -13,7 +13,7 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class MysqliAccess extends MysqlDbAccess {
+class MysqliComponent extends SqlComponent {
 
     function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
@@ -32,6 +32,25 @@ class MysqliAccess extends MysqlDbAccess {
         $this->cleanAll();
         
         return $result;
+    }
+    
+    function sqlEscape($content) {
+        /**
+         * Need to add connection in order to avoid ODBC errors here 
+         */
+        $con = mysqli_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
+        mysqli_set_charset($this->dbConfigArray['encoding'] ,$con);
+        //check if $content is an array
+        if (is_array($content)) {
+            foreach ($content as $key => $value) {
+                $content[$key] = mysqli_real_escape_string($value);
+            }
+        } else {
+            //check if $content is not an array
+            $content = mysqli_real_escape_string($content);
+        }
+        mysqli_close($con);
+        return $content;
     }
 
 }
