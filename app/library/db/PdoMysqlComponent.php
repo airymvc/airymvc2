@@ -34,7 +34,7 @@ class PdoMysqlComponent extends PdoSqlComponent {
     	return $this->pdoConn->beginTransaction();
     }
     
-    public function prepare($statement, array $driverOptions) {
+    public function prepare($statement, array $driverOptions = array()) {
     	//return a prepareStatement here
     	return $this->pdoConn->prepare($statement, $driverOptions);
     }
@@ -101,7 +101,7 @@ class PdoMysqlComponent extends PdoSqlComponent {
         
     public function execute($statement = NULL, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
 
-    	$statement = is_null($statement) ? $this->_dbComponent->getStatement() : $statement;
+    	$statement = is_null($statement) ? $this->getStatement() : $statement;
 		try {
 			$results = $this->query($statement, $fetchType, $fetch, $ctorargs);
 		} catch(PDOException $e) {
