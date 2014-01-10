@@ -19,17 +19,19 @@ class MysqlComponent extends SqlComponent{
 		parent::__construct($databaseId);
     }
     
-    public function execute() {
+    public function execute($statement = NULL) {
 
-        $con = mysql_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
+    	$statement = is_null($statement) ? $this->getStatement() : $statement;
+        $con = mysql_connect($this->dbConfigArray['host'], $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);
         mysql_set_charset($this->dbConfigArray['encoding'] ,$con);
-                
+          
         if (!$con) {
             die('Could not connect: ' . mysql_error());
         }
+
         mysql_select_db($this->dbConfigArray['database'], $con);
-        $mysql_results = mysql_query($this->getStatement());
-        
+        $mysql_results = mysql_query($statement);
+
         if (!$mysql_results) {
             die('Could not query:' . mysql_error());
         }

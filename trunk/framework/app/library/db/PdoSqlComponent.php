@@ -101,7 +101,7 @@ class PdoSqlComponent extends SqlComponent {
         
     public function execute($statement = NULL, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
 
-    	$statement = is_null($statement) ? $this->_dbComponent->getStatement() : $statement;
+    	$statement = is_null($statement) ? $this->getStatement() : $statement;
 		try {
 			$results = $this->query($statement, $fetchType, $fetch, $ctorargs);
 		} catch(PDOException $e) {
