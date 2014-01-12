@@ -31,12 +31,25 @@ abstract class SqlComponent {
     protected $limitPart;
     protected $keywords;
     protected $queryType;
+    
+    protected $openIdentifier  = "";
+    protected $closeIdentifier = "";
 
     function __construct($databaseId = 0) {
         $config = Config::getInstance();
         $configArray = $config->getDBConfig();
         $this->dbConfigArray = $configArray[$databaseId];
         $this->setKeywords();
+        
+        if (strtolower($this->dbConfigArray['dbtype']) == 'mysql') {
+        	$this->setOpenIdentifier("`");
+        	$this->setCloseIdentifier("`");
+        }
+        
+        if (strtolower($this->dbConfigArray['dbtype']) == 'mssql') {
+        	$this->setOpenIdentifier("[");
+        	$this->setCloseIdentifier("]");
+        }
     }
 
     /*
@@ -110,10 +123,10 @@ abstract class SqlComponent {
     protected function attachWhere($whereString, $fieldKey, $fieldArray, $relationalOperator, $operator = null) {
         $pos = strpos($fieldKey, '.');
         $operator = is_null($operator) ? "" : strtoupper($operator);
-        $key = "`{$fieldKey}`";
+        $key = "{$this->openIdentifier}{$fieldKey}{$this->closeIdentifier}";
         if ($pos != false){
             $tf = explode (".", $fieldKey);
-            $key = "`{$tf[0]}`.`{$tf[1]}`";
+            $key = "{$this->openIdentifier}{$tf[0]}{$this->closeIdentifier}.{$this->openIdentifier}{$tf[1]}{$this->closeIdentifier}";
         }
         $whereString .= "{$operator} {$key} {$relationalOperator} '{$fieldArray[$fieldKey]}' ";
         return $whereString;    	
@@ -148,7 +161,7 @@ abstract class SqlComponent {
             if ($index != 0) {
             	$addon = $this->joinPart;
             }
-            $this->joinPart = "{$addon} INNER JOIN `{$tbl}`";
+            $this->joinPart = "{$addon} INNER JOIN {$this->openIdentifier}{$tbl}{$this->closeIdentifier}";
         }
         return $this;
     }
@@ -245,7 +258,7 @@ abstract class SqlComponent {
         $mopr = $tf_pair[0];
         $mtable1 = $mkeys[1];
         $mtable2 = $mkeys[2];
-        $joinOnString .= $leadingOp . " `" . $mtable1 . "`.`" . $tf_pair[$mtable1] . "` " . $mopr . " `" . $mtable2 . "`.`" . $tf_pair[$mtable2] . "` ". $op;
+        $joinOnString .= $leadingOp . " {$this->openIdentifier}" . $mtable1 . "{$this->closeIdentifier}.{$this->openIdentifier}" . $tf_pair[$mtable1] . "{$this->closeIdentifier} " . $mopr . " {$this->openIdentifier}" . $mtable2 . "{$this->closeIdentifier}.{$this->openIdentifier}" . $tf_pair[$mtable2] . "{$this->closeIdentifier} ". $op;
         
         return $joinOnString;    	
     }
@@ -271,7 +284,7 @@ abstract class SqlComponent {
     	$selectPart = $selectString;
         foreach ($columns as $index => $col) {
             if ($index == count($columns) - 1) {
-                $selectPart .= $col . " FROM `" . $table . "`";
+                $selectPart .= $col . " FROM {$this->openIdentifier}" . $table . "{$this->closeIdentifier}";
             } else {
                 $selectPart .= $col . ", ";
             }
@@ -280,7 +293,7 @@ abstract class SqlComponent {
     }
     
     protected function composeSelectByString($selectString, $columnString, $table) {
-    	$selectPart = $selectString . $columnString ." FROM `" . $table . "`";
+    	$selectPart = $selectString . $columnString ." FROM {$this->openIdentifier}" . $table . "{$this->closeIdentifier}";
     	return $selectPart;
     }
 
@@ -291,7 +304,7 @@ abstract class SqlComponent {
 
     public function update($columns, $table) {
         $this->queryType = "UPDATE";
-        $this->updatePart = "UPDATE `" . $table . "` SET ";
+        $this->updatePart = "UPDATE {$this->openIdentifier}" . $table . "{$this->closeIdentifier} SET ";
         $size = count($columns) - 1;
         $n = 0;
         foreach ($columns as $column_index => $column_value) {
@@ -299,7 +312,7 @@ abstract class SqlComponent {
             if ($n == $size) {
                 $lastAppend = "'";
             }
-            $this->updatePart .= "`" . $column_index . "`='" . $column_value . $lastAppend;
+            $this->updatePart .= "{$this->openIdentifier}" . $column_index . "{$this->closeIdentifier}='" . $column_value . $lastAppend;
             $n++;
         }
 
@@ -318,28 +331,28 @@ abstract class SqlComponent {
         $this->insertPart = "INSERT INTO " . $table . " ( ";
         $size = count($columns) - 1;
         $n = 0;
-        foreach ($columns as $column_index => $column_value) {
-        	$attach = "`, ";
+        foreach ($columns as $columnIndex => $columnValue) {
+        	$attach = "{$this->closeIdentifier}, ";
             if ($n == $size) {
-            	$attach = "`) VALUES (";
+            	$attach = "{$this->closeIdentifier}) VALUES (";
             }
-            $this->insertPart = $this->insertPart . "`" . $column_index . $attach;
+            $this->insertPart = $this->insertPart . "{$this->openIdentifier}" . $columnIndex . $attach;
             $n++;
         }
 
         $n = 0;
-        foreach ($columns as $column_index => $column_value) {
+        foreach ($columns as $columnIndex => $columnValue) {
         	$middle = "'";
             $last = "', ";
             if ($n == $size) {
             	$middle = "'";
             	$last = "')";
             }
-            if (array_key_exists($column_value, $this->keywords)) {
+            if (array_key_exists($columnValue, $this->keywords)) {
             	$middle = "";
             	$last = "";
             }
-            $this->insertPart = $this->insertPart . $middle . $column_value . $last;
+            $this->insertPart = $this->insertPart . $middle . $columnValue . $last;
             $n++;
         }
 
@@ -550,6 +563,33 @@ abstract class SqlComponent {
 	public function getLimitPart() {
 		return $this->limitPart;
 	}
+	/**
+	 * @return the $closeIdentifier
+	 */
+	public function getCloseIdentifier() {
+		return $this->closeIdentifier;
+	}
+
+	/**
+	 * @param field_type $closeIdentifier
+	 */
+	public function setCloseIdentifier($identifier) {
+		$this->closeIdentifier = $identifier;
+	}
+	/**
+	 * @return the $openIdentifier
+	 */
+	public function getOpenIdentifier() {
+		return $this->openIdentifier;
+	}
+
+	/**
+	 * @param field_type $openIdentifier
+	 */
+	public function setOpenIdentifier($identifier) {
+		$this->openIdentifier = $identifier;
+	}
+	
 
 }
 
