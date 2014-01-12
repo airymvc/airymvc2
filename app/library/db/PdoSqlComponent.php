@@ -21,6 +21,8 @@ class PdoSqlComponent extends SqlComponent {
 
     function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
+       	$this->setOpenIdentifier("");
+        $this->setCloseIdentifier("");
 		
 		$hostArray = explode(":", $this->dbConfigArray['host']);	
 		$this->host = $hostArray[0];
@@ -102,6 +104,7 @@ class PdoSqlComponent extends SqlComponent {
     public function execute($statement = NULL, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
 
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
+    	$statement = $this->sqlEscape($statement);
 		try {
 			$results = $this->query($statement, $fetchType, $fetch, $ctorargs);
 		} catch(PDOException $e) {

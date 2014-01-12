@@ -28,6 +28,7 @@ class Authentication {
     const LOGOUT = "logout";
     
     public static $layoutAllows = array();
+    public static $aclXml;
     
     public static function isLogin($moduleName) {
         /**
@@ -40,7 +41,7 @@ class Authentication {
     }
 
     public static function getSignInAction($module) {
-        $auth = AclUtility::getInstance()->getAuthentications();
+        $auth = self::getAclUtitlity()->getAuthentications();
         $action = self::SIGN_IN;
         if (isset($auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION])) {
             $action = $auth[$module][AclXmlConstant::ACL_SIGN_IN_ACTION];
@@ -49,7 +50,7 @@ class Authentication {
     }
 
     public static function getLoginController($module) {
-        $auth = AclUtility::getInstance()->getAuthentications();
+        $auth = self::getAclUtitlity()->getAuthentications();
         if (is_null($auth[$module]["controller"])) {
             $message =  "Login Controller in Acl XML 'authentication' is not defined properly";
             throw new AiryException($message);
@@ -59,7 +60,7 @@ class Authentication {
     }
 
     public static function getLoginAction($module) {
-        $auth = AclUtility::getInstance()->getAuthentications();
+        $auth = self::getAclUtitlity()->getAuthentications();
         $action = self::LOGIN;
         if (isset($auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION])) {
             $action = $auth[$module][AclXmlConstant::ACL_LOGIN_ACTION];
@@ -68,7 +69,7 @@ class Authentication {
     }
 
     public static function getLoginErrorAction($module) {
-        $auth = AclUtility::getInstance()->getAuthentications();
+        $auth = self::getAclUtitlity()->getAuthentications();
         $action = self::LOGIN_ERROR;
         if (isset($auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION])) {
             $action = $auth[$module][AclXmlConstant::ACL_LOGIN_ERROR_ACTION];
@@ -77,7 +78,7 @@ class Authentication {
     }
 
     public static function getOtherExclusiveActions($module) {
-        $auth = AclUtility::getInstance()->getAuthentications();
+        $auth = self::getAclUtitlity()->getAuthentications();
         $actions = array();
         if (isset($auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS])) {
         	foreach ($auth[$module][AclXmlConstant::ACL_OTHER_EXCLUSIVE_ACTIONS] as $idx => $exAction) {
@@ -89,7 +90,7 @@ class Authentication {
 
     public static function getLoginExcludeActions($module) {
         $loginActions = array();
-        $auth = AclUtility::getInstance()->getAuthentications();
+        $auth = self::getAclUtitlity()->getAuthentications();
         if (!isset($auth[$module])) {
             $message = "Module {$module} is not defined or is mismatched in Acl XML 'authentication' section when config setting use_authentication is enable";       	
         	throw new AiryException($message);
@@ -135,8 +136,7 @@ class Authentication {
     }
 
     public static function getAllAllows($module) {
-        $auth = AclUtility::getInstance();
-        $rules = $auth->getBrowseRules();
+        $rules = self::getAclUtitlity()->getBrowseRules();
         $allows = (isset($rules[$module]))? $rules[$module]: null;
         return $allows;
     }
@@ -157,6 +157,18 @@ class Authentication {
     	if (count(self::$layoutAllows[$module]) == 0) {
     		unset(self::$layoutAllows[$module]);
     	}
+    }
+    
+    private static function getAclUtitlity() {
+        $acl = AclUtility::getInstance();
+    	if (!is_null(self::$aclXml)) {
+    		$acl->setAclXml(self::$aclXml);
+    	}
+    	return $acl;
+    }
+    
+    public static function setAclXml($xml) {
+    	self::$aclXml = $xml;
     }
     
 
