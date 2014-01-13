@@ -19,6 +19,89 @@ class MssqlComponent extends SqlComponent{
 		parent::__construct($databaseId);
     }
     
+    /*
+     *  $offset @int
+     *  $interval @int
+     *  
+     *  But, we use the following generic solution since we do not have a key.
+	 *  
+	 *  SELECT TOP $interval * FROM tablename
+	 *  WHERE key NOT IN (
+     *		SELECT TOP $offset key
+     *		FROM tablename
+     *		ORDER BY key
+	 *	);
+	 *  
+	 *  After SQL 2005, database has ROW_NUMBER(), so we can use the following. 
+	 *  That means that we can only support MS SQL 2005 or above.
+	 *  
+	 *  SELECT * FROM 
+	 *  (SELECT *, ROW_NUMBER() OVER (ORDER BY name) as row FROM table_name) a 
+	 *  WHERE row > 5 and row <= 10
+	 *  
+     */
+
+    public function limit($offset, $interval) {
+        $this->limitPart = "";
+        $offset = (!is_null($offset)) ? $offset : 0;
+
+        $endNumber = $offset + $interval;
+        $this->limitPart = " (row > {$offset}) and (row <= {$endNumber})";
+        return $this;
+    }
+    
+    
+//    /**
+//     * @return the $queryStmt
+//     */
+//    
+//    public function getStatement() {
+//        //Combine every part of the query statement
+//        switch ($this->queryType) {
+//            case "SELECT":
+//                $this->queryStmt = null; 
+//				$this->queryStmt = $this->composeSelectStatement($this->selectPart, $this->joinPart, $this->joinOnPart, $this->wherePart, 
+//									 							 $this->groupPart, $this->orderPart, $this->limitPart);
+//                break;
+//            case "UPDATE":
+//                $this->queryStmt = null;
+//                $this->queryStmt = $this->updatePart . $this->wherePart;
+//                break;
+//            case "INSERT":
+//                $this->queryStmt = null;
+//                $this->queryStmt = $this->insertPart;
+//                break;
+//            case "DELETE":
+//                $this->queryStmt = null;
+//                $this->queryStmt = $this->deletePart . $this->wherePart;
+//                break;
+//        }
+//        return $this->queryStmt;
+//    }
+    
+    
+    public function composeSelectStatement($selectPart, $joinPart, $joinOnPart, $wherePart, $groupPart, $orderPart, $limitPart) {
+        $queryStmt = ""; 
+    	if ($limitPart != "") {
+             if ($wherePart != "") {
+                 $wherePart .= "AND {$limitPart}";
+             }
+             $selectParts = explode ("FROM", $selectPart);
+             $newSelectParts = $selectParts[0];
+             $selectFields = trim(str_ireplace("SELECT", "", $newSelectParts));
+             $tableName = $selectParts[1];
+                	
+     		 // (SELECT *, ROW_NUMBER() OVER (ORDER BY name) as row FROM table_name) a
+     		 $fromPart = " FROM (SELECT {$selectFields}, ROW_NUMBER() OVER ({$orderPart}) as row FROM {$tableName}) a";                	
+             $queryStmt = $newSelectParts . $fromPart . $joinPart 
+                		      . $joinOnPart . $wherePart . $groupPart;
+          } else {
+             $queryStmt = $selectPart . $joinPart . $joinOnPart
+                              . $wherePart . $groupPart . $orderPart; 
+          }
+          return $queryStmt;
+    }
+    
     public function execute($statement = NULL) {
 
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
@@ -44,22 +127,7 @@ class MssqlComponent extends SqlComponent{
 
 
     function sqlEscape($content) {
-//        /**
-//         * Need to add connection in order to avoid ODBC errors here 
-//         */
-//        $con = mysql_connect($this->dbConfigArray['host'],$this->dbConfigArray['id'],$this->dbConfigArray['pwd']);
-//        mysql_set_charset($this->dbConfigArray['encoding'] ,$con);
-//        //check if $content is an array
-//        if (is_array($content)) {
-//            foreach ($content as $key => $value) {
-//                $content[$key] = mysql_real_escape_string($value);
-//            }
-//        } else {
-//            //check if $content is not an array
-//            $content = mysql_real_escape_string($content);
-//        }
-//        mysql_close($con);
-//        return $content;
+        return $content;
     }
 
 

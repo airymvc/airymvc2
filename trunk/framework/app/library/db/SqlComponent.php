@@ -429,8 +429,8 @@ abstract class SqlComponent {
         switch ($this->queryType) {
             case "SELECT":
                 $this->queryStmt = null;
-                $this->queryStmt = $this->selectPart . $this->joinPart . $this->joinOnPart
-                        . $this->wherePart . $this->groupPart . $this->orderPart . $this->limitPart; 
+				$this->queryStmt = $this->composeSelectStatement($this->selectPart, $this->joinPart, $this->joinOnPart, $this->wherePart, 
+									 							 $this->groupPart, $this->orderPart, $this->limitPart);
                 break;
             case "UPDATE":
                 $this->queryStmt = null;
@@ -447,6 +447,23 @@ abstract class SqlComponent {
         }
         return $this->queryStmt;
     }
+    
+    /**
+     * if the query type is select, this function is to compose the statement
+     * 
+     * @param string $selectPart
+     * @param string $joinPart
+     * @param string $joinOnPart
+     * @param string $wherePart
+     * @param string $groupPart
+     * @param string $orderPart
+     * @param string $limitPart
+     */
+    public function composeSelectStatement($selectPart, $joinPart, $joinOnPart, $wherePart, $groupPart, $orderPart, $limitPart) {
+        $queryStmt = $selectPart . $joinPart . $joinOnPart . $wherePart . $groupPart . $orderPart . $limitPart;
+        return $queryStmt;
+    }    
+ 
     
     public function getSelectStatement(){
         if ($this->queryType != "SELECT") {
