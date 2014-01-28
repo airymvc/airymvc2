@@ -13,7 +13,7 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class MysqliComponent extends SqlComponent {
+class MysqliComponent extends MysqlCommon {
 
 	private $port = 3306;
 	private $host;

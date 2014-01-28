@@ -13,7 +13,7 @@
  * @author: Hung-Fu Aaron Chang
  */
 
-class MysqlComponent extends SqlComponent{
+class MysqlComponent extends MysqlCommon{
 
     function __construct($databaseId = 0) {
 		parent::__construct($databaseId);

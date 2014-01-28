@@ -22,14 +22,10 @@ interface DbAccessInterface {
     
     public function orWhere($opString);
     
-    public function InWhere($in);
+    public function inWhere($in);
     
-    public function innerJoin($tables);
+    public function innerJoinOn($table, $condition);
     
-    public function orJoinOn($condition);
-    
-    public function andJoinOn($condition);
-
     public function update($columns, $table);
     
     public function insert($columns, $table);  
@@ -41,8 +37,6 @@ interface DbAccessInterface {
     public function getStatement();
     
     public function groupBy($column);
-    
-    public function joinOn($condition);
     
     public function limit($offset, $interval);
 

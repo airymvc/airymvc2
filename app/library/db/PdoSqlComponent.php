@@ -16,20 +16,16 @@
 class PdoSqlComponent extends SqlComponent {
 	
 	protected $pdoConn;
+	protected $dsn;
 	protected $host;
-	protected $port = 3306;
+	protected $port;
 
     function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
-       	$this->setOpenIdentifier("");
-        $this->setCloseIdentifier("");
-		
-		$hostArray = explode(":", $this->dbConfigArray['host']);	
-		$this->host = $hostArray[0];
-		$this->port = $hostArray[1]; 
-		$dsn = "{$this->dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$this->dbConfigArray['database']};charset={$this->dbConfigArray['encoding']}";
-
-    	$this->pdoConn = new PDO($dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);		
+		// in order to fit pdo's prepare statement, take out the identifiers
+		// ex: :field1
+    	$this->setOpenIdentifier("");
+        $this->setCloseIdentifier("");	
     }
     
     public function beginTransaction() {
