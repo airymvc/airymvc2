@@ -38,21 +38,35 @@ abstract class AbstractAccess {
    		return $this;
     }
     
-    public function InWhere($in) {
+    public function inWhere($in) {
     	$this->_dbComponent->inWhere($in);
    		return $this;
     }
     
+    public function innerJoinOn($table, $condition) {
+    	$this->_dbComponent->innerJoinOn($table, $condition);
+   		return $this;
+    }
+    
+    /**
+     * Deprecated Method
+     */
     public function innerJoin($tables) {
     	$this->_dbComponent->innerJoin($tables);
    		return $this;
     }
     
+    /**
+     * Deprecated Method
+     */    
     public function orJoinOn($condition) {
     	$this->_dbComponent->orJoinOn($condition);
    		return $this;    	
     }
     
+    /**
+     * Deprecated Method
+     */     
     public function andJoinOn($condition) {
     	$this->_dbComponent->andJoinOn($condition);
    		return $this;    	
@@ -86,6 +100,9 @@ abstract class AbstractAccess {
    		return $this;    	
     }
     
+    /**
+     * Deprecated Method
+     */     
     public function joinOn($condition) {
     	$this->_dbComponent->joinOn($condition);
    		return $this;

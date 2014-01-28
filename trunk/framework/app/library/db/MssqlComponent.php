@@ -105,23 +105,29 @@ class MssqlComponent extends SqlComponent{
     public function execute($statement = NULL) {
 
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
-        $con = mssql_connect($this->dbConfigArray['host'], $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);
-        mssql_set_charset($this->dbConfigArray['encoding'] ,$con);
-          
+        $con = mssql_connect($this->dbConfigArray['host'], $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);  
         if (!$con) {
-            die('Could not connect: ' . mssql_error());
+            die('Could not connect: ' . mssql_get_last_message());
         }
-
         mssql_select_db($this->dbConfigArray['database'], $con);
-        $mssql_results = mssql_query($statement);
-
-        if (!$mssql_results) {
-            die('Could not query:' . mssql_error());
+        $mssqlResult = mssql_query($statement);
+        if (!$mssqlResult) {
+            die('Could not query:' . mssql_get_last_message());
         }
+        
+        //wrapping the query result into an array
+      	$resultArray = array();
+		while($row = mssql_fetch_array($mssqlResult, MSSQL_BOTH)) {
+			$resultArray[] = $row;
+		}
+        
+        mssql_free_result($mssqlResult);
         mssql_close($con);
         $this->cleanAll();
         
-        return $mssql_results;
+        //NOTE: For MSSQL, unlike MySQL, the raw mssql_query result cannot be passed and used.
+        //So, in order to passing the whole result, we need to wrap the result by using mssql_fetch_array first
+        return $resultArray;
     }
 
 

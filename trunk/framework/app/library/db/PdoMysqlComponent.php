@@ -15,19 +15,16 @@
 
 class PdoMysqlComponent extends PdoSqlComponent {
 	
-	protected $pdoConn;
-	protected $host;
-	protected $port = 3306;
-
     function __construct($databaseId = 0) {
-		parent::__construct($databaseId);
-		
+
+		parent::__construct($databaseId);	
+
 		$hostArray = explode(":", $this->dbConfigArray['host']);	
 		$this->host = $hostArray[0];
-		$this->port = $hostArray[1]; 
-		$dsn = "{$this->dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$this->dbConfigArray['database']};charset={$this->dbConfigArray['encoding']}";
+		$this->port = isset($hostArray[1]) ? $hostArray[1] : "3306";
 
-    	$this->pdoConn = new PDO($dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);		
+		$dsn = "{$this->dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$this->dbConfigArray['database']};charset={$this->dbConfigArray['encoding']}";
+    	$this->pdoConn = new PDO($dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);	
     }
 
     function sqlEscape($content) {
