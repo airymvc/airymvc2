@@ -80,11 +80,14 @@ class MssqlComponent extends SqlComponent{
 //    }
     
     
-    public function composeSelectStatement($selectPart, $joinPart, $joinOnPart, $wherePart, $groupPart, $orderPart, $limitPart) {
+    public function composeSelectStatement($selectPart, $joinOnParts, $joinPart, $joinOnPart, $wherePart, $groupPart, $orderPart, $limitPart) {
         $queryStmt = ""; 
+        
     	if ($limitPart != "") {
              if ($wherePart != "") {
                  $wherePart .= "AND {$limitPart}";
+             } else {
+             	 $wherePart = "WHERE {$limitPart}";
              }
              $selectParts = explode ("FROM", $selectPart);
              $newSelectParts = $selectParts[0];
@@ -92,12 +95,12 @@ class MssqlComponent extends SqlComponent{
              $tableName = $selectParts[1];
                 	
      		 // (SELECT *, ROW_NUMBER() OVER (ORDER BY name) as row FROM table_name) a
-     		 $fromPart = " FROM (SELECT {$selectFields}, ROW_NUMBER() OVER ({$orderPart}) as row FROM {$tableName}) a";                	
-             $queryStmt = $newSelectParts . $fromPart . $joinPart 
-                		      . $joinOnPart . $wherePart . $groupPart;
+     		 $fromPart = " FROM (SELECT {$selectFields}, ROW_NUMBER() OVER ({$orderPart}) as row FROM {$tableName}) a ";                	
+             $queryStmt = $newSelectParts . $fromPart . $joinOnParts .  $joinPart 
+                		. $joinOnPart . $wherePart . $groupPart;
           } else {
-             $queryStmt = $selectPart . $joinPart . $joinOnPart
-                              . $wherePart . $groupPart . $orderPart; 
+             $queryStmt = $selectPart . $joinOnParts. $joinPart . $joinOnPart
+                        . $wherePart . $groupPart . $orderPart; 
           }
           return $queryStmt;
     }
