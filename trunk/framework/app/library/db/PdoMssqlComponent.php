@@ -22,7 +22,9 @@ class PdoMssqlComponent extends PdoSqlComponent {
     	parent::__construct($databaseId);
 		$this->mssqlComponent = new MssqlComponent();
 		$driver = isset($this->dbConfigArray['driver']) ? $this->dbConfigArray['driver'] : "dblib";
-		$dsn = "{$driver}:host={$this->dbConfigArray['host']};dbname={$this->dbConfigArray['database']};charset={$this->dbConfigArray['encoding']}";
+		$charset = isset($this->dbConfigArray['encoding']) ? "charset={$this->dbConfigArray['encoding']}" : "charset=utf8";
+		
+		$dsn = "{$driver}:host={$this->dbConfigArray['host']};dbname={$this->dbConfigArray['database']};{$charset}";
     	$this->pdoConn = new PDO($dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);
     }
     
