@@ -15,24 +15,29 @@
 
 class DbConfig {
 
+	/**
+	 * This is the function to get the database access objects for all the database settings in the config.ini file.
+	 * 
+	 * @throws AiryException
+	 */
     public static function getConfig() {
-        $config = Config::getInstance();
-        $dbConfigArray = $config->getDBConfig();
-        $dbConfigs = array();
+    	$config = Config::getInstance();
+        $dbSettings = $config->getDBConfig();
+        $dbAccessElements = array();
 
-        foreach ($dbConfigArray as $idx => $configArray) {
+        foreach ($dbSettings as $idx => $configArray) {
         	if (!isset($configArray['dbtype'])) {
         		throw new AiryException("no dbtype setting in the config.ini");
         	}
         	//pdo is the default connection type
         	$connectionType = isset($configArray['connection_type']) ? $configArray['connection_type'] : "pdo";
             if (strtolower($connectionType) == "pdo") {
-            	$dbConfigs[$idx] = new PdoAccess($idx);
+            	$dbAccessElements[$idx] = new PdoAccess($idx);
             } else {
-            	$dbConfigs[$idx] = new DbAccess($idx);
+            	$dbAccessElements[$idx] = new DbAccess($idx);
             }
         }
-        return $dbConfigs;
+        return $dbAccessElements;
     }
 
 }

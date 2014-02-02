@@ -22,8 +22,9 @@ class PdoMysqlComponent extends PdoSqlComponent {
 		$hostArray = explode(":", $this->dbConfigArray['host']);	
 		$this->host = $hostArray[0];
 		$this->port = isset($hostArray[1]) ? $hostArray[1] : "3306";
-
-		$dsn = "{$this->dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$this->dbConfigArray['database']};charset={$this->dbConfigArray['encoding']}";
+		$charset = isset($this->dbConfigArray['encoding']) ? "charset={$this->dbConfigArray['encoding']}" : "charset=utf8";
+		
+		$dsn = "{$this->dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$this->dbConfigArray['database']};{$charset}";
     	$this->pdoConn = new PDO($dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);	
     }
 
