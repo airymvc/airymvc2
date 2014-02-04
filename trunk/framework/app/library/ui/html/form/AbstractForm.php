@@ -100,15 +100,16 @@ class AbstractForm extends UIComponent{
     public function render()
     {
     	$formId = null;
-        $formOpenText = "<form";
+    	$insert = "";
         foreach ($this->_attributes as $key => $value)
         {
-            $formOpenText .= " " . $key ."=\"".$value ."\"";
+            $insert .= sprintf(" %s='%s'", $key, $value);
             if ($key == 'id') {
             	$formId = $value;
             }
         }
-        $formOpenText = $formOpenText . ">";
+        $formOpenText = "<form{$insert}>";
+    	
         
         /**
          * Render the form elements here 

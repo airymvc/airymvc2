@@ -35,12 +35,12 @@ class FieldElement extends AbstractFormElement{
     
     protected function renderElements()
     {
-        $inputText = "<div id='{$this->_label_id}' class='{$this->_label_css}'>{$this->_label}</div><input";
+        $insert = "";
         foreach ($this->_attributes as $key => $value)
         {
-            $inputText = $inputText . " " . $key ."=\"".$value ."\"";
+            $insert .= sprintf(" %s='%s'", $key, $value);
         }
-        $inputText = $inputText . ">";
+        $inputText = "<div id='{$this->_label_id}' class='{$this->_label_css}'>{$this->_label}</div><input{$insert}>";
         $this->_elementText = $inputText;      
     }
     

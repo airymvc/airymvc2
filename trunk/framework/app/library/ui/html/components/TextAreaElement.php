@@ -21,25 +21,21 @@ class TextAreaElement extends FieldElement{
     //put your code here
     protected $_type  = InputType::TEXTAREA;
     
-    public function __construct($id)
-    {
+    public function __construct($id) {
         $this->setId($id);
     }
     
-    protected function renderElements()
-    {
-        $inputText = "<div id='{$this->_label_id}' class='{$this->_label_css}'>{$this->_label}</div><textarea";
+    protected function renderElements() {
+        $insert = "";
         foreach ($this->_attributes as $key => $value)
         {   
             if ($key != "value"){
-                $inputText = $inputText . " " . $key ."=\"".$value ."\"";
+                $insert .= sprintf(" %s='%s'", $key, $value);
             }
         }
         $textValue = isset($this->_attributes['value'])? $this->_attributes['value'] : "";
         
-        $inputText = $inputText . ">";
-        $inputText = $inputText . $textValue;
-        $inputText = $inputText ."</textarea>";
+        $inputText = "<div id='{$this->_label_id}' class='{$this->_label_css}'>{$this->_label}</div><textarea {$insert}>{$textValue}</textarea>";
         $this->_elementText = $inputText;     
     }
     

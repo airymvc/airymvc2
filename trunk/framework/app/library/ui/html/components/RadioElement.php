@@ -31,13 +31,12 @@ class RadioElement extends AbstractFormElement{
     
     public function render()
     {
-        $inputText = "<input";
+        $insert = "";
         foreach ($this->_attributes as $key => $value)
         {
-            $inputText = $inputText . " " . $key ."=\"".$value ."\"";
+            $insert .= sprintf(" %s='%s'", $key, $value);
         }
-        $inputText = $inputText . ">";
-        $inputText = $inputText . $this->_text;
+        $inputText = $inputText . "<input{$insert}>" . $this->_text;
         $this->_elementText = $inputText;
         
         return $this->_elementText;

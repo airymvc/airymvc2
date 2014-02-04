@@ -36,12 +36,12 @@ class DivElement extends AbstractFormElement{
     //override the method
     protected function renderElements()
     {
-    	$inputText = "<div";
+    	$insert = "";
         foreach ($this->_attributes as $key => $value)
         {
-            $inputText = $inputText . " " . $key ."=\"".$value ."\"";
+            $insert = sprintf(" %s='%s'", $key, $value);
         }
-        $inputText = $inputText . ">";
+        $inputText = "<div{$insert}>";
         
         $this->_elementText = $inputText . $this->_innerHtml . '</div>';       
     }
