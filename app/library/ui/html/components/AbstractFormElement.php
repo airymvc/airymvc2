@@ -76,12 +76,12 @@ class AbstractFormElement extends UIComponent{
      */
     protected function renderElements()
     {   
-        $inputText = "<input";
+        $insert = "";
         foreach ($this->_attributes as $key => $value)
         {
-            $inputText = $inputText . " " . $key ."=\"".$value ."\"";
+            $insert .= sprintf(" %s='%s'", $key, $value);
         }
-        $inputText = $inputText . ">";
+        $inputText = "<input{$insert}>";
         $openHtml  = "";
         $closeHtml = "";
         if (!is_null($this->_decoration)) {
