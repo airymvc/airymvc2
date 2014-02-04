@@ -22,20 +22,21 @@ require_once 'AbstractFormElement.php';
  */
 class CheckBoxElement extends AbstractFormElement{
     //put your code here
-    public function __construct($id)
-    {
+    public function __construct($id) {
         $this->setId($id);
         $this->setAttribute("type", InputType::CHECKBOX);
     }
     protected $_text;
    
-    public function setText($text)
-    {
+    public function setText($text) {
         $this->_text    = $text;
     }
     
-    protected function renderElements()
-    {
+    public function getText($text) {
+       return  $this->_text;
+    }
+    
+    protected function renderElements() {
         $insert = "";
         foreach ($this->_attributes as $key => $value)
         {
