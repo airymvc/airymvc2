@@ -59,6 +59,10 @@ class Config{
     	$this->_iniFilePath = $path;
     }
     
+    public function getIniFilePath() {
+    	return $this->_iniFilePath;
+    }
+    
     /**
      * The result depends on multiple databases
      * [0] => array of database #1 setting
@@ -93,16 +97,7 @@ class Config{
          return $result;
      }
      
-//     public function getTimezone()
-//     {
-//     	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
-//         if (!isset($iniArray['Time_Zone']) || !isset($iniArray['Time_Zone']['timezone'])) {
-//             return null;
-//         }       
-//         $tzArray = $iniArray['Time_Zone'];
-//         
-//         return $tzArray['timezone'];
-//     }
+
      public function getAuthenticationConfig()
      {
      	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
