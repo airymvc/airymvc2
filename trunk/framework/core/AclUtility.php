@@ -45,10 +45,9 @@ class AclUtility
     	$this->_aclxml = $aclxml;
     }
 
-//    public function loadXMLtoDOM($file) {
-//
-//        $this->_xmldom->load($file);
-//    }
+    public function getAclXml($aclxml) {
+    	return $this->_aclxml;
+    }
 
     public function getAuthentications() {
     	$loginRelatedActions = array("sign_in_action", 
