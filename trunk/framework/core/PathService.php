@@ -43,9 +43,9 @@ class PathService {
     	return $instance->getAbsoluteHostPathData();
     }    
     
-    public static function getFormActionURL($moduleName, $controllerName, $actionName, $params = null) {
+    public static function getFormActionURL($moduleName, $controllerName, $actionName, $params = null, $isDirective = False) {
     	$instance = self::getInstance();
-    	return $instance->getFormActionURLData($moduleName, $controllerName, $actionName, $params = null);
+    	return $instance->getFormActionURLData($moduleName, $controllerName, $actionName, $params, $isDirective);
     }    
         
     public static function getRootDir() {
@@ -83,19 +83,27 @@ class PathService {
           $serverHost = $serverName. ":" . $serverPort . $vfolder;
           return $serverHost;
     }
-    private function getFormActionURLData($moduleName, $controllerName, $actionName, $params = null) {
+    private function getFormActionURLData($moduleName, $controllerName, $actionName, $params = null, $isDirective = False) {
                 $config = Config::getInstance();
                 $mkey = $config->getModuleKeyword();
                 $ckey = $config->getControllerKeyword();
                 $akey = $config->getActionKeyword();
                 $leadFileName = $config->getLeadFileName();
-                $url = $this->getAbsoluteHostURL()."/{$leadFileName}?{$mkey}={$moduleName}&{$ckey}={$controllerName}&{$akey}={$actionName}";
+                
+                $queryOp = "?";
+                if ($isDirective) {
+                	$url = $this->getAbsoluteHostURL()."/{$moduleName}/{$controllerName}/{$actionName}";
+                } else {
+                	$queryOp = "&";
+                	$url = $this->getAbsoluteHostURL()."/{$leadFileName}?{$mkey}={$moduleName}&{$ckey}={$controllerName}&{$akey}={$actionName}";
+                }
+                
                 if ($params == null){ 
                     return $url;
                 }
                 
                 foreach ($params as $key => $value) {
-                    $url = $url . "&{$key}={$value}";
+                    $url = $url . "{$queryOp}{$key}={$value}";
                 }
                 return $url;
     }   

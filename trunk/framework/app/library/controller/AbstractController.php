@@ -162,12 +162,12 @@ abstract class AbstractController{
             $this->$action();
         }
         
-        public function getCurrentActionURL()
+        public function getCurrentActionURL($isDirective = False)
         {
             $moduleName = MvcReg::getModuleName();
             $controllerName = MvcReg::getControllerName();
             $actionName = MvcReg::getActionName();
-            $url = PathService::getFormActionURL($moduleName, $controllerName, $actionName);
+            $url = PathService::getFormActionURL($moduleName, $controllerName, $actionName, null, $isDirective);
             return $url;
         }
     
