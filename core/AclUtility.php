@@ -45,9 +45,10 @@ class AclUtility
     	$this->_aclxml = $aclxml;
     }
 
-    public function getAclXml($aclxml) {
-    	return $this->_aclxml;
-    }
+//    public function loadXMLtoDOM($file) {
+//
+//        $this->_xmldom->load($file);
+//    }
 
     public function getAuthentications() {
     	$loginRelatedActions = array("sign_in_action", 
@@ -150,7 +151,12 @@ class AclUtility
         for ($i = 0; $i < $mapTbls->length; $i++) {
             $node = $mapTbls->item($i);
             $tbId = $node->getAttribute('id');
-            $dbId = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_DB_ID)->item(0)->nodeValue;
+            $dbId = "db1";
+            //set default dbId as "db1" for
+            //check if it is a single database setting
+            if (!is_null($xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_DB_ID)->item(0))) {
+            	$dbId = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_DB_ID)->item(0)->nodeValue;
+            }
             $mapDbs[$tbId] = array(AclXmlConstant::ACL_MAPPING_DB_ID => $dbId);
         }
         
