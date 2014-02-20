@@ -71,6 +71,10 @@ class Dispatcher{
                       } else {      
                           //all allowed actions that are defined in acl.xml
                           $allows = Authentication::getAllAllows($moduleName);
+
+                          //Change the controllerName to ControllerName
+                          //because the router already transform the value
+                          $controllerName = ucfirst($controllerName);
                           
                           //Dispatch sequence - checking allowing actions before checking login related actions
                           //(1) Check acl access exclusions
