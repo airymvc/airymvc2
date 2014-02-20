@@ -50,6 +50,9 @@ class Paginator{
     private $_currentCssSelector;
     private $_pageCssId;
     private $_pageCssSelector;
+    private $_isShowTotalPage;
+    private $_totalPagePrefix;
+    private $_totalPagePostfix;
     
     private $_previousLabel;
     private $_nextLabel;
@@ -57,7 +60,7 @@ class Paginator{
     private $_lastLabel;
     
     
-    public function __construct($URL = "", $params = array(), $pageParameterKey = "page", $numberOfItemsKey = "items_per_page", $numberOfItems = 10, $numberOfPages = 10, $currentPage = 1, $databaseId = 0, $navPrefix = "<span class='page_number'>&nbsp;", $navPostfix = '&nbsp;</span>') {
+    public function __construct($URL = "", $params = array(), $pageParameterKey = "page", $numberOfItemsKey = "items_per_page", $numberOfItems = 10, $numberOfPages = 10, $currentPage = 1, $databaseId = 0, $navPrefix = "<span class='page_number'>&nbsp;", $navPostfix = '&nbsp;</span>', $isShowTotalPage = TRUE, $totalPagePrefix = "&nbsp;<span class='total_pages'>Total&nbsp;", $totalPagePostfix = "&nbsp;pages</span>") {
     	$this->setURL($URL);
     	$this->setPageParameterKey($pageParameterKey);
     	$this->setNumberOfItemsKey($numberOfItemsKey);
@@ -69,6 +72,9 @@ class Paginator{
     	$this->setNavPrefix($navPrefix);
     	$this->setDatabaseId($databaseId);
         $this->configdbSetting();
+        $this->setIsShowTotalPage($isShowTotalPage);
+        $this->setTotalPagePrefix($totalPagePrefix);
+        $this->setTotalPagePostfix($totalPagePostfix);
         
         $this->setDefaultValue();
     }
@@ -130,12 +136,13 @@ class Paginator{
     
     public function getPageHtmlBySQL($sql) {
 
-        $this->_totalPage = $this->getTotalPageCount($sql);
+    	$numberItemsOnPage = $this->_numberOfItems;
+        $this->_totalPage = ceil($this->getTotalItemCount($sql)/$numberItemsOnPage);
 		
         $pageHtml = "<div id='{$this->getPaginatorCssId()}' class='{$this->getPaginatorCssSelector()}'>";
         
-        $numberItemsOnPage = $this->_numberOfItems;
-        $end = ceil($this->_totalPage/$numberItemsOnPage); 
+        $numberOfPages = $this->_numberOfPages;
+        $end = $this->_totalPage; 
         
         $currentPage = ($this->_currentPage > $end) ? $end : $this->_currentPage;
 		$currentPage = ($currentPage < 1) ? 1 : $currentPage;
@@ -183,7 +190,12 @@ class Paginator{
         $addLast = "<a id='{$this->getNextCssId()}' href='{$nextLink}' class='{$this->getNextCssSelector()}'>{$nextNavPrefix}{$this->getNextLabel()}{$this->getNavPostfix()}</a>"
                  . "<a id='{$this->getLastCssId()}' href='{$lastLink}' class='{$this->getLastCssSelector()}'>{$lastNavPrefix}{$this->getLastLabel()}{$this->getNavPostfix()}</a>";
         
-        $pageHtml = $pageHtml . $addLast .'</div>';
+        $addTotalPages = "";
+        if ($this->_isShowTotalPage) {
+        	$addTotalPages = $this->_totalPagePrefix . $this->getTotalPage() . $this->_totalPagePostfix;
+        }
+        
+        $pageHtml = $pageHtml . $addLast .$addTotalPages .'</div>';
         $this->_pageHtml = $pageHtml;
         
 
@@ -232,7 +244,7 @@ class Paginator{
         return $paramsString;
     }
     
-    private function getTotalPageCount($sql) {
+    private function getTotalItemCount($sql) {
     	
         $search = "/^SELECT(.*)FROM/i";
         $replace = "SELECT COUNT(*) FROM";
@@ -240,15 +252,13 @@ class Paginator{
         
         //Need to take out the limit here if using MySQL
         $searchLimit = "/LIMIT?((\s)+(\d)+,(\s)+(\d)+)/i";
-        $replace = "";
-        $countSql = trim(preg_replace($searchLimit, $replace, $sql));
+        $sql = trim(preg_replace($searchLimit, "", $sql));
         $searchLimit = "/LIMIT?((\s)+(\d)+)(\s)+OFFSET?((\s)+(\d)+)(\s)+/i";
-        $countSql = trim(preg_replace($searchLimit, $replace, $sql));
+        $sql = trim(preg_replace($searchLimit, "", $sql));
         
         //Need to take out the limit here if using MSSQL
         $searchLimit = "/(\bAND\b)?(\s)+row(\s)+>(\s)+(\d)+(\s)+and(\s)+row(\s)+<=(\s)+(\d)+/i";
-        $replace = "";
-        $countSql = trim(preg_replace($searchLimit, $replace, $sql));
+        $sql = trim(preg_replace($searchLimit, "", $sql));
         
         if (empty($this->_dbSetting)) {
         	throw new AiryException("No database setting in Paginator");
@@ -270,7 +280,7 @@ class Paginator{
     	$pdoConn = new PDO($dsn, $this->_dbSetting['id'], $this->_dbSetting['pwd']);
 
 		try {
-			$pdoResult = $pdoConn->query($countSql);
+			$pdoResult = $pdoConn->query($sql);
 		} catch(PDOException $e) {
     		 echo 'PDO ERROR: ' . $e->getMessage();
 		}
@@ -720,9 +730,26 @@ class Paginator{
 		$this->_numberOfPages = $numberOfPages;
 	}
 
+	public function setIsShowTotalPage($isShowTotalPage) {
+		$this->_isShowTotalPage = $isShowTotalPage;
+	}
 
-
-
+	public function setTotalPagePrefix($totalPagePrefix) {
+		$this->_totalPagePrefix = $totalPagePrefix;
+	}
+	
+    public function setTotalPagePostfix($totalPagePostfix) {
+    	$this->_totalPagePostfix = $totalPagePostfix;	
+    }
+    
+    public function getTotalPagePrefix() {
+    	return $this->_totalPagePrefix;
+    }
+    
+    public function getTotalPagePostfix() {
+    	return $this->_totalPagePostfix;
+    }
+	
 }
 
 ?>
