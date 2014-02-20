@@ -18,6 +18,7 @@ class Config{
     private static $instance;
     private $_iniFilePath;
     
+    const SINGLE_DB_SETTING_DB_ID = 'db1';
     const JS_INI_KEY  = 'jsconfig';
     const CS_INI_SYS_KEY = 'cssconfig';
     const DB_INI_SYS_KEY = 'dbconfig';
@@ -41,6 +42,8 @@ class Config{
         		throw AiryException("No config file in {$frameworkConfig} error!!");
         	}   
         }
+        
+        
     }
     
     /**
@@ -59,10 +62,6 @@ class Config{
     	$this->_iniFilePath = $path;
     }
     
-    public function getIniFilePath() {
-    	return $this->_iniFilePath;
-    }
-    
     /**
      * The result depends on multiple databases
      * [0] => array of database #1 setting
@@ -74,13 +73,16 @@ class Config{
     {
          $iniArray = parse_ini_file ($this->_iniFilePath, true);
          $dbArray = $iniArray['DB'];
-         
+
          $result   = array();
          $parseIni = $this->convertMultiIni($dbArray);
          //Single database setting
          //Just one layer key-value structure
          if (!isset($parseIni[self::DB_INI_SYS_KEY])) {
-         	 return $dbArray;
+         	 $result[0] = $dbArray;
+         	 //for single database setting, we use db1 for key too
+         	 $result[self::SINGLE_DB_SETTING_DB_ID] = $dbArray;
+         	 return $result;
          }
          
          //For multiple database setting
@@ -97,7 +99,16 @@ class Config{
          return $result;
      }
      
-
+//     public function getTimezone()
+//     {
+//     	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
+//         if (!isset($iniArray['Time_Zone']) || !isset($iniArray['Time_Zone']['timezone'])) {
+//             return null;
+//         }       
+//         $tzArray = $iniArray['Time_Zone'];
+//         
+//         return $tzArray['timezone'];
+//     }
      public function getAuthenticationConfig()
      {
      	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
@@ -291,6 +302,7 @@ class Config{
      private function convertMultiIni ($keyValues) {
         
         $result = array();
+
         foreach($keyValues as $key => $value)
         {
             $tmp = &$result;
@@ -307,7 +319,10 @@ class Config{
      public function getCacheConfig()
      {
      	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
-         $cache = $iniArray['Cache'];
+         $cache = "data/cache";
+         if (isset($iniArray['Cache'])) {
+     	 	$cache = $iniArray['Cache'];
+         }
 
          return $cache;
      }

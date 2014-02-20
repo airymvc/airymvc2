@@ -14,7 +14,7 @@
  */
 
 require_once ('AclUtility.php');
-require_once('MysqlAccess.php');
+//require_once('MysqlAccess.php');
 
 
 class AclComponent {

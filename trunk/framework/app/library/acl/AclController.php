@@ -50,7 +50,9 @@ class AclController extends AbstractController {
         $this->_acl->login();
     }
 
-
+    public function getAclComponent() {
+    	return $this->_acl;
+    }
 
     
 //    protected function signIn($moduleName = null, $controllerName = null, $actionName = null) {

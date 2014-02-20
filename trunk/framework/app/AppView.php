@@ -106,7 +106,7 @@ class AppView extends AbstractView{
                         $viewContent = $this->addPluginLib($viewContent);                       
                     }
                       
-                    $viewContent = $this->_languageService->replaceWordByKey($viewContent);
+                    //$viewContent = $this->_languageService->replaceWordByKey($viewContent);
                     
                     //Check if inserting doctype at the beginning of the view content
                     if (!$this->_inLayout) {
@@ -123,7 +123,12 @@ class AppView extends AbstractView{
                     fclose($fp);
 
                     if (!$this->_inLayout) {
-                        include "airy.view://view_content";   
+                    	//use ob_start to push all include files into a buffer 
+                    	//and then call the callback function replaceLanguageWords
+                    	//only use stream writter cannot fulfill this
+                    	ob_start(array($this, 'replaceLanguageWords'));
+                        include "airy.view://view_content";  
+                        ob_end_flush(); 
                     } else {
                     	$this->_viewScripts = file_get_contents("airy.view://view_content");
                         return $this->_viewScripts;
@@ -187,17 +192,20 @@ class AppView extends AbstractView{
             $pluginStr = "";
             //Get the array of css and javascript addresses from config.ini
             $libs    = Config::getInstance()->getScriptPlugin();
-            $cssLibs = $libs['css'];
-            $JsLibs  = $libs['script'];
+            if (isset($libs['css'])) {
+            	$cssLibs = $libs['css'];
             
-            foreach ($cssLibs as $cssLib) {
-                $pluginStr .= sprintf("<link rel='stylesheet' type='text/css' href='%s'>", $cssLib);
+            	foreach ($cssLibs as $cssLib) {
+                	$pluginStr .= sprintf("<link rel='stylesheet' type='text/css' href='%s'>", $cssLib);
+            	}
             }
             
-            foreach ($JsLibs as $JsLib) {
-                $pluginStr .= sprintf("<script src='%s'></script>", $JsLib);
-            } 
-            
+            if (isset($libs['script'])) {
+            	$JsLibs  = $libs['script'];
+            	foreach ($JsLibs as $JsLib) {
+                	$pluginStr .= sprintf("<script src='%s'></script>", $JsLib);
+            	} 
+            }
             return $pluginStr;
         }
         
@@ -247,6 +255,14 @@ class AppView extends AbstractView{
         
         public function getViewScripts() {
         	return $this->_viewScripts;
+        }
+        /**
+         * call back function 
+         * @param string $buffer
+         */
+        public function replaceLanguageWords($buffer) {
+        	echo "calling callback";
+        	return $this->_languageService->replaceWordByKey($buffer);
         }
         
 	

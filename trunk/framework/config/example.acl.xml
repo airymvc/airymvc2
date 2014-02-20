@@ -40,7 +40,7 @@
 	control the access right to module or controller-->
     <mapping_tables>
         <mapping_table id="1">
-            <!-- tbis database id is based on the id number from config.ini file -->
+            <!-- this database id is based on the id number from config.ini file -->
     		<!-- choose the database which you put the authentication information -->
             <mapping_database_id>db1</mapping_database_id>
             <name>account</name>
