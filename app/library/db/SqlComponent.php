@@ -291,7 +291,12 @@ abstract class SqlComponent {
      */
 
     public function limit($offset, $interval) {
-        $this->limitPart = "";
+
+    	$this->limitPart = "";    	
+    	if (is_null($offset) && is_null($interval)) {
+    		return $this;
+    	}
+
         $offset = (!is_null($offset)) ? $offset : 0;
 
         $insert = "";
