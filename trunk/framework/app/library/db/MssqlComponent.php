@@ -43,6 +43,10 @@ class MssqlComponent extends SqlComponent{
 
     public function limit($offset, $interval) {
         $this->limitPart = "";
+        if (is_null($offset) && is_null($interval)) {
+        	return $this;
+        }
+        
         $offset = (!is_null($offset)) ? $offset : 0;
 
         $endNumber = $offset + $interval;
