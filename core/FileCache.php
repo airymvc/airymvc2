@@ -50,7 +50,7 @@ class FileCache {
      	$filename = $instance->_cacheFolder . DIRECTORY_SEPARATOR .$key; 
      	$cache = null;  
      	if (file_exists($filename)) {	
-     		if (time() - filemtime($filename) < ($instance->_lifetime)) {
+     		if ((time() - filemtime($filename)) < ($instance->_lifetime)) {
      			$cache = $instance->getFileData($key);
      		} else {
      			$instance->removeFileData($key);
@@ -73,6 +73,16 @@ class FileCache {
     public static function removeFile($key){
     	$instance = self::getInstance();
         return $instance->removeFileData($key);
+    }
+    
+    public static function setLifeTime($time){
+    	$instance = self::getInstance();
+        return $instance->setLifeTimeData($time);
+    }
+    
+    public static function getLifeTime(){
+    	$instance = self::getInstance();
+        return $instance->getLifeTimeData();
     }
     
     /**
@@ -106,6 +116,20 @@ class FileCache {
 		if (file_exists($filename)) {
 			exec($command);
 		}
+    }
+    
+    /**
+     * set cache lifetime
+     */
+    public function setLifeTimeData($time){
+		$this->_lifetime = $time;
+    }
+    
+    /**
+     * get cache lifetime
+     */
+    public function getLifeTimeData(){
+		return $this->_lifetime;
     }
     
 }
