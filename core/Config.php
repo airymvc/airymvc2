@@ -39,7 +39,7 @@ class Config{
         	if (file_exists($frameworkConfig)) {
             	$this->_iniFilePath = $frameworkConfig;
         	} else {
-        		throw AiryException("No config file in {$frameworkConfig} error!!");
+        		throw new AiryException("No config file in {$frameworkConfig} error!!");
         	}   
         }
         
@@ -319,7 +319,7 @@ class Config{
      public function getCacheConfig()
      {
      	 $iniArray = parse_ini_file ($this->_iniFilePath, true);
-         $cache = "data/cache";
+     	 $cache = array();
          if (isset($iniArray['Cache'])) {
      	 	$cache = $iniArray['Cache'];
          }

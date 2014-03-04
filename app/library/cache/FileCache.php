@@ -19,21 +19,25 @@ class FileCache {
     private static $instance;
     private $_lifetime;
     
-    function __construct() {
-        $config = Config::getInstance();
-        $root = PathService::getRootDir();
-		$this->_cacheFolder = $root . DIRECTORY_SEPARATOR . $config->getCacheFolder();
+    function __construct($cacheFolder = NULL) {
+    	if (is_null($cacheFolder)) {
+        	$config = Config::getInstance();
+        	$root = PathService::getRootDir();
+			$this->_cacheFolder = $root . DIRECTORY_SEPARATOR . $config->getCacheFolder();
+    	} else {
+    		$this->_cacheFolder = $cacheFolder;
+    	}
 		$this->_lifetime = 60*5;
     }
     
-    public static function getInstance()
+    public static function getInstance($cacheFolder = NULL)
     {
         if(is_null(self::$instance)) {
-            self::$instance = new self();
+            self::$instance = new self($cacheFolder);
         }    
         
         return self::$instance;
-    }
+    }    
     
     /**
      * Static method for user

@@ -20,9 +20,17 @@ class Initializer {
      * This initialize those include path 
      */
     public static function initialize() {
-    	if (!is_null(FileCache::get(self::FILECACHE))) {
-    		set_include_path(FileCache::get(self::FILECACHE));
-    		return;
+
+    	//this is set for FileCache usage
+    	$root = PathService::getRootDir();
+    	$configFile = $root . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "config.ini";
+    	
+    	if (file_exists($configFile)) {
+    		set_include_path(get_include_path() . PATH_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "library" . DIRECTORY_SEPARATOR . "cache");
+    		if (!is_null(FileCache::get(self::FILECACHE))) {
+    			set_include_path(FileCache::get(self::FILECACHE));
+    			return;
+    		}
     	}
         
     	set_include_path(get_include_path() . PATH_SEPARATOR . "core");
@@ -36,7 +44,6 @@ class Initializer {
 
 
         //set module paths
-        $root = PathService::getRootDir();
         $modulePath = $root . DIRECTORY_SEPARATOR . "project" .DIRECTORY_SEPARATOR . "modules";
         $moduleFolders = Initializer::getDirectory($modulePath, TRUE);
         foreach ($moduleFolders as $i => $mfolder)
@@ -46,11 +53,6 @@ class Initializer {
             $f = "modules" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
             set_include_path(get_include_path() . PATH_SEPARATOR . $f);
         }
-        $Config = Config::getInstance();
-//        //set time zone
-//        if (!is_null($Config->getTimezone())) {
-//            date_default_timezone_set($Config->getTimezone());
-//        }
         
         /**
          * include folders under project, library, plug-in
@@ -87,8 +89,10 @@ class Initializer {
             $f = "project" .DIRECTORY_SEPARATOR .str_replace($rp, "", $fd);
             set_include_path(get_include_path() . PATH_SEPARATOR . $f);
         }
-        
-        FileCache::save(self::FILECACHE, get_include_path());
+        if (file_exists($configFile)) {
+        	FileCache::save(self::FILECACHE, get_include_path());
+        }
+
     }
     
     /**
