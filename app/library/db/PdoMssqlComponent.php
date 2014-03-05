@@ -24,8 +24,9 @@ class PdoMssqlComponent extends PdoSqlComponent {
 		$driver = isset($this->dbConfigArray['driver']) ? $this->dbConfigArray['driver'] : "dblib";
 		$charset = isset($this->dbConfigArray['encoding']) ? "charset={$this->dbConfigArray['encoding']}" : "charset=utf8";
 		
-		$dsn = "{$driver}:host={$this->dbConfigArray['host']};dbname={$this->dbConfigArray['database']};{$charset}";
-    	$this->pdoConn = new PDO($dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);
+		$this->dsn = "{$driver}:host={$this->dbConfigArray['host']};dbname={$this->dbConfigArray['database']};{$charset}";
+		$this->setConnection($this->dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);
+
     }
     
     public function limit($offset, $interval) {
