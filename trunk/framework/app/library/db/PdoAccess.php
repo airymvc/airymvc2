@@ -28,6 +28,70 @@ class PdoAccess extends AbstractAccess implements DbAccessInterface  {
         $this->_dbComponent = new $className($databaseId);
     }
 
+    public function prepare($statement, array $driverOptions = array()) {
+    	$this->_dbComponent->prepare($statement, $driverOptions);
+    	return $this;
+    }
+    
+    public function beginTransaction() {
+    	$this->_dbComponent->beginTransaction();
+    	return $this;
+    }
+    
+    public function rollBack() {
+    	$this->pdoConn->rollBack();
+    }
+    
+    public function commit() {
+    	$this->_dbComponent->commit();
+    	return $this;
+    }
+    
+    public function exec($statement = null) {
+    	$this->_dbComponent->exec($statement);
+    	return $this;
+    }
+    
+    public function setAttribute($attribute, $value) {
+    	$this->_dbComponent->setAttribute($attribute, $value);
+    	return $this;
+    }
+    
+    public function getAttribute($attribute) {
+    	return $this->_dbComponent->getAttribute($attribute);
+    }
+    
+    public function errorCode() {
+    	return $this->_dbComponent->errorCode();
+    }
+    
+    public function errorInfo() {
+    	return $this->_dbComponent->errorInfo();
+    }
+    
+    public function getAvailableDrivers() {
+    	return $this->_dbComponent->getAvailableDrivers();
+    }
+    
+    public function inTransaction() {
+    	return $this->_dbComponent->inTransaction();
+    }
+    
+    public function lastInsertId($name = NULL) {
+    	return $this->_dbComponent->lastInsertId($name = NULL);
+    }
+    
+    public function query($statement, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
+    	return $this->_dbComponent->query($statement, $fetchType, $fetch, $ctorargs);
+    }
+    
+    public function quote($str, $parameterType = PDO::PARAM_STR) {
+    	return $this->_dbComponent->quote($str, $parameterType);
+    }
+    
+    public function execute($statement = NULL, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
+    	return $this->_dbComponent->execute($statement, $fetchType, $fetch, $ctorargs);
+    }
 
  
 }
