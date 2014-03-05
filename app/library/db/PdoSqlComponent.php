@@ -103,7 +103,7 @@ class PdoSqlComponent extends SqlComponent {
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
     	$results = null;
 		try {
-			 $results = $this->pdoConn->query($statement, $fetchType, $fetch, $ctorargs);
+			 $results = $this->query($statement, $fetchType, $fetch, $ctorargs);
 		} catch(PDOException $e) {
     		 echo 'PDO ERROR: ' . $e->getMessage();
 		}
