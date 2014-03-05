@@ -29,8 +29,8 @@ class PdoAccess extends AbstractAccess implements DbAccessInterface  {
     }
 
     public function prepare($statement, array $driverOptions = array()) {
-    	$this->_dbComponent->prepare($statement, $driverOptions);
-    	return $this;
+    	//return a prepareStatement here
+    	return $this->_dbComponent->prepare($statement, $driverOptions);
     }
     
     public function beginTransaction() {
