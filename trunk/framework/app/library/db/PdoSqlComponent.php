@@ -19,6 +19,7 @@ class PdoSqlComponent extends SqlComponent {
 	protected $dsn;
 	protected $host;
 	protected $port;
+	protected $autoConnectionClose = true;
 
     function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
@@ -81,16 +82,16 @@ class PdoSqlComponent extends SqlComponent {
     public function query($statement, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
     	if (!is_null($fetchType)) {
     		if (is_int($fetch)) {
-    			return $results = $this->pdoConn->query($statement, $fetchType, $fetch);
+    			return $this->pdoConn->query($statement, $fetchType, $fetch);
     		}
     		if (is_string($fetch)) {
-    			return $results = $this->pdoConn->query($statement, $fetchType, $fetch, $ctorargs);
+    			return $this->pdoConn->query($statement, $fetchType, $fetch, $ctorargs);
     		}
     		if (is_object($fetch)) {
-    			return $results = $this->pdoConn->query($statement, $fetchType, $fetch);
+    			return $this->pdoConn->query($statement, $fetchType, $fetch);
     		}
     	}
-    	return $results = $this->pdoConn->query($statement);
+    	return $this->pdoConn->query($statement);
     }
     
     public function quote($str, $parameterType = PDO::PARAM_STR) {
@@ -100,18 +101,39 @@ class PdoSqlComponent extends SqlComponent {
     public function execute($statement = NULL, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
 
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
+    	$results = null;
 		try {
-			$results = $this->query($statement, $fetchType, $fetch, $ctorargs);
+			 $results = $this->pdoConn->query($statement, $fetchType, $fetch, $ctorargs);
 		} catch(PDOException $e) {
     		 echo 'PDO ERROR: ' . $e->getMessage();
 		}
 		//close the connection
-		$this->pdoConn = null;
+		if ($this->autoConnectionClose) {
+			$this->closeConnection();
+		}
         $this->cleanAll();
         
         return $results;
     }
+    
+    public function setAutoConnectionClose($value) {
+    	$this->autoConnectionClose = $value;
+    	return $this;
+    }
+    
+    public function closeConnection() {
+    	$this->pdoConn = null;
+    	return $this;
+    }
 
+    public function setConnection($dsn = NULL, $userid = NULL, $passwd = NULL) {
+    	$dsn = is_null($dsn) ? $this->dsn : $dsn;
+    	$userid = is_null($userid) ? $this->dbConfigArray['id'] : $userid;
+    	$passwd = is_null($passwd) ? $this->dbConfigArray['pwd'] : $passwd;
+    	$this->pdoConn = new PDO($dsn, $userid, $passwd);	
+    	return $this;
+    }
+    
     function sqlEscape($content) {
 
         //check if $content is an array
