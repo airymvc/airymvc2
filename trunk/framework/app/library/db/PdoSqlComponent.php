@@ -20,8 +20,8 @@ class PdoSqlComponent extends SqlComponent {
 	protected $host;
 	protected $port;
 	protected $autoConnectionClose = true;
-
-    function __construct($databaseId = 0) {
+ 	
+ 	function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
 		// in order to fit pdo's prepare statement, take out the identifiers
 		// ex: :field1
@@ -103,6 +103,9 @@ class PdoSqlComponent extends SqlComponent {
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
     	$results = null;
 		try {
+			 if (is_null($this->pdoConn)) {
+				 $this->setConnection();
+			 }
 			 $results = $this->query($statement, $fetchType, $fetch, $ctorargs);
 		} catch(PDOException $e) {
     		 echo 'PDO ERROR: ' . $e->getMessage();
@@ -116,7 +119,7 @@ class PdoSqlComponent extends SqlComponent {
         return $results;
     }
     
-    public function setAutoConnectionClose($value) {
+    public function setAutoClose($value) {
     	$this->autoConnectionClose = $value;
     	return $this;
     }
