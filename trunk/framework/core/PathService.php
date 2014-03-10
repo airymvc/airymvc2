@@ -101,10 +101,17 @@ class PathService {
                 if ($params == null){ 
                     return $url;
                 }
-                
+
+                $queryStr = "";
                 foreach ($params as $key => $value) {
-                    $url = $url . "{$queryOp}{$key}={$value}";
-                }
+                	if ($queryStr == "") {
+                		$queryStr = "{$key}={$value}";
+                	} else {
+                		$queryStr .= "&{$key}={$value}";
+                	}
+                }    
+                $url .= "{$queryOp}{$queryStr}";
+                
                 return $url;
     }   
     
