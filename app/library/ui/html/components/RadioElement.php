@@ -23,7 +23,16 @@ class RadioElement extends AbstractFormElement{
         $this->setAttribute("type", InputType::RADIO);
     }
     protected $_text;
-   
+    
+    /**
+     * Same as setText method for consistency (TextElement, TextAreaElement)
+     * @param string $text
+     */
+    public function setLabel($text)
+    {
+    	$this->setText($text);
+    }
+    
     public function setText($text)
     {
         $this->_text    = $text;
@@ -36,7 +45,7 @@ class RadioElement extends AbstractFormElement{
         {
             $insert .= sprintf(" %s='%s'", $key, $value);
         }
-        $inputText = $inputText . "<input{$insert}>" . $this->_text;
+        $inputText = "<input{$insert}>" . $this->_text;
         $this->_elementText = $inputText;
         
         return $this->_elementText;

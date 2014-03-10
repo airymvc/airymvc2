@@ -47,6 +47,7 @@ class AbstractForm extends UIComponent{
         } else {
             $this->_elements[$element->getId()] =  $element;
         }
+        return $this;
     }
     
     public function getElementById($id)
@@ -130,8 +131,10 @@ class AbstractForm extends UIComponent{
         if (!is_null($this->_formDecoration)) {
         	 //reset the elementHtml here
         	 $elementHtml = "";
-    		 $openHtml  = $this->_formDecoration[$formId][0] . $formOpenText;
-    	     $closeHtml = $formCloseText . $this->_formDecoration[$formId][1];
+        	 $formPrefix = (isset($this->_formDecoration[$formId]) && isset($this->_formDecoration[$formId][0])) ? $this->_formDecoration[$formId][0] : "";
+        	 $formPostfix = (isset($this->_formDecoration[$formId]) && isset($this->_formDecoration[$formId][1])) ? $this->_formDecoration[$formId][1] : "";
+        	 $openHtml  = $formPrefix . $formOpenText;
+    	     $closeHtml = $formCloseText . $formPostfix;
     	     
     		 //prepare for elements inside the form
     		 foreach ($elementTexts as $elementId => $elementText) {
