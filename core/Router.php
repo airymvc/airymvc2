@@ -136,17 +136,18 @@ class Router {
         }
 
         //Set Controller Name; also set the default model and view here
+        //Controller's first letter is upper case
         if (!empty($this->key_val_pairs[$controllerKeyword])) {
             $this->controllerName = RouterHelper::hyphenToCamelCase($this->key_val_pairs[$controllerKeyword], TRUE);
             $this->setDefaultModelView($this->controllerName);
             MvcReg::setControllerName($this->controllerName); 
             
-            $this->controller = RouterHelper::hyphenToCamelCase($this->key_val_pairs[$controllerKeyword], TRUE).self::CONTROLLER_POSTFIX;//controller name
+            $this->controller = $this->controllerName.self::CONTROLLER_POSTFIX;//controller name
             unset($this->key_val_pairs[$controllerKeyword]);
 
         }else {
-            $this->controllerName = self::DEFAULT_PREFIX;
-            $this->controller = self::DEFAULT_PREFIX.self::CONTROLLER_POSTFIX;
+            $this->controllerName = strtoupper(self::DEFAULT_PREFIX);
+            $this->controller = $this->controllerName.self::CONTROLLER_POSTFIX;
             $this->setDefaultModelView(self::DEFAULT_PREFIX);
             MvcReg::setControllerName($this->controllerName);
         }
