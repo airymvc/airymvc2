@@ -146,7 +146,7 @@ class Router {
             unset($this->key_val_pairs[$controllerKeyword]);
 
         }else {
-            $this->controllerName = strtoupper(self::DEFAULT_PREFIX);
+            $this->controllerName = ucfirst(self::DEFAULT_PREFIX);
             $this->controller = $this->controllerName.self::CONTROLLER_POSTFIX;
             $this->setDefaultModelView(self::DEFAULT_PREFIX);
             MvcReg::setControllerName($this->controllerName);
