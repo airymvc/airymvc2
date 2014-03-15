@@ -100,6 +100,10 @@ class PdoAccess extends AbstractAccess implements DbAccessInterface  {
     public function closeConnection() {
     	return $this->_dbComponent->closeConnection();
     }
+    
+    public function setConnection($dsn = NULL, $userid = NULL, $passwd = NULL) {	
+    	return $this->_dbComponent->setConnection();
+    }
 
  
 }

@@ -23,6 +23,7 @@ class Router {
     const VIEW_POSTFIX = 'View';
     const DEFAULT_PREFIX = 'index';
     const ALLOW_THIS_ACTION = 'inlayout_mca';
+    const LANGUAGE_CODE = 'language_cide';
 
     private $controller;
     private $action;
@@ -168,13 +169,23 @@ class Router {
         $this->setDefaultActionView($this->controllerName, $this->actionName);
         $this->setModuleControllerAction($this->moduleName, $this->controllerName, $this->actionName);
         
-        //Setting language code 
+        //Setting language code and Session
         if  (!empty($this->key_val_pairs[$languageKeyword])) {
             $this->languageCode = $this->key_val_pairs[$languageKeyword];
             $this->setLanguageCode($this->languageCode);
+            
+            //set langauge session based on module
+            //@TODO: need to consider to add a project layer in the futuure
+            $_SESSION[$this->moduleName][self::LANGUAGE_CODE] = $this->languageCode;
             unset($this->key_val_pairs[$languageKeyword]);
         } else {
-            $this->setLanguageCode($defaultLanguageCode);
+        	if (!empty($_SESSION[$this->moduleName][self::LANGUAGE_CODE])) {
+        		$this->setLanguageCode($_SESSION[$this->moduleName][self::LANGUAGE_CODE]);
+        	} else {
+            	$this->setLanguageCode($defaultLanguageCode);
+            	//@TODO: need to consider to add a project layer in the futuure
+            	$_SESSION[$this->moduleName][self::LANGUAGE_CODE] = $defaultLanguageCode;
+        	}
         }
         
         //Getting serialize data for setting authentication allowing actions

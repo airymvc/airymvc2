@@ -19,7 +19,7 @@ class PdoSqlComponent extends SqlComponent {
 	protected $dsn;
 	protected $host;
 	protected $port;
-	protected $autoConnectionClose = true;
+	protected $autoConnectionClose = false;
  	
  	function __construct($databaseId = 0) {
 		parent::__construct($databaseId);
