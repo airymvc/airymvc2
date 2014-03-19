@@ -23,7 +23,7 @@ class Router {
     const VIEW_POSTFIX = 'View';
     const DEFAULT_PREFIX = 'index';
     const ALLOW_THIS_ACTION = 'inlayout_mca';
-    const LANGUAGE_CODE = 'language_cide';
+    const LANGUAGE_CODE = 'language_code';
 
     private $controller;
     private $action;

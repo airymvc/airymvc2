@@ -16,14 +16,17 @@
 class LangReg {
     
      static $_languageCode;
+     const LANGUAGE_CODE = 'language_code';
      
-     public static function setLanguageCode($languageCode)
-     {
+     public static function setLanguageCode($languageCode) {
           self::$_languageCode = $languageCode;
      }
-     public static function getLanguageCode()
-     {
+     public static function getLanguageCode() {
           return self::$_languageCode;
+     }
+     public static function getCurrentUseLanguageCode($moduleName = null) {
+     	  $moduleName = is_null($moduleName) ? MvcReg::getModuleName() : $moduleName;
+     	  return $_SESSION[$moduleName][self::LANGUAGE_CODE];
      }
 
 }
