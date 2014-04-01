@@ -20,9 +20,10 @@ class Config{
     
     const SINGLE_DB_SETTING_DB_ID = 'db1';
     const JS_INI_KEY  = 'jsconfig';
+    const LOG_INI_KEY  = 'logconfig';
     const CS_INI_SYS_KEY = 'cssconfig';
     const DB_INI_SYS_KEY = 'dbconfig';
-    
+
     const JSKEY       = 'script';
     const CSSKEY      = 'css';
     
@@ -334,6 +335,26 @@ class Config{
              return $cacheArray['folder'];
          }
          return 'data'.DIRECTORY_SEPARATOR.'cache';        
+     }
+     
+     public function getLogFolders()
+     {
+     	$ini_array = parse_ini_file ($this->_iniFilePath, true);
+     	if (!isset($ini_array['Log'])) {
+     		return null;
+     	}
+     	$result = array();
+     	foreach ($ini_array['Log'] as $key => $value) {
+     		$configs = explode('.', $key);
+     		if ($configs[0] == self::LOG_INI_KEY) {
+     			$result[] = $value;
+     		}
+     	}
+     	if (empty($result)) {
+     		$result[0] = "data" . DIRECTORY_SEPARATOR ."log";
+     	}
+     
+     	return $result;
      }
 }
 ?>
