@@ -17,7 +17,9 @@ class FileCache {
 
     private $_cacheFolder;
     private static $instance;
-    private $_lifetime;
+    //$lifetime is the overall cache lifetime, used when no key specific lifetime
+    private static $lifetime;
+    private static $cacheSpecificLifetime = array();
     
     function __construct($cacheFolder = NULL) {
     	if (is_null($cacheFolder)) {
@@ -27,7 +29,7 @@ class FileCache {
     	} else {
     		$this->_cacheFolder = $cacheFolder;
     	}
-		$this->_lifetime = 60*5;
+		FileCache::$lifetime = 60*5;
     }
     
     public static function getInstance($cacheFolder = NULL)
@@ -41,10 +43,15 @@ class FileCache {
     
     /**
      * Static method for user
+     * @param string $save
+     * @param string $content
      */
-    public static function save($key, $content){
+    public static function save($key, $content, $cacheLifetime = null){
     	$instance = self::getInstance();
     	$key = md5($key);
+    	if (!is_null($cacheLifetime)) {
+    		FileCache::$cacheSpecificLifetime[$key] = $cacheLifetime;
+    	}
         return $instance->saveFileData($key, $content);
     }
     
@@ -54,7 +61,7 @@ class FileCache {
      	$filename = $instance->_cacheFolder . DIRECTORY_SEPARATOR .$key; 
      	$cache = null;  
      	if (file_exists($filename)) {	
-     		if ((time() - filemtime($filename)) < ($instance->_lifetime)) {
+     		if ((time() - filemtime($filename)) < (FileCache::$lifetime)) {
      			$cache = $instance->getFileData($key);
      		} else {
      			$instance->removeFileData($key);
@@ -80,13 +87,11 @@ class FileCache {
     }
     
     public static function setLifeTime($time){
-    	$instance = self::getInstance();
-        return $instance->setLifeTimeData($time);
+    	FileCache::$lifetime = $time;
     }
     
     public static function getLifeTime(){
-    	$instance = self::getInstance();
-        return $instance->getLifeTimeData();
+		return FileCache::$lifetime;
     }
     
     /**
@@ -122,19 +127,6 @@ class FileCache {
 		}
     }
     
-    /**
-     * set cache lifetime
-     */
-    public function setLifeTimeData($time){
-		$this->_lifetime = $time;
-    }
-    
-    /**
-     * get cache lifetime
-     */
-    public function getLifeTimeData(){
-		return $this->_lifetime;
-    }
     
 }
 
