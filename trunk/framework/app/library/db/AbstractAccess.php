@@ -16,6 +16,7 @@
 abstract class AbstractAccess {
 	
 	protected $_dbComponent;
+	protected $dbConfigArray;
 
 	
    	public function select($columns, $table, $distinct = null) {

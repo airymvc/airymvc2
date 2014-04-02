@@ -30,9 +30,17 @@ class DbConfig {
         		throw new AiryException("no dbtype setting in the config.ini");
         	}
         	//pdo is the default connection type
-        	$connectionType = isset($configArray['connection_type']) ? $configArray['connection_type'] : "pdo";
+        	$connectionType = "pdo";
+        	if (isset($configArray['connection_type'])) {
+        		$connectionType = $configArray['connection_type'];
+        	} else if (strtolower($configArray['dbtype']) == "mongodb") {
+        		$connectionType = "mongodb";
+        	}
+
             if (strtolower($connectionType) == "pdo") {
             	$dbAccessElements[$idx] = new PdoAccess($idx);
+            } else if (strtolower($connectionType) == "mongodb") {
+            	$dbAccessElements[$idx] = new MongoDbAccess($idx);
             } else {
             	$dbAccessElements[$idx] = new DbAccess($idx);
             }
