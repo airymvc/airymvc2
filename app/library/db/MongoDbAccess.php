@@ -375,6 +375,19 @@ class MongoDbAccess implements DbAccessInterface {
                 break;
         }
     }
+    
+    public function cleanAll(){
+    	$this->queryType    = NULL;
+    	$this->selectPart   = NULL;
+    	$this->wherePart    = NULL;
+    	$this->orderPart    = NULL;
+    	$this->limitPart    = NULL;
+    	$this->offsetPart   = NULL;
+    	$this->updatePart   = NULL;
+    	$this->insertPart   = NULL;
+    	$this->distinctPart = NULL;
+    	$this->groupPart    = NULL;
+    }
 
     //unsupport methods
     //TODO: to have a better way to resolve these methods
