@@ -24,9 +24,17 @@ class Dispatcher{
     const VIEW_POSTFIX = 'View';
     
     private static $theController;
+
+    public static function dispatchMVC($router) {
+    	$moduleName = $router->getModuleName();
+    	$params = $router->getParams();
+    	$controllerName = $router->getControllerName();   //the name without 'Controller'
+    	$actionName = $router->getActionName();
+    	Dispatcher::forward($moduleName, $controllerName, $actionName, $params, $router);
+    }
+    
         
-	public static function dispatch($Router)  
-	{     		
+	public static function dispatch($Router) {     		
 		$moduleName = $Router->getModuleName();  
 		$params = $Router->getParams(); 
 		$controllerName = $Router->getControllerName();   //the name without 'Controller'
@@ -36,10 +44,10 @@ class Dispatcher{
         Dispatcher::forward($moduleName, $controllerName, $actionName, $params); 
         session_write_close(); 
 	}
-
-	public static function forward($moduleName, $controllerName, $actionName, $params)  
+    //TODO: need to refactor forward method
+	public static function forward($moduleName, $controllerName, $actionName, $params, $router = null)  
 	{  
-         $Router = new Router();
+         $Router = is_null($router) ? new Router() : $router;
          $Router->setDefaultModelView($controllerName); 
 
          $controller = $controllerName.self::CONTROLLER_POSTFIX;
@@ -136,7 +144,7 @@ class Dispatcher{
                           $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
                           Dispatcher::toMVC($loginController, $loginAction, $params);
                        }
-				} else {            
+				} else {
                        Dispatcher::toMVC($controller, $action, $params);
 				}     
 		 	} else {
@@ -152,8 +160,7 @@ class Dispatcher{
 		} 
 	}
 	        
-	private static function toMVC($controller, $action, $params, $viewVariables = null, $inLayout = FALSE)  
-	{
+	private static function toMVC($controller, $action, $params, $viewVariables = null, $inLayout = FALSE)  {
 		//Take out global, not use
        	self::$theController = new $controller();   
        	//This means constructor does not initialize the necessary params

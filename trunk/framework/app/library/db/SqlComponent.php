@@ -263,9 +263,6 @@ abstract class SqlComponent {
             	$middle = "'";
             	$last = "')";
             }
-            if(is_bool($columnValue)) {
-            	$columnValue = ($$columnValue) ? 1 : 0;
-            }
             if (array_key_exists($columnValue, $this->keywords)) {
             	$middle = "";
             	$last = "";
