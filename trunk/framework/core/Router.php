@@ -73,24 +73,44 @@ class Router {
         Parameter::setParams($this->params);  
     }
     
-    
+    /**
+     * When using url redirect, the following is an example
+     * 
+     * <VirtualHost *:80>
+     * 		AliasMatch ^/(js|img|css)/(.*)$ /usr/local/zend/apache2/htdocs/zframework/webroot/$1/$2
+     * </VirtualHost>
+     * <Directory "/usr/local/zend/apache2/htdocs/zframework">
+     * 		RewriteEngine on
+     * 		RewriteBase /
+     * 		RewriteCond %{REQUEST_URI} !\.(css|png|jpe?g|gif)$ [NC]
+     * 		RewriteCond %{REQUEST_URI} !index\.php [NC]
+     * 		RewriteRule  ^([^/]+)/([^/]+)/([^/]+)(.*)$ /index.php?md=$1&cl=$2&at=$3$4 [QSA]
+     * </Directory>
+     * The value for key at (action) will attach the key-value path. We need to resolve it.
+     * 
+     * @throws AiryException
+     */
     private function prepare() {
     	$this->root = PathService::getRootDir();        
         $config = Config::getInstance();
         $mvc_array = $config->getMVCKeyword();
-        $moduleKeyword = "module";
-        $controllerKeyword = "controller";
-        $actionKeyword = "action";
+        $moduleKeyword = array_key_exists('module', $mvc_array) ? $mvc_array['module']: "module";
+        $controllerKeyword = array_key_exists('controller', $mvc_array)? $mvc_array['controller']: "controller";
+        $actionKeyword = array_key_exists('action', $mvc_array)? $mvc_array['action']: "action";;
         $languageKeyword = $config->getLanguageKeyword();
         $defaultLanguageCode = $config->getDefaultLanguage();
 
+        //Before we jump into the getting params process, we need re-map the $_GET and $_POST due to the apache URL rewrite setting
+        //We use RouterUrlRewritter to deal with that
+        $urlRewritter = new RouterUrlRewriter();
+        $urlRewritter->remapGetAndPost($actionKeyword);
         
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $keys = array_keys($_GET); //get URL after '?'
         }else {
-            $qstring_pieces = explode('&', $_SERVER['QUERY_STRING']);
+            $qstringPieces = explode('&', $_SERVER['QUERY_STRING']);
 
-            foreach ($qstring_pieces as $key =>$value) {
+            foreach ($qstringPieces as $key =>$value) {
                 $x = explode('=', $value);
                 $this->key_val_pairs[$x[0]] = $x[1];
                 $this->qstring_keys[$x[0]];
@@ -107,19 +127,7 @@ class Router {
                 $this->key_val_pairs[strtolower($value)] = $_POST[$value];
             }
         }
-
-        if (array_key_exists('module', $mvc_array)) {
-            $moduleKeyword = $mvc_array['module'];
-        }
-
-        if (array_key_exists('controller', $mvc_array)) {
-            $controllerKeyword = $mvc_array['controller'];
-        }
-
-        if (array_key_exists('action', $mvc_array)) {
-            $actionKeyword = $mvc_array['action'];
-        }
-
+        
         if ($moduleKeyword == $controllerKeyword ||
             $actionKeyword == $controllerKeyword ||
             $moduleKeyword == $actionKeyword) {
