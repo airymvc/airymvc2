@@ -7,8 +7,10 @@ class RouterUrlRewriter {
 		$actionWithQueryPath = $_GET[$actionKeyword];
 		$params = explode("/", $actionWithQueryPath);
 		$GETParams = array();
-		for ($i=1; $i<count($params); $i=$i+2) {
-			$GETParams[$params[$i]] = $params[$i+1];
+		if (count($params) < 2) {
+			for ($i=1; $i<count($params); $i=$i+2) {
+				 $GETParams[$params[$i]] = $params[$i+1];
+			}
 		}
 		//deal with action
 		$GETParams[$actionKeyword] = $params[0];
