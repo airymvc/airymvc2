@@ -261,7 +261,6 @@ class AppView extends AbstractView{
          * @param string $buffer
          */
         public function replaceLanguageWords($buffer) {
-        	echo "calling callback";
         	return $this->_languageService->replaceWordByKey($buffer);
         }
         

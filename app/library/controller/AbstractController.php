@@ -17,6 +17,8 @@
  *
  * @author Hung-Fu Aaron Chang
  */
+require dirname(dirname(__FILE__)) . "/view/Layout.php";
+
 abstract class AbstractController{
     
     	protected $params;
@@ -67,9 +69,20 @@ abstract class AbstractController{
         function setDefaultView()
         {
             if (file_exists(MvcReg::getActionViewFile())) {
-                $this->view->setViewFilePath(MvcReg::getActionViewFile()); 
+                $this->view->setViewFilePath(MvcReg::getActionViewFile());
             } else {
-                $this->view->setViewFilePath(MvcReg::getViewFile());
+            	$actionViewFile = $this->toLowerCaseViewFilename(MvcReg::getActionViewFile());
+            	if (file_exists($actionViewFile)) {
+            		$this->view->setViewFilePath($actionViewFile);
+            	} else {
+            		//This is for backward compatiability
+            		if (file_exists(MvcReg::getViewFile())) {
+                		$this->view->setViewFilePath(MvcReg::getViewFile());
+            		} else {
+            			$viewFile = $this->toLowerCaseViewFilename(MvcReg::getViewFile());
+            			$this->view->setViewFilePath($viewFile);
+            		}
+            	}
             }
         }
 
@@ -192,6 +205,14 @@ abstract class AbstractController{
         private function getActionViewFile($moduleName, $controllerName, $actionName) {
             $viewArray = RouterHelper::getActionViewData($moduleName, $controllerName, $actionName);
             return $viewArray[1];
+        }
+        
+        private function toLowerCaseViewFilename($viewFile) {
+        	$elems = explode(DIRECTORY_SEPARATOR, $viewFile);
+        	$viewFilename = ucfirst($elems[count($elems)-1]);
+        	$elems[count($elems)-1] = $viewFilename;
+        	$path = join (DIRECTORY_SEPARATOR, $elems);
+        	return $path;
         }
         
 

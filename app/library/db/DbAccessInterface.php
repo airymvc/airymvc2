@@ -32,7 +32,7 @@ interface DbAccessInterface {
     
     public function delete($table);
     
-    public function execute();
+    public function execute($statement);
     
     public function getStatement();
     
