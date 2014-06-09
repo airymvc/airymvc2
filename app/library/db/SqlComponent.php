@@ -127,9 +127,16 @@ abstract class SqlComponent {
         $pos = strpos($fieldKey, '.');
         $operator = is_null($operator) ? "" : strtoupper($operator);
         $key = "{$this->openIdentifier}{$fieldKey}{$this->closeIdentifier}";
+        //Determine if it is a SQL function
+        if (strpos($fieldKey, ")") > 1) {
+        	$key = "$fieldKey";
+        }
         if ($pos != false){
             $tf = explode (".", $fieldKey);
             $key = "{$this->openIdentifier}{$tf[0]}{$this->closeIdentifier}.{$this->openIdentifier}{$tf[1]}{$this->closeIdentifier}";
+            if (strpos($fieldKey, ")") > 1) {
+            	$key = "{$tf[0]}.{$tf[1]}";
+            }
         }
         $whereString .= "{$operator} {$key} {$relationalOperator} '{$fieldArray[$fieldKey]}' ";
         return $whereString;    	
@@ -220,16 +227,18 @@ abstract class SqlComponent {
     public function update($columns, $table) {
         $this->queryType = "UPDATE";
         $this->updatePart = "UPDATE {$this->openIdentifier}" . $table . "{$this->closeIdentifier} SET ";
-        $size = count($columns) - 1;
-        $n = 0;
         foreach ($columns as $column_index => $column_value) {
         	$lastAppend = "', ";
-            if ($n == $size) {
-                $lastAppend = "'";
+        	if (strpos($column_value, ")") > 1) {
+        		$lastAppend = ", ";
+        	}
+            $updateElement = "{$this->openIdentifier}" . $column_index . "{$this->closeIdentifier}='" . $column_value . $lastAppend;
+            if (strpos($column_value, ")") > 1) {
+           		$updateElement = "{$this->openIdentifier}" . $column_index . "{$this->closeIdentifier}=" . $column_value . $lastAppend;
             }
-            $this->updatePart .= "{$this->openIdentifier}" . $column_index . "{$this->closeIdentifier}='" . $column_value . $lastAppend;
-            $n++;
-        }
+            $this->updatePart .= $updateElement;
+        }        
+        $this->updatePart = rtrim($this->updatePart, ", ");
 
         return $this;
     }
