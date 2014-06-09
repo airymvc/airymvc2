@@ -88,7 +88,7 @@ abstract class AbstractAccess {
    		return $this;    	
     }
     
-    public function execute($statement) {
+    public function execute($statement = NULL) {
     	return $this->_dbComponent->execute($statement);   	
     }
     
