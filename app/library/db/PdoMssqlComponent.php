@@ -18,7 +18,7 @@ class PdoMssqlComponent extends PdoSqlComponent {
 	//mssql component is used for exporting limit and 
 	protected $mssqlComponent;
 
-    function __construct($databaseId = 0) {
+    function __construct() {
     	$this->mssqlComponent = new MssqlComponent();
 		$this->setIdentifier();
     }
@@ -31,6 +31,7 @@ class PdoMssqlComponent extends PdoSqlComponent {
 		$this->dsn = "{$driver}:host={$dbConfigArray['host']};dbname={$dbConfigArray['database']};{$charset}";
 		$this->setConnection($this->dsn, $dbConfigArray['id'], $dbConfigArray['pwd']);
     }
+        
     
     public function limit($offset, $interval) {
 		$this->mssqlComponent->limit($offset, $interval);
