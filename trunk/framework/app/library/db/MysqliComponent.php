@@ -18,10 +18,6 @@ class MysqliComponent extends MysqlCommon {
 	private $port = 3306;
 	private $host;
 	
-    function __construct($databaseId = 0) {
-		parent::__construct($databaseId);
-    }
-
     public function execute() {
 		$hostArray = explode(":", $this->dbConfigArray['host']);    	
 		$this->host = $hostArray[0];

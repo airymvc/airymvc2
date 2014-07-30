@@ -15,8 +15,9 @@
 
 class MssqlComponent extends SqlComponent{
 
-    function __construct($databaseId = 0) {
-		parent::__construct($databaseId);
+    function __construct() {
+		$this->setOpenIdentifier("[");
+		$this->setCloseIdentifier("]");
     }
     
     /*

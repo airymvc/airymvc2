@@ -29,6 +29,25 @@ class AppModel extends AbstractModel {
         return $this->db;
     }
 
+	/**
+ 	 * @param array $config
+ 	 */
+    public function setDb($config) {
+    	$this->multiDb = DbConfig::getConfig();
+    	$this->db = DbConfig::assignDbAccess(0, $config);
+    }
+
+    
+	/**
+ 	 * 
+ 	 * @param int $databaseId
+ 	 * @param array $config
+ 	 */
+    public function setMultiDb($databaseId, $config) {
+    	$this->multiDb = DbConfig::getConfig();
+    	$this->db = DbConfig::assignDbAccess($databaseId, $config);
+    }
+    
 }
 
 ?>

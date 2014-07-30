@@ -15,17 +15,19 @@
 
 class PdoMysqlComponent extends PdoSqlComponent {
 	
-    function __construct($databaseId = 0) {
+    function __construct() {
 
-		parent::__construct($databaseId);	
-
-		$hostArray = explode(":", $this->dbConfigArray['host']);	
-		$this->host = $hostArray[0];
-		$this->port = isset($hostArray[1]) ? $hostArray[1] : "3306";
-		$charset = isset($this->dbConfigArray['encoding']) ? "charset={$this->dbConfigArray['encoding']}" : "charset=utf8";
-		
-		$this->dsn = "{$this->dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$this->dbConfigArray['database']};{$charset}";
-    	$this->setConnection($this->dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);	
+    	$this->setIdentifier();
+    }
+    
+    public function configConnection($dbConfigArray) {
+    	$hostArray = explode(":", $dbConfigArray['host']);
+    	$this->host = $hostArray[0];
+    	$this->port = isset($hostArray[1]) ? $hostArray[1] : "3306";
+    	$charset = isset($dbConfigArray['encoding']) ? "charset={$dbConfigArray['encoding']}" : "charset=utf8";
+    	
+    	$this->dsn = "{$dbConfigArray['dbtype']}:host={$this->host};port={$this->port};dbname={$dbConfigArray['database']};{$charset}";
+    	$this->setConnection($this->dsn, $dbConfigArray['id'], $dbConfigArray['pwd']);
     }
 
     function sqlEscape($content) {
