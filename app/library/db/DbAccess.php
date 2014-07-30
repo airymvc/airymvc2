@@ -14,22 +14,29 @@
  */
 
 class DbAccess extends AbstractAccess implements DbAccessInterface {
-	
-	//passing config here for unit test convenience
-    function __construct($databaseId = 0, $iniFile = null) {
+	    
+    public function config($databaseId = 0, $iniFile = null) {
     	$config = Config::getInstance();
     	if (!is_null($iniFile)) {
-        	$config->setIniFilePath($iniFile);
+    		$config->setIniFilePath($iniFile);
     	}
-        $configArray = $config->getDBConfig();
-        $this->dbConfigArray = $configArray[$databaseId]; 
-        $className = ucfirst(strtolower($this->dbConfigArray['dbtype'])) . 'Component';
-        
-        //If the database type is mysql, determining whether mysql or mysqli to be initialized
-        if (strtolower($this->dbConfigArray['dbtype']) == "mysql") {
-        	$className = ucfirst(strtolower($this->dbConfigArray['connection_type'])) . 'Component';
-        }
-        $this->_dbComponent = new $className($databaseId);
+    	$configArray = $config->getDBConfig();
+    	$this->setDbConfig($configArray[$databaseId]);
+    	$this->setComponent($configArray[$databaseId]);
+    }
+    
+    public function setDbConfig($config) {
+    	$this->dbConfigArray = $config;
+    }
+    
+    public function setComponent($config) {
+    	//initialize the object based on the database type
+    	$className = ucfirst(strtolower($config['dbtype'])) . 'Component';
+    	if (strtolower($config['dbtype']) == "mysql") {
+    		$className = ucfirst(strtolower($config['connection_type'])) . 'Component';
+    	}
+    	
+    	$this->_dbComponent = new $className();
     }
 
 }

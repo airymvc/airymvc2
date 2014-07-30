@@ -33,18 +33,25 @@ class MongoDbAccess implements DbAccessInterface {
 	protected $limitPart;
 	protected $offsetPart;
 	protected $queryType;
-	
-    public function __construct($databaseId = 0, $iniFile = null) {
-        $config = Config::getInstance();
+	    
+    public function config($databaseId = 0, $iniFile = null) {
+    	$config = Config::getInstance();
     	if (!is_null($iniFile)) {
-        	$config->setIniFilePath($iniFile);
+    		$config->setIniFilePath($iniFile);
     	}
-        $configArray = $config->getDBConfig();
-        $this->dbConfigArray = $configArray[$databaseId];
-	
-		$host = $this->dbConfigArray['host'];
-		$userPassword = "{$this->dbConfigArray['id']}:{$this->dbConfigArray['pwd']}@";
-		$dbStr = $this->dbConfigArray['database'];
+    	$configArray = $config->getDBConfig();
+    	$this->setDbConfig($configArray[$databaseId]);
+    	$this->setComponent($configArray[$databaseId]);
+    }
+    
+    public function setDbConfig($config) {
+    	$this->dbConfigArray = $config;
+    }
+    
+    public function setComponent($config) {
+		$host = $config['host'];
+		$userPassword = "{$config['id']}:{$config['pwd']}@";
+		$dbStr = $config['database'];
 		
 		/**
 		 * mongodb://[username:password@]host1[:port1][,host2[:port2:],...]/db
@@ -58,6 +65,8 @@ class MongoDbAccess implements DbAccessInterface {
 		$this->setMongoClient($connection);
 		$this->database = $this->mongoClient->$dbStr;
     }
+    
+    
     
     //The default MongoClient methods
     public function setMongoClient($connection) {

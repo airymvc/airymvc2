@@ -28,7 +28,7 @@ abstract class SqlComponent {
     protected $orderPart;
     protected $groupPart;
     protected $limitPart;
-    protected $keywords;
+    protected $keywords = array('CURRENT_TIMESTAMP' => "CURRENT_TIMESTAMP");
     protected $queryType;
     
     //joinPart and JoinOnPart will be modified after the method is deprecated
@@ -37,22 +37,16 @@ abstract class SqlComponent {
     
     protected $openIdentifier  = "";
     protected $closeIdentifier = "";
-
-    function __construct($databaseId = 0) {
-        $config = Config::getInstance();
-        $configArray = $config->getDBConfig();
-        $this->dbConfigArray = $configArray[$databaseId];
-        $this->setKeywords();
-        
-        if (strtolower($this->dbConfigArray['dbtype']) == 'mysql') {
-        	$this->setOpenIdentifier("`");
-        	$this->setCloseIdentifier("`");
-        }
-        
-        if (strtolower($this->dbConfigArray['dbtype']) == 'mssql') {
-        	$this->setOpenIdentifier("[");
-        	$this->setCloseIdentifier("]");
-        }
+    
+    
+    public function setConfigById($databaseId = 0) {
+    	$config = Config::getInstance();
+    	$configArray = $config->getDBConfig();
+    	$this->setConfig($configArray[$databaseId]);
+    }
+    
+    public function setConfig($configArray) {
+    	$this->dbConfigArray = $configArray;
     }
 
     /*
@@ -436,9 +430,6 @@ abstract class SqlComponent {
         $this->queryStmt = $queryStmt;
     }
 
-    public function setKeywords() {
-        $this->keywords['CURRENT_TIMESTAMP'] = "CURRENT_TIMESTAMP";
-    }
 
     function sqlEscape($content) {}
     

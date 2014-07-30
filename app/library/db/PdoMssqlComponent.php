@@ -19,14 +19,17 @@ class PdoMssqlComponent extends PdoSqlComponent {
 	protected $mssqlComponent;
 
     function __construct($databaseId = 0) {
-    	parent::__construct($databaseId);
-		$this->mssqlComponent = new MssqlComponent();
-		$driver = isset($this->dbConfigArray['driver']) ? $this->dbConfigArray['driver'] : "dblib";
-		$charset = isset($this->dbConfigArray['encoding']) ? "charset={$this->dbConfigArray['encoding']}" : "charset=utf8";
+    	$this->mssqlComponent = new MssqlComponent();
+		$this->setIdentifier();
+    }
+    
+    public function configConnection($dbConfigArray) {
 		
-		$this->dsn = "{$driver}:host={$this->dbConfigArray['host']};dbname={$this->dbConfigArray['database']};{$charset}";
-		$this->setConnection($this->dsn, $this->dbConfigArray['id'], $this->dbConfigArray['pwd']);
-
+		$driver = isset($dbConfigArray['driver']) ? $dbConfigArray['driver'] : "dblib";
+		$charset = isset($dbConfigArray['encoding']) ? "charset={$dbConfigArray['encoding']}" : "charset=utf8";
+		
+		$this->dsn = "{$driver}:host={$dbConfigArray['host']};dbname={$dbConfigArray['database']};{$charset}";
+		$this->setConnection($this->dsn, $dbConfigArray['id'], $dbConfigArray['pwd']);
     }
     
     public function limit($offset, $interval) {

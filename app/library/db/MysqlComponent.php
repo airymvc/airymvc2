@@ -14,10 +14,6 @@
  */
 
 class MysqlComponent extends MysqlCommon{
-
-    function __construct($databaseId = 0) {
-		parent::__construct($databaseId);
-    }
     
     public function execute($statement = NULL) {
 

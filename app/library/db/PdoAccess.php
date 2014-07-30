@@ -14,20 +14,29 @@
  */
 
 class PdoAccess extends AbstractAccess implements DbAccessInterface  {
-	
-	//passing config here for unit test convenience
-    function __construct($databaseId = 0, $iniFile = null) {
+    
+    public function config($databaseId = 0, $iniFile = null) {
     	$config = Config::getInstance();
     	if (!is_null($iniFile)) {
-        	$config->setIniFilePath($iniFile);
+    		$config->setIniFilePath($iniFile);
     	}
-        $configArray = $config->getDBConfig();
-        $this->dbConfigArray = $configArray[$databaseId];
-        //initialize the object based on the database type
-        $className = 'Pdo' . ucfirst(strtolower($this->dbConfigArray['dbtype'])) . 'Component';
-        $this->_dbComponent = new $className($databaseId);
+    	$configArray = $config->getDBConfig();
+    	$this->setDbConfig($configArray[$databaseId]);
+    	$this->setComponent($configArray[$databaseId]);
     }
 
+    public function setDbConfig($config) {
+    	$this->dbConfigArray = $config;
+    }
+    
+    public function setComponent($config) {
+    	//initialize the object based on the database type
+    	$className = 'Pdo' . ucfirst(strtolower($config['dbtype'])) . 'Component';
+    	$this->_dbComponent = new $className();
+    	$this->_dbComponent->configConnection($config);
+    }
+    
+    
     public function prepare($statement, array $driverOptions = array()) {
     	//return a prepareStatement here
     	return $this->_dbComponent->prepare($statement, $driverOptions);

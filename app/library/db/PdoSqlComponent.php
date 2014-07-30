@@ -21,13 +21,13 @@ class PdoSqlComponent extends SqlComponent {
 	protected $port;
 	protected $autoConnectionClose = false;
  	
- 	function __construct($databaseId = 0) {
-		parent::__construct($databaseId);
-		// in order to fit pdo's prepare statement, take out the identifiers
-		// ex: :field1
+    protected function setIdentifier() {
+    	// in order to fit pdo's prepare statement, take out the identifiers
+    	// ex: :field1
     	$this->setOpenIdentifier("");
-        $this->setCloseIdentifier("");	
+    	$this->setCloseIdentifier("");
     }
+    
     
     public function beginTransaction() {
     	return $this->pdoConn->beginTransaction();
