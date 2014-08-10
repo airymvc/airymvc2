@@ -37,6 +37,7 @@ class DbAccess extends AbstractAccess implements DbAccessInterface {
     	}
     	
     	$this->_dbComponent = new $className();
+    	$this->_dbComponent->setConfig($config);
     }
 
 }
