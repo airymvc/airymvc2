@@ -74,6 +74,10 @@ class Dispatcher{
                           // need to acl rule after login
                           // put them here
                           //
+                      	  if (Authentication::getSuccessController($moduleName) == $controllerName &&
+                      		  Authentication::getSuccessAction($moduleName) == $actionName) {
+                      	  	  Dispatcher::setRoute($moduleName, $controllerName, $actionName);
+                      	  }
                           Dispatcher::toMVC($controller, $action, $params);  
                           return;
                       } else {      
@@ -137,11 +141,7 @@ class Dispatcher{
                           $loginActionName     = Authentication::getLoginAction($moduleName);
                           $loginAction         = Authentication::getLoginAction($moduleName).self::ACTION_POSTFIX;
                           
-                          $router = new Router();
-                          $router->removeDefaultActionView();
-                          $router->setDefaultActionView($loginControllerName, $loginActionName);
-                          $router->setDefaultModelView($loginControllerName);
-                          $router->setModuleControllerAction($moduleName, $loginControllerName, $loginAction);
+                          Dispatcher::setRoute($moduleName, $loginControllerName, $loginActionName);
                           Dispatcher::toMVC($loginController, $loginAction, $params);
                        }
 				} else {
@@ -179,6 +179,14 @@ class Dispatcher{
         	throw new AiryException($errorMsg);
         }    
         return self::$theController;
+    }
+    
+    private static function setRoute($moduleName, $controllerName, $actionName) {
+    	$router = new Router();
+    	$router->removeDefaultActionView();
+    	$router->setDefaultActionView($controllerName, $actionName);
+    	$router->setDefaultModelView($controllerName);
+    	$router->setModuleControllerAction($moduleName, $controllerName, $actionName);    	
     }
 }
 ?>

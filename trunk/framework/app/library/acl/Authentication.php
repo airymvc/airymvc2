@@ -76,7 +76,26 @@ class Authentication {
         }
         return $action;
     }
-
+    
+    public static function getSuccessController($module) {
+    	$auth = self::getAclUtitlity()->getSuccessfulDispatch();
+    	var_dump($auth);
+    	$successController = NULL;
+    	if (isset($auth[$module]["controller"])) {
+    		$successController = $auth[$module]["controller"];
+    	}
+    	return $successController;
+    }
+    
+    public static function getSuccessAction($module) {
+    	$auth = self::getAclUtitlity()->getSuccessfulDispatch();
+    	$successAction = NULL;
+    	if (isset($auth[$module]["action"])) {
+    		$successAction = $auth[$module]["action"];
+    	}
+    	return $successAction;
+    }
+    
     public static function getOtherExclusiveActions($module) {
         $auth = self::getAclUtitlity()->getAuthentications();
         $actions = array();
