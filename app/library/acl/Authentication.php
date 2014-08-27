@@ -79,7 +79,6 @@ class Authentication {
     
     public static function getSuccessController($module) {
     	$auth = self::getAclUtitlity()->getSuccessfulDispatch();
-    	var_dump($auth);
     	$successController = NULL;
     	if (isset($auth[$module]["controller"])) {
     		$successController = $auth[$module]["controller"];
