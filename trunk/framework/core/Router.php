@@ -112,7 +112,8 @@ class Router {
 
             foreach ($qstringPieces as $key =>$value) {
                 $x = explode('=', $value);
-                $this->key_val_pairs[$x[0]] = $x[1];
+                $value = isset($x[1]) ? $x[1] : "";
+                $this->key_val_pairs[$x[0]] = $value;
                 $this->qstring_keys[$x[0]];
             }
             $keys = array_keys($_POST); //get form variables
