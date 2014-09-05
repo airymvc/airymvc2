@@ -13,6 +13,7 @@ class RouterUrlRewriter {
 			}
 			if (count($params) >= 2) {
 				for ($i=1; $i<count($params); $i=$i+2) {
+					 $params[$i+1] = isset($params[$i+1]) ? $params[$i+1] : NULL;
 					 $GETParams[$params[$i]] = $params[$i+1];
 				}
 			}
