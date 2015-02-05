@@ -16,7 +16,7 @@
 class DivContainer extends AbstractContainer{
 
 	/**
-	 * @property HTML div text
+	 * @var HTML div text
 	 */
     protected $_divText;
     

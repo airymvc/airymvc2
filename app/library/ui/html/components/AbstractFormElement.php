@@ -16,17 +16,17 @@
 class AbstractFormElement extends UIComponent{
     
     /**
-     * @property array $_attributes
+     * @var array $_attributes
      */
     protected $_attributes = array();
 
     /**
-     * @property string $_elementText
+     * @var string $_elementText
      */
     protected $_elementText;
     
     /**
-     * @property array $_decoration
+     * @var array $_decoration
      */
     protected $_decoration = null;
    

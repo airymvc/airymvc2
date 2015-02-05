@@ -21,13 +21,13 @@ require dirname(dirname(__FILE__)) . "/view/Layout.php";
 abstract class AbstractAccess {
 	
 	/**
-	 * @property mixed $_dbComponent
+	 * @var mixed $_dbComponent
 	 */
 	protected $_dbComponent;
 	
 	/**
 	 * The configuration array that is from the config.ini
-	 * @property array $dbConfigArray
+	 * @var array $dbConfigArray
 	 */
 	protected $dbConfigArray;
 

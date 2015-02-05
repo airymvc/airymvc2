@@ -22,17 +22,17 @@ require_once 'AbstractFormElement.php';
 class FieldElement extends AbstractFormElement{
 
 	/**
-	 * @property string $_label
+	 * @var string $_label
 	 */
     protected $_label;
     
     /**
-     * @property string $_label_id
+     * @var string $_label_id
      */
     protected $_label_id;
     
     /**
-     * @property string $_label_css
+     * @var string $_label_css
      */
     protected $_label_css;
     

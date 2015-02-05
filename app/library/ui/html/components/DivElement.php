@@ -16,12 +16,12 @@
 class DivElement extends AbstractFormElement{
 
 	/**
-	 * @property string $_innerHtml
+	 * @var string $_innerHtml
 	 */
     protected $_innerHtml;
     
     /**
-     * @property string $_id
+     * @var string $_id
      */
     private $_id;
     

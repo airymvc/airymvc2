@@ -24,62 +24,62 @@ class AclComponent {
 	const ACTION_POSTFIX = "Action";
 	
 	/**
-	 * @property object $_loginForm The form object is used for view.
+	 * @var object $_loginForm The form object is used for view.
 	 */
 	public $_loginForm;
 	
 	/**
-	 * @property string $_moduleName The module name.
+	 * @var string $_moduleName The module name.
 	 */
 	private $_moduleName;
 	
 	/**
-	 * @property string $_formId The form id.
+	 * @var string $_formId The form id.
 	 */
 	private $_formId;
 	
 	/**
-	 * @property string $_formName The form name.
+	 * @var string $_formName The form name.
 	 */
 	private $_formName;
 	
 	/**
-	 * @property string $_uidLabel The label of user id of the form.
+	 * @var string $_uidLabel The label of user id of the form.
 	 */
 	private $_uidLabel;
 	
 	/**
-	 * @property string $_pwdLabel The label of password of the form.
+	 * @var string $_pwdLabel The label of password of the form.
 	 */
 	private $_pwdLabel;
 	
 	/**
-	 * @property array $_formLayout An array saves form's layouts.
+	 * @var array $_formLayout An array saves form's layouts.
 	 */	
 	private $_formLayout = array();
 	
 	/**
-	 * @property string $_loginMsgId The login message id.
+	 * @var string $_loginMsgId The login message id.
 	 */
 	private $_loginMsgId;
 	
 	/**
-	 * @property object $_view The view object.
+	 * @var object $_view The view object.
 	 */
 	protected $_view;
 	
 	/**
-	 * @property array $params Save the parameters.
+	 * @var array $params Save the parameters.
 	 */
 	public $params = array();
 
 	/**
-	 * @property object $acDb The database object used for ACL.
+	 * @var object $acDb The database object used for ACL.
 	 */
 	protected $acDb;
 	
 	/**
-	 * @property array $acDbArray The array saves database objects that are used for ACL.
+	 * @var array $acDbArray The array saves database objects that are used for ACL.
 	 */
 	protected $acDbArray;
     

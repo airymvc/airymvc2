@@ -44,17 +44,17 @@ class LoginForm extends PostForm {
     const DEFAULT_LOEGIN_MESSAGE_ID = "system_login_message";
     
     /**
-     * @property string $_formDecoration
+     * @var string $_formDecoration
      */
     protected $_formDecoration;
     
     /**
-     * @property string $_formId
+     * @var string $_formId
      */
     protected $_formId;
     
     /**
-     * @property string $_loginMsgId
+     * @var string $_loginMsgId
      */
     protected $_loginMsgId;
  
