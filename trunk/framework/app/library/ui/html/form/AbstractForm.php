@@ -22,22 +22,22 @@ require_once dirname(__FILE__) . '/../UIComponent.php';
 class AbstractForm extends UIComponent{
 
 	/**
-	 * @property The HTML form attributes
+	 * @var The HTML form attributes
 	 */
     protected $_attributes = array();
     
 	/**
-	 * @property The elements that the form contains.
+	 * @var The elements that the form contains.
 	 */
     protected $_elements = array();
     
     /**
-     * @property The HTML form text
+     * @var The HTML form text
      */
     protected $_formText;
     
     /**
-     * @property The HTML form decoration.
+     * @var The HTML form decoration.
      */
     protected $_formDecoration;
     

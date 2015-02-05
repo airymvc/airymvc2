@@ -22,7 +22,7 @@ require_once 'AbstractFormElement.php';
 class RadioElement extends AbstractFormElement{
     
 	/**
-	 * @property string $_text
+	 * @var string $_text
 	 */
 	protected $_text;
             

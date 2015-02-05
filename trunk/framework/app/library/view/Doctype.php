@@ -32,7 +32,7 @@ class Doctype {
     
     /**
      * Array of doctypes.
-     * @property array $_doctypes
+     * @var array $_doctypes
      */
     private $_doctypes = array();
     

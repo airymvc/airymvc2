@@ -28,7 +28,7 @@ class TextAreaElement extends FieldElement{
     
 	/**
 	 * @see framework\app\library\ui\html\component\InputType
-	 * @property string $_type
+	 * @var string $_type
 	 */
     protected $_type  = InputType::TEXTAREA;
     

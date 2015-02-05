@@ -19,7 +19,7 @@ class AppView extends AbstractView{
         /**
          * This is the viewfilepath that will be used
          * 
-         * @property string $_viewFilePath
+         * @var string $_viewFilePath
          */
 	    public  $_viewFilePath;
         
@@ -27,7 +27,7 @@ class AppView extends AbstractView{
         /**
          * Variables that have been set to this view are saved in an array
          * 
-         * @property array $_variables
+         * @var array $_variables
          */
         protected $_variables;        
         
@@ -35,42 +35,42 @@ class AppView extends AbstractView{
          *
          * Determine if the plugins will be added
          * 
-         * @property Boolean $_hasScript Default value = false.
+         * @var Boolean $_hasScript Default value = false.
          */
         protected $_hasScript  = false;
         
         /**
          * Determine if the view si inside a layout. Default value = false.
          *
-         * @property Boolean $_inLayout
+         * @var Boolean $_inLayout
          */
         protected $_inLayout = false;
 
         /**
          * Save the language service object.
          *
-         * @property object $_languageService
+         * @var object $_languageService
          */        
         protected $_languageService;
         
         /**
          * Determine if the view has no doctype. Default value = false.
          *
-         * @property Boolean $_noDoctype
+         * @var Boolean $_noDoctype
          */
         protected $_noDoctype = false;
 
         /**
          * Save doctype value. Default value = NULL.
          *
-         * @property string $_doctype
+         * @var string $_doctype
          */
         protected $_doctype = NULL;
 
         /**
          * Save view script value. 
          *
-         * @property string $_viewScripts
+         * @var string $_viewScripts
          */
         protected $_viewScripts;
         

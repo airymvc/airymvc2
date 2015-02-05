@@ -15,23 +15,23 @@
 class FileCache {
 
 	/**
-	 * @property string $_cacheFolder
+	 * @var string $_cacheFolder
 	 */
     private $_cacheFolder;
     
     /**
-     * @property object $instance
+     * @var object $instance
      */
     private static $instance;
     //$lifetime is the overall cache lifetime, used when no key specific lifetime
     
     /**
-     * @property int $lifetime
+     * @var int $lifetime
      */
     private static $lifetime;
     
     /**
-     * @property array $cacheSpecificLifetime
+     * @var array $cacheSpecificLifetime
      */
     private static $cacheSpecificLifetime = array();
     

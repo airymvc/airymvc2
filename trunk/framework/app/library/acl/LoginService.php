@@ -15,7 +15,7 @@
 class LoginService {
 
 	/**
-	 *  @property object The instance of the class itself.
+	 *  @var object The instance of the class itself.
 	 */
     private static $instance; 
     

@@ -17,12 +17,12 @@ class HtmlScript extends UIComponent{
 	
 	/**
 	 * HTML text
-	 * @property string $_html
+	 * @var string $_html
 	 */
     protected $_html;
     
     /**
-     * @property string $_id
+     * @var string $_id
      */
     private $_id;
 

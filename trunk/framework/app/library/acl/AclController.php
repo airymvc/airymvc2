@@ -15,18 +15,18 @@
 class AclController extends AbstractController {
 
 	/**
-	 * @property object $_loginForm
+	 * @var object $_loginForm
 	 */
     protected $_loginForm;
     
     /**
-     * @property string $_loginFormVariableName
+     * @var string $_loginFormVariableName
      */
     protected $_loginFormVariableName;
     
     /**
      * The ACL object.
-     * @property object $_acl
+     * @var object $_acl
      */
     protected $_acl;
 

@@ -15,12 +15,12 @@
 abstract class AbstractModel {
     
     /**
-     * @property object $db Database object. 
+     * @var object $db Database object. 
      */
     public $db;
 
     /**
-     * * @property object $multiDb Array of database objects. 
+     * * @var object $multiDb Array of database objects. 
      */
     public $multiDb = array();
     

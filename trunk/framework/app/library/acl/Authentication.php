@@ -25,12 +25,12 @@ class Authentication {
     const LOGOUT = "logout";
     
     /**
-     * @property array $layoutAllows
+     * @var array $layoutAllows
      */
     public static $layoutAllows = array();
     
     /**
-     * @property string $aclXml The acl xml file.
+     * @var string $aclXml The acl xml file.
      */    
     public static $aclXml;
     

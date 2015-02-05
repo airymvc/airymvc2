@@ -18,7 +18,7 @@ class PathService {
 	/**
 	 * The instance of the class itself
 	 *
-	 * @property object $instance the instance
+	 * @var object $instance the instance
 	 */
     private static $instance;
     

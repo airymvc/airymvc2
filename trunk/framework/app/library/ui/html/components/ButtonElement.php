@@ -23,7 +23,7 @@ class ButtonElement extends AbstractFormElement{
 
 	/**
 	 * @see framework\app\library\ui\html\component\InputType
-	 * @property string $_type
+	 * @var string $_type
 	 */
     protected $_type  = InputType::BUTTON;
     
