@@ -1,25 +1,24 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
 /**
- * Description of Ini
+ * This contains the autoload function to auto loading the object.
  *
- * @author Hung-Fu Aaron Chang
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 set_include_path(get_include_path() . PATH_SEPARATOR . "core");
 
+/**
+ * The auto load function
+ * 
+ * @param object $object the class that will be auto load
+ */
 function __autoload($object)
 {  
 	require_once("{$object}.php");

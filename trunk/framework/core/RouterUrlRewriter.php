@@ -1,4 +1,18 @@
 <?php
+/**
+ * AiryMVC Framework
+ *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ * @author: Hung-Fu Aaron Chang
+ */
+/**
+ * This helper class is used for composing the data that Router needs.
+ *
+ * @filesource
+ * @package framework\core\RouterUrlRewriter
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class RouterUrlRewriter {
 	
 	public function remapGetAndPost($actionKeyword) {

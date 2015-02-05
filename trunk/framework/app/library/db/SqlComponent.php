@@ -1,18 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This abstract class is used for composing each kind of the SQL statement.
+ *
+ * @filesource
+ * @package framework\app\library\db\SqlComponent
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 abstract class SqlComponent {
 
 
@@ -38,18 +38,25 @@ abstract class SqlComponent {
     protected $openIdentifier  = "";
     protected $closeIdentifier = "";
     
-    
+    /**
+     * Set the config array according to the database id value.
+     * @see SqlComponent::setConfig()
+     * @param int $databaseId
+     */
     public function setConfigById($databaseId = 0) {
     	$config = Config::getInstance();
     	$configArray = $config->getDBConfig();
     	$this->setConfig($configArray[$databaseId]);
     }
-    
+    /**
+     * @param array $configArray
+     */
     public function setConfig($configArray) {
     	$this->dbConfigArray = $configArray;
     }
 
-    /*
+    /**
+     * @example
      * array (op of 'AND' or 'OR', array (op of 'like' or '=', array of (column => value)))
      * EX: array("AND"=>array("="=>array(field1=>value1, field2=>value2), ">"=>array(field3=>value3)))
      *     array(""=>array("="=>array(field1=>value1)))
@@ -57,8 +64,9 @@ abstract class SqlComponent {
      * 
      * if it is after a inner join, should use "table.field1=>value1"
      * 
+     * @param array|string $condition
+     * @return SqlComponent
      */
-
     public function where($condition) {
 
     	$this->wherePart = " WHERE ";
@@ -70,12 +78,19 @@ abstract class SqlComponent {
         return $this;
 
     }
-    
+     /**
+      * @param string $condition
+      * @return string
+      */
     protected function composeWhereByString($condition) {
     	$condition = $this->sqlEscape($condition);
     	return "({$condition})";
     }
-    
+    /**
+     * @param array $condition
+     * @throws AiryException
+     * @return string
+     */
     protected function composeWhereByArray($condition) {
     	$wherePart = "";
         $ops = array_keys($condition);
@@ -116,7 +131,15 @@ abstract class SqlComponent {
         return $wherePart;    	
     }
     
-    
+    /**
+     * 
+     * @param string $whereString
+     * @param string $fieldKey
+     * @param array $fieldArray
+     * @param string $relationalOperator
+     * @param string $operator
+     * @return string
+     */
     protected function attachWhere($whereString, $fieldKey, $fieldArray, $relationalOperator, $operator = null) {
         $pos = strpos($fieldKey, '.');
         $operator = is_null($operator) ? "" : strtoupper($operator);
@@ -136,21 +159,30 @@ abstract class SqlComponent {
         return $whereString;    	
     }
     
-    
+    /**
+     * @param string $opString
+     * @return SqlComponent
+     */
     public function andWhere($opString) {
     	$opString = $this->sqlEscape($opString);
     	$opString = " AND ({$opString})";
     	$this->wherePart .= $opString; 
     	return $this;  	
     }
-    
+    /**
+     * @param string $opString
+     * @return SqlComponent
+     */
     public function orWhere($opString) {
     	$opString = $this->sqlEscape($opString);
     	$opString = " OR ({$opString})";
     	$this->wherePart .= $opString; 
     	return $this;    	
     }
-
+	/**
+	 * @param string $in
+	 * @return SqlComponent 
+	 */
     public function inWhere($in) {
     	$opString = " IN ({$in})";
     	$this->wherePart .= $opString; 
@@ -158,7 +190,7 @@ abstract class SqlComponent {
     }
 
     /**
-     * EX: innerJoinOn ("tableName", "tableName.Key = to_be_Join_tableName.Key") 
+     * @example innerJoinOn ("tableName", "tableName.Key = to_be_Join_tableName.Key") 
      * 
      * @param string $table
      * @param string $condition
@@ -170,6 +202,10 @@ abstract class SqlComponent {
         return $this;
     }
     
+    /**
+     * Get JOIN ON part text
+     * @return string
+     */
     public function getJoinOn() {
     	$joinOnString = "";
     	foreach ($this->joinOnParts as $i => $joinOn) {
@@ -178,7 +214,13 @@ abstract class SqlComponent {
     	return $joinOnString;
     }
 
-
+    /**
+     * Compose the SELECT part of the SQL query.
+     * @param array $columns
+     * @param string $table
+     * @param string $distinct
+     * @return object The instance itself.
+     */
     public function select($columns, $table, $distinct = null) {
         $this->queryType = "SELECT";
         if (is_null($distinct)) {
@@ -196,6 +238,13 @@ abstract class SqlComponent {
         return $this;
     }
     
+    /**
+     * 
+     * @param string $selectString
+     * @param array $columns
+     * @param string $table
+     * @return string
+     */
     protected function composeSelectByArray($selectString, $columns, $table) {
     	$selectPart = $selectString;
         foreach ($columns as $index => $col) {
@@ -208,16 +257,25 @@ abstract class SqlComponent {
         return $selectPart;  	
     }
     
+    /**
+     *
+     * @param string $selectString
+     * @param array $columns
+     * @param string $table
+     * @return string
+     */    
     protected function composeSelectByString($selectString, $columnString, $table) {
     	$selectPart = $selectString . $columnString ." FROM {$this->openIdentifier}" . $table . "{$this->closeIdentifier}";
     	return $selectPart;
     }
 
-    /*
-     * $table @string : the name of the table
-     * $columns @array : the columns array(column_name => column_value, column_name1 => column_value1)
-     */
 
+    /**
+     * Compose the DELETE SQL query.
+     * @param string $table The name of the table.
+     * @param array $columns The columns array(column_name => column_value, column_name1 => column_value1)
+     * @return SqlComponent
+     */
     public function update($columns, $table) {
         $this->queryType = "UPDATE";
         $this->updatePart = "UPDATE {$this->openIdentifier}" . $table . "{$this->closeIdentifier} SET ";
@@ -237,13 +295,12 @@ abstract class SqlComponent {
         return $this;
     }
 
-    /*
-     * $table @string : the name of the table
-     * $columns @array : the columns array(column_name => column_value, column_name1 => column_value1)
-     * 
-     * $keywords like TIMESTAMP, it needs to be taken care of 
-     */
+    /**
 
+     * @param array $columns The columns array(column_name => column_value, column_name1 => column_value1) $keywords like TIMESTAMP, it needs to be taken care of 
+     * @param string $table The name of the table
+     * @return SqlComponent
+     */
     public function insert($columns, $table) {
         $this->queryType = "INSERT";
         $this->insertPart = "INSERT INTO " . $table . " ( ";
@@ -277,10 +334,11 @@ abstract class SqlComponent {
         return $this;
     }
 
-    /*
-     * $table @string : the name of the table
+    /**
+     * Compose the DELETE SQL query.
+     * @param string $table
+     * @return SqlComponent
      */
-
     public function delete($table) {
         $table = $this->sqlEscape($table);
         $this->queryType = "DELETE";
@@ -288,11 +346,11 @@ abstract class SqlComponent {
         return $this;
     }
 
-    /*
-     *  $offset @int
-     *  $interval @int
+    /**
+     * @param int $offset 
+     * @param int $interval
+     * @return SqlComponent
      */
-
     public function limit($offset, $interval) {
 
     	$this->limitPart = "";    	
@@ -310,11 +368,11 @@ abstract class SqlComponent {
         return $this;
     }
 
-    /*
-     *  $column @string: column name in the database
-     *  $if_desc @int: null or 1
+    /**
+     * @param string $column Column name in the database.
+     * @param int $if_desc NULL or 1.
+     * @return SqlComponent
      */
-
     public function orderBy($column, $ifDesc = NULL) {
     	$this->orderPart = "";
         $desc = "";
@@ -325,8 +383,9 @@ abstract class SqlComponent {
         return $this;
     }
     
-    /*
-     *  $column @string: column name in the database
+    /**
+     * @param string $column Column name in the database.
+     * @return SqlComponent
      */
     public function groupBy($column) {
     	$this->groupPart = "";
@@ -338,14 +397,14 @@ abstract class SqlComponent {
     public function execute() {}
 
     /**
-     * @return the $dbConfigArray
+     * @return array $dbConfigArray
      */
     public function getdbConfigArray() {
         return $this->dbConfigArray;
     }
 
     /**
-     * @return the $queryStmt
+     * @return string $queryStmt
      */
     public function getStatement() {
         //Combine every part of the query statement
@@ -387,10 +446,10 @@ abstract class SqlComponent {
         return $queryStmt;
     }    
  
-    /**
-     * Deprecated method 
-     */
-    
+   /**
+ 	* 
+ 	* @deprecated Not suggested to use.
+ 	*/
     public function getSelectStatement(){
         if ($this->queryType != "SELECT") {
             return null;
@@ -400,7 +459,9 @@ abstract class SqlComponent {
                            . $this->wherePart . $this->groupPart . $this->orderPart . $this->limitPart;         
         return $this->selectStatement;
     }
-    
+    /**
+     * Clean all the query.
+     */
     public function cleanAll(){
         $this->queryType  = "";
         $this->selectPart = "";
@@ -417,14 +478,15 @@ abstract class SqlComponent {
     }
 
     /**
-     * @param field_type $dbConfigArray
+     * 
+     * @param array $dbConfigArray
      */
     public function setdbConfigArray($dbConfigArray) {
         $this->dbConfigArray = $dbConfigArray;
     }
 
     /**
-     * @param field_type $queryStmt
+     * @param string $queryStmt
      */
     public function setStatement($queryStmt) {
         $this->queryStmt = $queryStmt;
@@ -436,96 +498,96 @@ abstract class SqlComponent {
     //The following getter is for unit tests
     
 	/**
-	 * @return the $selectPart
+	 * @return string $selectPart
 	 */
 	public function getSelectPart() {
 		return $this->selectPart;
 	}
 
 	/**
-	 * @return the $updatePart
+	 * @return string $updatePart
 	 */
 	public function getUpdatePart() {
 		return $this->updatePart;
 	}
 
 	/**
-	 * @return the $deletePart
+	 * @return string $deletePart
 	 */
 	public function getDeletePart() {
 		return $this->deletePart;
 	}
 
 	/**
-	 * @return the $insertPart
+	 * @return string $insertPart
 	 */
 	public function getInsertPart() {
 		return $this->insertPart;
 	}
 
 	/**
-	 * @return the $joinPart
+	 * @return string $joinPart
 	 */
 	public function getJoinPart() {
 		return $this->joinPart;
 	}
 
 	/**
-	 * @return the $joinOnPart
+	 * @return string $joinOnPart
 	 */
 	public function getJoinOnPart() {
 		return $this->joinOnPart;
 	}
 
 	/**
-	 * @return the $wherePart
+	 * @return string $wherePart
 	 */
 	public function getWherePart() {
 		return $this->wherePart;
 	}
 
 	/**
-	 * @return the $orderPart
+	 * @return string $orderPart
 	 */
 	public function getOrderPart() {
 		return $this->orderPart;
 	}
 
 	/**
-	 * @return the $groupPart
+	 * @return string $groupPart
 	 */
 	public function getGroupPart() {
 		return $this->groupPart;
 	}
 
 	/**
-	 * @return the $limitPart
+	 * @return string $limitPart
 	 */
 	public function getLimitPart() {
 		return $this->limitPart;
 	}
 	/**
-	 * @return the $closeIdentifier
+	 * @return string $closeIdentifier
 	 */
 	public function getCloseIdentifier() {
 		return $this->closeIdentifier;
 	}
 
 	/**
-	 * @param field_type $closeIdentifier
+	 * @param string $closeIdentifier
 	 */
 	public function setCloseIdentifier($identifier) {
 		$this->closeIdentifier = $identifier;
 	}
 	/**
-	 * @return the $openIdentifier
+	 * @return string $openIdentifier
 	 */
 	public function getOpenIdentifier() {
 		return $this->openIdentifier;
 	}
 
 	/**
-	 * @param field_type $openIdentifier
+	 * @param string $openIdentifier
 	 */
 	public function setOpenIdentifier($identifier) {
 		$this->openIdentifier = $identifier;

@@ -1,19 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
- * 
  */
 
+/**
+ * This class handles all the dispatch rules and dispatch to the target action.
+ *
+ * @package framework\core\Dispatcher
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Dispatcher{  
 	
     const ALL_CONTROLLERS = "ALL_CONTROLLERS";
@@ -25,6 +24,11 @@ class Dispatcher{
     
     private static $theController;
 
+    /**
+     * This method forward to the action.
+     *
+     * @param object $router the instance of the Router class.
+     */
     public static function dispatchMVC($router) {
     	$moduleName = $router->getModuleName();
     	$params = $router->getParams();
@@ -33,7 +37,11 @@ class Dispatcher{
     	Dispatcher::forward($moduleName, $controllerName, $actionName, $params, $router);
     }
     
-        
+    /**
+     * This method forward to the action.
+     *
+     * @param object $Router the instance of the Router class.
+     */        
 	public static function dispatch($Router) {     		
 		$moduleName = $Router->getModuleName();  
 		$params = $Router->getParams(); 
@@ -44,7 +52,18 @@ class Dispatcher{
         Dispatcher::forward($moduleName, $controllerName, $actionName, $params); 
         session_write_close(); 
 	}
-    //TODO: need to refactor forward method
+
+	/**
+	 * The forward function is to call the action according to the module, controller and action.
+	 * The function needs to consider all the forward restrictions and rules.
+	 *
+	 * @param string $moduleName the forwarding module name
+	 * @param string $controllerName the forwarding controller name
+	 * @param string $actionName the forwarding action name
+	 * @param array  $params the url params
+	 * @param object $router an instance of Router the default value = null
+	 * 
+	 */
 	public static function forward($moduleName, $controllerName, $actionName, $params, $router = null)  
 	{  
          $Router = is_null($router) ? new Router() : $router;
@@ -159,7 +178,20 @@ class Dispatcher{
 			}
 		} 
 	}
-	        
+
+	/**
+	 * The method sets or initializes module, controller, action, params, view variables and layout
+	 *
+	 * @param string  $controller the controller name that is initialized.
+	 * @param string  $action the forwarding action name
+	 * @param array   $viewVariables the view variables
+	 * @param array   $params the url params
+	 * @param boolean $inLayout if the view is in a layout
+	 * 
+	 * @return object the instance of the controller
+	 * 
+	 * @throws AiryException
+	 */
 	private static function toMVC($controller, $action, $params, $viewVariables = null, $inLayout = FALSE)  {
 		//Take out global, not use
        	self::$theController = new $controller();   
@@ -180,7 +212,15 @@ class Dispatcher{
         }    
         return self::$theController;
     }
-    
+
+    /**
+     * The method sets default views and action
+     *
+     * @param string  $moduleName the module name
+     * @param string  $controllerName the  action name
+     * @param string  $actionName the action name 
+     * 
+     */
     private static function setRoute($moduleName, $controllerName, $actionName) {
     	$router = new Router();
     	$router->removeDefaultActionView();

@@ -1,19 +1,17 @@
 <?php
 /**
- * AiryMVC Framework  -- AiryException
+ * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
- * 
  */
-
-
+/**
+ * This handles the exception about the framework.
+ *
+ * @package framework\app\library\error\AiryException
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class AiryException extends Exception{
 
 	public function __construct($message = '', $code = 0, Exception $previous = null) {

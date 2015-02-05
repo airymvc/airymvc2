@@ -1,18 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This handles the MYSQL database using PDO connection.
+ *
+ * @filesource
+ * @package framework\app\library\db\PdoMssqlComponent
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class PdoMysqlComponent extends PdoSqlComponent {
 	
     function __construct() {

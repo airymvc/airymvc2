@@ -2,16 +2,16 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This interface for database access.
+ *
+ * @package framework\app\library\db\DbAccessInterface
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 interface DbAccessInterface {
 	
     public function select($columns, $table, $distinct = 0);

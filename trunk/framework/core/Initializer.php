@@ -1,23 +1,25 @@
 <?php
 /**
  * AiryMVC Framework
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * 
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * This class handles all the path variables that need to be initialized.
+ *
+ * @package framework\core\Initializer
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Initializer {
 	
 	const FILECACHE = "initialize_include_file";
 
     /**
-     * This initialize those include path 
+     * This initialize those include path.
+     * 
      */
     public static function initialize() {
 
@@ -96,38 +98,37 @@ class Initializer {
     }
     
     /**
-     * The input folder will be recursively loop throught and save the folder into an array
+     * The input folder will be recursively loop throught and save the folder into an array.
      * 
-     * @param string $directory
-     * @param boolean $recursive
-     * @return array 
+     * @param string $directory the root directory.
+     * @param boolean $recursive sets if the function recursively fetches the directories.
+     * 
+     * @return array all the directories.
      */    
     public static function getDirectory($directory, $recursive) {
-	$array_items = array();
+		$array_items = array();
         $ignore = array('.', '..', '.svn', '.DS_Store');
-	if ($handle = opendir($directory)) {
-		while (false !== ($file = readdir($handle))) {
-			if (!in_array($file, $ignore)) {
-				if (is_dir($directory. DIRECTORY_SEPARATOR . $file)) {
-					if($recursive) {
-						$array_items = array_merge($array_items, Initializer::getDirectory($directory. DIRECTORY_SEPARATOR . $file, $recursive));
+		if ($handle = opendir($directory)) {
+			while (false !== ($file = readdir($handle))) {
+				if (!in_array($file, $ignore)) {
+					if (is_dir($directory. DIRECTORY_SEPARATOR . $file)) {
+						if($recursive) {
+							$array_items = array_merge($array_items, Initializer::getDirectory($directory. DIRECTORY_SEPARATOR . $file, $recursive));
+						}
+						$file = $directory . DIRECTORY_SEPARATOR . $file;
+	                                        if (DIRECTORY_SEPARATOR == "\\") {
+	                                            $array_items[] = preg_replace("/\\\\/si", DIRECTORY_SEPARATOR, $file);
+	                                        } else {
+	                                            $array_items[] = preg_replace("/\/\//si", DIRECTORY_SEPARATOR, $file);
+	                                        }
+
 					}
-					$file = $directory . DIRECTORY_SEPARATOR . $file;
-                                        if (DIRECTORY_SEPARATOR == "\\") {
-                                            $array_items[] = preg_replace("/\\\\/si", DIRECTORY_SEPARATOR, $file);
-                                        } else {
-                                            $array_items[] = preg_replace("/\/\//si", DIRECTORY_SEPARATOR, $file);
-                                        }
-                                            
-                                                                   
-					
 				}
 			}
+			closedir($handle);
 		}
-		closedir($handle);
+		return $array_items;
 	}
-	return $array_items;
-}
 
 }
 

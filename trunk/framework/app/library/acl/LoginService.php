@@ -1,28 +1,27 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
 /**
- * Description of LoginSessionService
+ * This is the service that handle for authentication (login) related function.
  *
- * @author Hung-Fu Aaron Chang
+ * @package framework\app\library\acl\LoginService
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class LoginService {
-    
+
+	/**
+	 *  @property object The instance of the class itself.
+	 */
     private static $instance; 
+    
     /**
      *  Use Singleton pattern here
+     *  @return object The instance of the class itself.
      */
     public static function getInstance()
     {
@@ -31,13 +30,14 @@ class LoginService {
         }    
         
         return self::$instance;
-    }    
+    }  
+      
     /**
-     *
-     * @param String $moduleName
-     * @return String uid 
+     * Get the user id.
+     * @param string $moduleName The default value = NULL
+     * @return string The user id value inside the session.
      */
-    public function getLoginUserId($moduleName = null)
+    public function getLoginUserId($moduleName = NULL)
     {
         if (!is_null($moduleName)) {
             return $_SESSION[$moduleName][Authentication::UID];
@@ -47,6 +47,12 @@ class LoginService {
         return $_SESSION[$currentModuleName][Authentication::UID];
         
     }
+    
+    /**
+     * Get the user id.
+     * @param string $moduleName The default value = NULL
+     * @return string The encrypted user id value in the session.
+     */
     public function getEncryptLoginUserId ($moduleName = null){
         if (!is_null($moduleName)) {
             return $_SESSION[$moduleName][Authentication::ENCRYPT_UID];
@@ -55,6 +61,12 @@ class LoginService {
         $currentModuleName = MvcReg::getModuleName();
         return $_SESSION[$currentModuleName][Authentication::ENCRYPT_UID];        
     }
+    
+    /**
+     * Get the value for checking if the user is logined.
+     * @param string $moduleName The default value = NULL
+     * @return string The isLogin value in the session.
+     */
     public function isLogin($moduleName = null)
     {
         if (!is_null($moduleName)) {
@@ -64,9 +76,11 @@ class LoginService {
         $currentModuleName = MvcReg::getModuleName();
         return $_SESSION[$currentModuleName][Authentication::UID];        
     }
+    
     /**
-     * setLogin : Save the session data with uid, moduleName
-     * @params: String $uid, String $moduleName
+     * setLogin - save the session data with uid, moduleName
+     * @param string $uid
+     * @param string $moduleName
      */
     public function setLogin($moduleName, $uid) {
 

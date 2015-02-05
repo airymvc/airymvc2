@@ -1,18 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This handles the database access and each kind of the SQL statement.
+ *
+ * @filesource
+ * @package framework\app\library\db\MongoDbAccess
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class MongoDbAccess implements DbAccessInterface {
 	
 	//component part
@@ -33,7 +33,11 @@ class MongoDbAccess implements DbAccessInterface {
 	protected $limitPart;
 	protected $offsetPart;
 	protected $queryType;
-	    
+	
+	/**
+	 * @param int $databaseId
+	 * @param string $iniFile
+	 */
     public function config($databaseId = 0, $iniFile = null) {
     	$config = Config::getInstance();
     	if (!is_null($iniFile)) {
@@ -44,51 +48,75 @@ class MongoDbAccess implements DbAccessInterface {
     	$this->setComponent($configArray[$databaseId]);
     }
     
+    /**
+     * @param array $config
+     */
     public function setDbConfig($config) {
     	$this->dbConfigArray = $config;
     }
     
+    /**
+     * 
+	 * @example
+	 * 
+	 * mongodb://[username:password@]host1[:port1][,host2[:port2:],...]/db
+	 * 
+	 * The connection string always starts with mongodb://, to indicate it is a connection string in this form.
+	 * If username and password are specified, the constructor will attempt to authenticate the connection 
+	 * with the database before returning. Username and password are optional and must be followed by an @, if specified.
+	 * 
+     * @param array $config
+     */
     public function setComponent($config) {
 		$host = $config['host'];
 		$userPassword = "{$config['id']}:{$config['pwd']}@";
 		$dbStr = $config['database'];
-		
-		/**
-		 * mongodb://[username:password@]host1[:port1][,host2[:port2:],...]/db
-		 * 
-		 * The connection string always starts with mongodb://, to indicate it is a connection string in this form.
-		 * If username and password are specified, the constructor will attempt to authenticate the connection 
-		 * with the database before returning. Username and password are optional and must be followed by an @, if specified.
-		 * 
-		 */
 		$connection = "mongodb://{$userPassword}{$host}/";
 		$this->setMongoClient($connection);
 		$this->database = $this->mongoClient->$dbStr;
     }
     
-    
-    
     //The default MongoClient methods
+    
+    /**
+     * @param string $connection
+     */
     public function setMongoClient($connection) {
     	$this->mongoClient = new MongoClient($connection);
     }
     
+    /**
+     * Get the connection.
+     */
     public function getConnections() {
     	return $this->mongoClient->getConnections();
     }
     
+    /**
+     * Get the hosts.
+     */
     public function getHosts() {
     	return $this->mongoClient->getHosts();
     }
     
+    /**
+     * Get the read preference.
+     */
     public function getReadPreference() {
     	return $this->mongoClient->getReadPreference();
     }
     
+    /**
+     * Get the write concern.
+     */
     public function getWriteConcern() {
     	return $this->mongoClient->getWriteConcern();
     }
     
+    /**
+     * @param object $serverHash
+     * @param int $id
+     */
     public function killCursor($serverHash, $id) {
     	return $this->mongoClient->killCursor ($serverHash, $id);
     }
@@ -126,6 +154,7 @@ class MongoDbAccess implements DbAccessInterface {
      * @param string $collection
      * @param array $columns
      * @param array $criteria
+     * @return object Query result.
      */
     public function find($collection, $columns, $criteria) {
     	$dbConnection = $this->database->$collection;
@@ -138,6 +167,7 @@ class MongoDbAccess implements DbAccessInterface {
      * @param string $collection
      * @param array $columns
      * @param array $criteria
+     * @return object Query result.
      */
     public function findOne($collection, $columns, $criteria) {
     	$dbConnection = $this->database->$collection;
@@ -145,8 +175,10 @@ class MongoDbAccess implements DbAccessInterface {
     }
     
     /**
+     * @example
      * findAndModify ( array $query [, array $update [, array $fields [, array $options ]]] )
-     * ex:
+     * 
+     * @example
      * array('$set' => array('inprogress' => true, "started" => new MongoDate())), 
      * 						 null, 
      *                       array("sort" => array("priority" => -1), "new" => true)
@@ -154,6 +186,7 @@ class MongoDbAccess implements DbAccessInterface {
      * @param string $collection
      * @param array $update
      * @param array $criteria
+     * @return object Query result.
      */
     public function findAndModify($collection, $update, $criteria) {
     	$dbConnection = $this->database->$collection;
@@ -243,10 +276,14 @@ class MongoDbAccess implements DbAccessInterface {
     	$this->updatePart = array('$set' => $columns);
     	return $this;
     }
-    
-    /**
-     * $collection @string : the name of the table
-     */
+
+	/**
+	 * @see DbAccessInterface::delete()
+	 * @param string $collection
+	 * @param string $where
+	 * @param array $options
+	 * @return MongoDbAccess
+ 	 */
     public function delete($collection, $where = NULL, $options = NULL) {
     	if (!is_null($where)) {
     		$dbConnection = $this->database->$collection;
@@ -262,8 +299,7 @@ class MongoDbAccess implements DbAccessInterface {
     }
     
     /**
-     *  $offset @int
-     *  $interval @int
+     * @see DbAccessInterface::limit()
      */
     public function limit($offset, $interval) {
     	$this->limitPart = $interval;
@@ -276,6 +312,7 @@ class MongoDbAccess implements DbAccessInterface {
      * @param string $collection: like table in sql database
      * @param boolean $directly: true for insert directly with using execute, 
      * 							 false need to call execute
+     * @return MongoDbAccess
      */
     public function insert($document, $collection, $directly = false, $options = NULL) {
     	if ($directly) {
@@ -293,9 +330,9 @@ class MongoDbAccess implements DbAccessInterface {
 
     }
     
-    /*
-     *  $column @string: column name in the database
-     *  $if_desc @int: null or 1
+    /**
+     * (non-PHPdoc)
+     * @see DbAccessInterface::orderBy()
      */
     public function orderBy($column, $ifDesc = NULL) {
     	$this->orderPart = array($column => 1);
@@ -349,8 +386,8 @@ class MongoDbAccess implements DbAccessInterface {
     }
     
     /**
-     * aggregate each sql part and execute the command
-     * @return multitype:multitype:
+     * Aggregate each SQL statement part and execute the command
+     * @return multitype
      */
     public function execute() {
     	$table = $this->dbCollection;
@@ -384,7 +421,9 @@ class MongoDbAccess implements DbAccessInterface {
                 break;
         }
     }
-    
+    /**
+     * Clean all kinds of the SQL statement
+     */
     public function cleanAll(){
     	$this->queryType    = NULL;
     	$this->selectPart   = NULL;
@@ -400,22 +439,39 @@ class MongoDbAccess implements DbAccessInterface {
 
     //unsupport methods
     //TODO: to have a better way to resolve these methods
+    
+    /**
+     * (non-PHPdoc)
+     * @see DbAccessInterface::andWhere()
+     */
     public function andWhere($opString) {
     	return $this->where($condition);
     }
-    
+    /**
+     * (non-PHPdoc)
+     * @see DbAccessInterface::orWhere()
+     */
     public function orWhere($opString) {
     	return $this->where($condition);
     }
-    
+    /**
+     * (non-PHPdoc)
+     * @see DbAccessInterface::inWhere()
+     */
     public function inWhere($in) {
     	return $this->where($condition);
     }
-    
+    /**
+     * (non-PHPdoc)
+     * @see DbAccessInterface::innerJoinOn()
+     */
     public function innerJoinOn($table, $condition) {
     	return $this;
     }
-    
+    /**
+     * (non-PHPdoc)
+     * @see DbAccessInterface::groupBy()
+     */
     public function groupBy($column) {
     	return $this;
     }

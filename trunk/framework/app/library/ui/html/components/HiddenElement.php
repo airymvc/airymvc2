@@ -1,28 +1,35 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\component\FieldElement
+ */
 require_once 'FieldElement.php';
+
+/**
+ * @see framework\app\library\ui\html\component\InputType
+ */
 require_once 'InputType.php';
 
 /**
- * Description of HiddenElement
+ * The input hidden field
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\html\component\HiddenElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class HiddenElement extends FieldElement{
-    //put your code here
+
+	/**
+	 * @see framework\app\library\ui\html\component\InputType
+	 * @property string $_type
+	 */
     protected $_type = InputType::HIDDEN;
     
     public function __construct($id)

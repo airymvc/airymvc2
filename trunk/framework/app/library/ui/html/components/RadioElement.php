@@ -1,29 +1,37 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\component\AbstractFormElement
+ */
 require_once 'AbstractFormElement.php';
 
+/**
+ * The fieldset html UI component
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\component\AbstractFormElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class RadioElement extends AbstractFormElement{
-    //put your code here
+    
+	/**
+	 * @property string $_text
+	 */
+	protected $_text;
+            
     public function __construct($id)
     {
         $this->setId($id);
         $this->setAttribute("type", InputType::RADIO);
     }
-    protected $_text;
-    
+
     /**
      * Same as setText method for consistency (TextElement, TextAreaElement)
      * @param string $text
@@ -33,11 +41,17 @@ class RadioElement extends AbstractFormElement{
     	$this->setText($text);
     }
     
+    /**
+     * @param string $text
+     */
     public function setText($text)
     {
         $this->_text    = $text;
     }
     
+    /**
+     * @see AbstractFormElement::render()
+     */
     public function render()
     {
         $insert = "";

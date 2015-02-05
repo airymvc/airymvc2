@@ -1,24 +1,25 @@
 <?php
-
 /**
- * AiryMVC Framework - AppView
+ * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+
+/**
+ * This is the controller class that is used for intializing the instance and set variables.
+ *
+ * @package framework\app\AppView
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class AppView extends AbstractView{
 
         /**
          * This is the viewfilepath that will be used
          * 
-         * @var string 
+         * @property string $_viewFilePath
          */
 	    public  $_viewFilePath;
         
@@ -26,7 +27,7 @@ class AppView extends AbstractView{
         /**
          * Variables that have been set to this view are saved in an array
          * 
-         * @var array 
+         * @property array $_variables
          */
         protected $_variables;        
         
@@ -34,21 +35,45 @@ class AppView extends AbstractView{
          *
          * Determine if the plugins will be added
          * 
-         * @var Boolean 
+         * @property Boolean $_hasScript Default value = false.
          */
         protected $_hasScript  = false;
         
+        /**
+         * Determine if the view si inside a layout. Default value = false.
+         *
+         * @property Boolean $_inLayout
+         */
         protected $_inLayout = false;
-        
-        //protected $_path;
-        
+
+        /**
+         * Save the language service object.
+         *
+         * @property object $_languageService
+         */        
         protected $_languageService;
         
+        /**
+         * Determine if the view has no doctype. Default value = false.
+         *
+         * @property Boolean $_noDoctype
+         */
         protected $_noDoctype = false;
-        
+
+        /**
+         * Save doctype value. Default value = NULL.
+         *
+         * @property string $_doctype
+         */
         protected $_doctype = NULL;
-        
+
+        /**
+         * Save view script value. 
+         *
+         * @property string $_viewScripts
+         */
         protected $_viewScripts;
+        
         
 		public function __construct()
 		{
@@ -64,8 +89,15 @@ class AppView extends AbstractView{
 		}	
         
         /**
+         * This method render the view.
          *
          * @throws Exception 
+		 * @var  $httpServerHost absolute host url.
+		 * @var  $serverHost absolute host path.
+		 * @var  $ABSOLUTE_URL absolute host url.
+		 * @var  $SERVER_HOST absolute host path.
+		 * @var  $LEAD_FILENAME leading filename ex: index.php.
+		 * 
          */
 		public function render() {
            try {
@@ -84,10 +116,7 @@ class AppView extends AbstractView{
                             }         
                         }
                     }
-                    /**
-                     * Deprecated
-                     * @TODO: change to all upper case variables 
-                     */                        
+                       
                     $httpServerHost   = PathService::getAbsoluteHostURL();
                     $serverHost       = PathService::getAbsoluteHostPath();
                     
@@ -144,24 +173,39 @@ class AppView extends AbstractView{
 	
 
 		/**
+		 * This method gets the view file path.
+		 * 
 	 	 * @return the $viewfilepath
 	 	 */
 		public function getViewfilepath() {
 			return $this->_viewFilePath;
 		}
 
-
+		/**
+		 * This method set the view variables. The same as setVar method.
+		 * @see setVar method
+		 *
+		 * @param string $variableName
+		 * @param object $value
+		 */
         public function setVariable($variableName, $value) {
               $this->_variables[$variableName] = $value;
         }
         
-        
+		/**
+		 * This method set the view variables. The same as setVariable method.
+		 *
+		 * @param string $variableName
+		 * @param object $value
+		 */       
         public function setVar($variableName, $value) {
               $this->_variables[$variableName] = $value;
         }
         
 		/**
-	 	 * @param field_type $viewfilepath
+		 * This method set the view file path.
+		 * 
+	 	 * @param string $viewFilePath
 	 	 */
 		public function setViewFilePath($viewFilePath) {
 			$this->_viewFilePath = $viewFilePath;
@@ -183,10 +227,19 @@ class AppView extends AbstractView{
             
         }
         
+        /**
+         * This method set true|false to the $_hasScript property. If there is script plugin, set value = TRUE.
+         *
+         */
         public function setScriptPlugin() {
             $this->_hasScript = true;
         }
         
+        /**
+         * Get the plugin libraries that are set in config.ini.
+         *
+         * @return string the plugin string that will be appended in the view.
+         */
         protected function getPluginLib() {
             
             $pluginStr = "";
@@ -210,9 +263,10 @@ class AppView extends AbstractView{
         }
         
         /**
-         * Add plugins into html content
+         * Add plugin library string and return html content
          * 
-         * @param type $buffer 
+         * @param string $content
+         * @return string the content of the view
          */
         protected function addPluginLib($content){
             
@@ -234,25 +288,48 @@ class AppView extends AbstractView{
             return $content;
         }
         
+        /**
+         * Set if the view is in a layout content value.
+         * @param boolean $boolFlag
+         * @return boolean
+         */
         public function setInLayout($boolFlag) {
             $this->_inLayout = $boolFlag;
         }
         
-        
+        /**
+         * Get the view variables.
+         *
+         * @return array the view variables.
+         */        
         public function getViewVariables() {
             return $this->_variables;
         }
         
-        
+        /**
+         * Set the doctype content value. The default value = NULL.
+         * 
+         * @param string $doctype the doctype value. 
+         */
         public function setDoctype($doctype = NULL) {
         	$doctypeHandler = new Doctype();
         	$this->_doctype = $doctypeHandler->getDoctype($doctype);
         }
         
+        /**
+         * Determine if the view has no doctype. Return the true|false value.
+         *
+         * @return boolean
+         */
         public function noDoctype() {
 			$this->_noDoctype = true;
         }
         
+        /**
+         * Get view script property
+         *
+         * @return string the view scripts
+         */
         public function getViewScripts() {
         	return $this->_viewScripts;
         }

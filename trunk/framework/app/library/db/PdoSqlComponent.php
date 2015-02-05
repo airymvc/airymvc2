@@ -1,18 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This handles the database using PDO connection.
+ *
+ * @filesource
+ * @package framework\app\library\db\PdoSqlComponent
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class PdoSqlComponent extends SqlComponent {
 	
 	protected $pdoConn;
@@ -21,6 +21,9 @@ class PdoSqlComponent extends SqlComponent {
 	protected $port;
 	protected $autoConnectionClose = false;
  	
+	/**
+	 * Set the identifiers in the statement
+	 */
     protected function setIdentifier() {
     	// in order to fit pdo's prepare statement, take out the identifiers
     	// ex: :field1
@@ -28,57 +31,105 @@ class PdoSqlComponent extends SqlComponent {
     	$this->setCloseIdentifier("");
     }
     
-    
+    /**
+     * @return boolean
+     */
     public function beginTransaction() {
     	return $this->pdoConn->beginTransaction();
     }
     
+    /**
+     * @param string $statement
+     * @param array $driverOptions
+     * @return PDOStatement
+     */
     public function prepare($statement, array $driverOptions = array()) {
     	//return a prepareStatement here
     	return $this->pdoConn->prepare($statement, $driverOptions);
     }
     
+    /**
+     * PDO::rollBack()
+     */
     public function rollBack() {
     	$this->pdoConn->rollBack();
     }
     
+    /**
+     * @return boolean
+     */
     public function commit() {
     	return $this->pdoConn->commit();
     }
     
+    /**
+     * @param string $statement
+     * @return int
+     */
     public function exec($statement = null) {
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
     	return $this->pdoConn->exec($statement);
     }
     
+    /**
+     * @param int $attribute
+     * @param mixed $value
+     */
     public function setAttribute($attribute, $value) {
     	$this->pdoConn->setAttribute($attribute, $value);
     }
 
+    /**
+     * @param int $attribute
+     * @return mixed
+     */
     public function getAttribute($attribute) {
     	return $this->pdoConn->getAttribute($attribute);
     }
     
+    /**
+     * @return mixed
+     */
     public function errorCode() {
     	return $this->pdoConn->errorCode();
     }
     
+    /**
+     * @return array
+     */
     public function errorInfo() {
     	return $this->pdoConn->errorInfo();
     }
     
+    /**
+     * @return array
+     */
     public function getAvailableDrivers() {
     	return $this->pdoConn->getAvailableDrivers();
     }
     
+    /**
+     * @return boolean
+     */
     public function inTransaction() {
     	return $this->pdoConn->inTransaction();
     }
     
+    /**
+     * @param string $name
+     * @return string
+     */
     public function lastInsertId($name = NULL) {
     	return $this->pdoConn->lastInsertId($name = NULL);
     }
     
+    /**
+     * @param string $statement
+     * @param string $fetchType
+     * @param string $fetch
+     * @param array $ctorargs
+     * @return PDOStatement
+     */
     public function query($statement, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
     	if (!is_null($fetchType)) {
     		if (is_int($fetch)) {
@@ -94,10 +145,18 @@ class PdoSqlComponent extends SqlComponent {
     	return $this->pdoConn->query($statement);
     }
     
+    /**
+     * @param string $str
+     * @param int $parameterType Default value = PDO::PARAM_STR
+     * @return string
+     */
     public function quote($str, $parameterType = PDO::PARAM_STR) {
     	return $this->pdoConn->quote($str, $parameterType);
     }
-        
+    
+    /**
+     * @see SqlComponent::execute()
+     */ 
     public function execute($statement = NULL, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
 
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
@@ -119,16 +178,29 @@ class PdoSqlComponent extends SqlComponent {
         return $results;
     }
     
+    /**
+     * @param string $value
+     * @return PdoSqlComponent
+     */
     public function setAutoClose($value) {
     	$this->autoConnectionClose = $value;
     	return $this;
     }
     
+    /**
+     * @return PdoSqlComponent
+     */
     public function closeConnection() {
     	$this->pdoConn = null;
     	return $this;
     }
 
+    /**
+     * @param string $dsn
+     * @param string $userid
+     * @param string $passwd
+     * @return PdoSqlComponent
+     */
     public function setConnection($dsn = NULL, $userid = NULL, $passwd = NULL) {
     	$dsn = is_null($dsn) ? $this->dsn : $dsn;
     	$userid = is_null($userid) ? $this->dbConfigArray['id'] : $userid;
@@ -137,6 +209,9 @@ class PdoSqlComponent extends SqlComponent {
     	return $this;
     }
     
+    /**
+     * @see SqlComponent::sqlEscape()
+     */
     function sqlEscape($content) {
 
         //check if $content is an array

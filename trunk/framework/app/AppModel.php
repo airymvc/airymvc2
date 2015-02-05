@@ -1,27 +1,25 @@
 <?php
 /**
  * AiryMVC Framework
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * 
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+
 /**
- * Description of AppModel
+ * This is the controller class that is used for intializing the instance and set variables.
  *
- * @author Hung-Fu Aaron Chang
+ * @package framework\app\AppModel
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class AppModel extends AbstractModel {
 
     /**
      * To deal with the database config(s)
-     * @return type 
+     * 
+     * @return object database 
      */
     public function initialDB() {
         $this->multiDb = DbConfig::getConfig();
@@ -30,6 +28,8 @@ class AppModel extends AbstractModel {
     }
 
 	/**
+	 * Sets the database config variables
+	 * 
  	 * @param array $config
  	 */
     public function setDb($config) {
@@ -39,6 +39,7 @@ class AppModel extends AbstractModel {
 
     
 	/**
+	 * Sets multiple databases configs.
  	 * 
  	 * @param int $databaseId
  	 * @param array $config

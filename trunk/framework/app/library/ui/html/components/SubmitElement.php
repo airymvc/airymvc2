@@ -1,22 +1,30 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\component\AbstractFormElement
+ */
 require_once 'AbstractFormElement.php';
 
+/**
+ * The button element
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\component\SubmitElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class SubmitElement extends AbstractFormElement{
-    //put your code here
+
+	/**
+	 * @see framework\app\library\ui\html\component\InputType
+	 * @property string $_type
+	 */
     protected $_type  = InputType::SUBMIT;
     
     public function __construct($id, $label = null)

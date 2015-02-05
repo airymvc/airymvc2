@@ -1,24 +1,35 @@
-
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\component\FieldElement
+ */
 require_once 'FieldElement.php';
+
+/**
+ * @see framework\app\library\ui\html\component\InputType
+ */
 require_once 'InputType.php';
 
+/**
+ * The input text field
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\component\TextElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class TextElement extends FieldElement{
-    //put your code here
+    
+	/**
+	 * @see framework\app\library\ui\html\component\InputType
+	 * @property string $_type
+	 */
     protected $_type  = InputType::TEXT;
     
     public function __construct($id)

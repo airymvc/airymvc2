@@ -1,23 +1,40 @@
 <?php
 /**
  * AiryMVC Framework
- * 
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\form\PostForm
+ */
 require_once dirname(__FILE__) . '/../ui/html/form/PostForm.php';
+
+/**
+ * @see framework\app\library\ui\html\UIComponent
+ */
 require_once dirname(__FILE__) . '/../ui/html/UIComponent.php';
+
+/**
+ * @see framework\core\MvcReg
+ */
 require_once dirname(__FILE__) . '/../../../core/MvcReg.php';
+
+/**
+ * @see framework\app\library\Authentication
+ */
 require_once dirname(__FILE__) . '/Authentication.php';
 
+/**
+ * The login form will be used in authentication (ACL) view.
+ *
+ * @package framework\app\library\acl\LoginForm
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ * 
+ * @see framework\app\library\acl\ui\html\form\PostForm
+ */
 class LoginForm extends PostForm {
     
 	//Default form value
@@ -26,11 +43,32 @@ class LoginForm extends PostForm {
     const DEFAULT_LOGIN_FORM_ID = "system_login_form";
     const DEFAULT_LOEGIN_MESSAGE_ID = "system_login_message";
     
+    /**
+     * @property string $_formDecoration
+     */
     protected $_formDecoration;
+    
+    /**
+     * @property string $_formId
+     */
     protected $_formId;
+    
+    /**
+     * @property string $_loginMsgId
+     */
     protected $_loginMsgId;
  
-
+    /**
+     * Constructor of the class.
+     * @param string $formId
+     * @param string $formName
+     * @param string $uidLabel
+     * @param string $pwdLabel
+     * @param string $moduleName
+     * @param string $formDecoration
+     * @param string $loginMsgId
+     * @param string $formAction
+     */
     public function __construct($formId = null, $formName= null, $uidLabel = null, $pwdLabel = null, $moduleName = null, $formDecoration = null, $loginMsgId = null, $formAction = null) {
         $this->_formId   = (is_null($formId)) ? self::DEFAULT_LOGIN_FORM_ID : $formId;
         $formName = (is_null($formName)) ? $this->_formId :  $formName;
@@ -53,6 +91,16 @@ class LoginForm extends PostForm {
         $this->createForm($formAction, $this->_formId, $formName, $uidLabel, $pwdLabel, $moduleName, $this->_loginMsgId);
     }
     
+    /**
+     * Create the form object.
+     * @param string $formAction
+     * @param string $formId
+     * @param string $formName
+     * @param string $uidLabel
+     * @param string $pwdLabel
+     * @param string $moduleName
+     * @param string $loginMsgId
+     */    
     protected function createForm ($formAction, $formId, $formName, $uidLabel, $pwdLabel, $moduleName, $loginMsgId) {  
         $acl = AclUtility::getInstance();
         $tblId = $acl->getTableIdByModule($moduleName);
@@ -88,12 +136,18 @@ class LoginForm extends PostForm {
         $this->setElement($submitBtn);
     }
     
-    
+    /**
+     * Populate error message to the login form.
+     */
     public function populateErrorMessage($message) {
     	$divElement = $this->getElementById($this->_loginMsgId);
     	$divElement->setHtmlValue($message);
     }
     
+    /**
+     * Get the form id value.
+     * @return string
+     */
     public function getFormId() {
     	return $this->_formId;
     }

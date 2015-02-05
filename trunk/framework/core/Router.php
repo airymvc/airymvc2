@@ -1,19 +1,17 @@
 <?php
-
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This class handles the language codes
+ *
+ * @package framework\core\Router
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Router {
 
     // Valid constant names
@@ -47,7 +45,15 @@ class Router {
     		$this->setAll($moduleName, $controllerName, $actionName, $params);
     	}
     }
-    
+    /**
+     * This method gets all the language codes.
+     *
+     * @param string $moduleName The module name.
+     * @param string $controllerName The controller name.
+     * @param string $actionName The action name.
+     * @param array  $params The parameters that passed via http call.
+     * @return array All the language codes.
+     */
     private function setAll($moduleName, $controllerName, $actionName, $params) {
     	// setup module first
         $this->moduleName = RouterHelper::hyphenToCamelCase($moduleName); //module name
@@ -74,8 +80,11 @@ class Router {
     }
     
     /**
-     * When using url redirect, the following is an example
+     * The method is to prepare all the values for routing.
      * 
+     * When using url redirect, the following is an example.
+     * 
+     * @example "See the Apache config file" The following is the rewrite rules in config file.
      * <VirtualHost *:80>
      * 		AliasMatch ^/(js|img|css)/(.*)$ /usr/local/zend/apache2/htdocs/zframework/webroot/$1/$2
      * </VirtualHost>
@@ -231,33 +240,41 @@ class Router {
     }
 
     /**
-     * @return the $controllerName
+     * Get the controller name.
+     * @return string The $controllerName.
      */
     public function getControllerName() {
         return $this->controllerName;
     }
 
     /**
-     * @return the $controllerName
+     * Get the action name.
+     * @return string The $actionName.
      */
     public function getActionName() {
         return $this->actionName;
     }
     
     /**
-     * @param field_type $params
+     * Set the parameters.
+     * @param array $params The parameters passed by http.
      */
     public function setParams($params) {
         $this->params = $params;
     }
 
     /**
-     * @param field_type $controllerName
+     * Set the controller name.
+     * @param string $controllerName
      */
     public function setControllerName($controllerName) {
         $this->controllerName = $controllerName;  
     }
-
+    /**
+     * Set the default model view.
+     * @deprecated Not recommended.
+     * @param string $controllerName
+     */
     public function setDefaultModelView($controllerName)
     {
         $modelClassName = $controllerName . self::MODEL_POSTFIX;
@@ -270,7 +287,11 @@ class Router {
         MvcReg::setModelFile($modelFile);
         MvcReg::setViewFile($viewFile);  
     }
-    
+    /**
+     * Set the default action view.
+     * @param string $controllerName
+     * @param string $actionName
+     */    
     public function setDefaultActionView($controllerName, $actionName)
     {
     	$actionViewArray = RouterHelper::getActionViewData($this->moduleName, $controllerName, $actionName);
@@ -280,21 +301,35 @@ class Router {
         MvcReg::setActionViewClassName($actionViewClassName);
         MvcReg::setActionViewFile($actionViewFile);  
     }
-    
+    /**
+     * Remove the default action view.
+     */    
     public function removeDefaultActionView(){
         MvcReg::setActionViewClassName(null);
         MvcReg::setActionViewFile(null);        
     }
-    
+    /**
+     * Set the module name.
+     * @param string $moduleName
+     */    
     public function setModule($moduleName) {
         MvcReg::setModuleName($moduleName);
     }
+    /**
+     * Set the module.
+     * @param string $moduleName
+     * @param string $controllerName
+     * @param string $actionName
+     */
     public function setModuleControllerAction($moduleName, $controllerName, $actionName) {
         MvcReg::setModuleName($moduleName);
         MvcReg::setControllerName($controllerName);
         MvcReg::setActionName($actionName);
     }
-    
+    /**
+     * Set the language code.
+     * @param string $languageCode
+     */
     public function setLanguageCode($languageCode) {
         LangReg::setLanguageCode($languageCode);
     }

@@ -1,26 +1,45 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This is for file cache.
+ *
+ * @package framework\app\library\cache\FileCache
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class FileCache {
 
+	/**
+	 * @property string $_cacheFolder
+	 */
     private $_cacheFolder;
+    
+    /**
+     * @property object $instance
+     */
     private static $instance;
     //$lifetime is the overall cache lifetime, used when no key specific lifetime
+    
+    /**
+     * @property int $lifetime
+     */
     private static $lifetime;
+    
+    /**
+     * @property array $cacheSpecificLifetime
+     */
     private static $cacheSpecificLifetime = array();
     
+    /**
+     * Constructor.
+     * 
+     * @param string $cacheFolder
+     */
     function __construct($cacheFolder = NULL) {
     	if (is_null($cacheFolder)) {
         	$config = Config::getInstance();
@@ -42,7 +61,7 @@ class FileCache {
     }    
     
     /**
-     * Static method for user
+     * Static method for user to save cache.
      * @param string $save
      * @param string $content
      */
@@ -55,6 +74,13 @@ class FileCache {
         return $instance->saveFileData($key, $content);
     }
     
+    /**
+     * Static method for getting cache.
+     * 
+     * @see FileCache::getFileData()
+     * @param string $key
+     * @return string $content
+     */    
     public static function get($key){
     	$instance = self::getInstance();
      	$key = md5($key);
@@ -70,32 +96,54 @@ class FileCache {
         return $cache;
     }
     
-    
+    /**
+     * Static method for saving data into file.
+     *
+     * @see FileCache::saveFileData()
+     * @param string $key
+     * @param string $content
+     */
     public static function saveFile($key, $content){
     	$instance = self::getInstance();
         return $instance->saveFileData($key, $content);
     }
-    
+
+    /**
+     * Get the file.
+     * @param string $key
+     */
     public static function getFile($key){
     	$instance = self::getInstance();
         return $instance->getFileData($key);
     }
-    
+
+    /**
+     * Remove the file.
+     * @param string $key
+     */
     public static function removeFile($key){
     	$instance = self::getInstance();
         return $instance->removeFileData($key);
     }
-    
+
+    /**
+     * Set the lifetime of the cache.
+     * @param int $time
+     */
     public static function setLifeTime($time){
     	FileCache::$lifetime = $time;
     }
-    
+
+    /**
+     * Get the lifetime of the cache.
+     * @return int
+     */
     public static function getLifeTime(){
 		return FileCache::$lifetime;
     }
     
     /**
-     * save the data into a cache file
+     * Save the data into a cache file.
      * @return boolean 
      */
     public function saveFileData($filename, $content){
@@ -104,7 +152,8 @@ class FileCache {
     }
     
     /**
-     * get the data from a file
+     * Get the data from a file
+     * @param string filename
      * @return string 
      */
     public function getFileData($filename){
@@ -117,7 +166,8 @@ class FileCache {
     }
     
     /**
-     * remove the file
+     * Remove the file.
+     * @param string filename
      */
     public function removeFileData($filename){
 		$filename = $this->_cacheFolder . DIRECTORY_SEPARATOR .$filename;

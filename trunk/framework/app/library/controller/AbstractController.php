@@ -2,26 +2,26 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
 /**
- * Description of AbstractController
- *
- * @author Hung-Fu Aaron Chang
+ * @see framework\app\library\view\Layout
  */
 require dirname(dirname(__FILE__)) . "/view/Layout.php";
 
+/**
+ * This is the abstract class of the controller.
+ *
+ * @package framework\app\library\controller\AbstractController
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 abstract class AbstractController{
     
-    	protected $params;
+	
+   		protected $params;
         
         protected $model;
 
@@ -41,6 +41,12 @@ abstract class AbstractController{
         //The constructor function for the controller
         public function init() {}
         
+        
+        /**
+         * Initialize the params and view variables
+         * @param array $params The parameters in the POST or GET request.
+         * @param array $viewVariables The view variables.
+         */
         public function initial($params, $viewVariables = null) {
             $this->setDefaultModel();
             $this->view = new AppView();
@@ -58,6 +64,9 @@ abstract class AbstractController{
             }
         } 
         
+        /**
+         * Prepare all the variables for the controller.
+         */        
         private function prepareVariables () {
             $modulesDir = PathService::getModulesDir();
             $moduleName = MvcReg::getModuleName();
@@ -65,7 +74,10 @@ abstract class AbstractController{
             $this->_controllerDir = $modulesDir . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . "controllers";
             $this->_viewDir       = $modulesDir . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . "views";
         }
-
+        
+        /**
+         * Set the default view.
+         */
         function setDefaultView()
         {
             if (file_exists(MvcReg::getActionViewFile())) {
@@ -86,7 +98,9 @@ abstract class AbstractController{
             }
         }
 
-        
+        /**
+         * Set the default model.
+         */
         protected function setDefaultModel()
         {
             if (file_exists(MvcReg::$_modelFile)) {
@@ -96,25 +110,36 @@ abstract class AbstractController{
             }
         }
         
+        /**
+         * Set the parameters.
+         * @param array $params
+         */        
         public function setParams($params)
         {
             $this->params = $params;
         }
 
+        /**
+         * Get the parameters.
+         * @return array $params
+         */
         public function getParams()
         {
             return $this->params;
         }
+        
         /**
-            * @return the $model
-            */
+         * Get the model.
+         * @return object $model
+         */
         public function getModel() {
             return $this->model;
         }
 	
         /**
-            * @param field_type $model
-            */
+         * Set the model.
+         * @param object $model 
+         */
         public function setModel($model) {
             $this->model = $model;
             $this->model->initialDB();
@@ -122,8 +147,9 @@ abstract class AbstractController{
         
         
         /**
-            * @return the $view
-            */
+         * Get the view.
+         * @return object $view
+         */
         public function getView() {
             return $this->view;
         }
@@ -131,8 +157,9 @@ abstract class AbstractController{
 
 
         /**
-            * @param AppView $view
-            */
+         * Set the view.
+         * @param object $view AppView
+         */
         public function setView($view) {
             $this->view = $view;
         }
@@ -175,6 +202,11 @@ abstract class AbstractController{
             $this->$action();
         }
         
+        /**
+         * Get the current action URL
+         * @see framework\core\PathService::getFormActionURL()
+         * @param boolean $isDirective Determine if using a directory or just query string in the URL.
+         */        
         public function getCurrentActionURL($isDirective = False)
         {
             $moduleName = MvcReg::getModuleName();
@@ -184,29 +216,60 @@ abstract class AbstractController{
             return $url;
         }
     
-        
+        /**
+         * Get the folder that saves the view files on the server
+         * @param string
+         */
         protected function getViewDir() {
             return $this->_viewDir;
         }
         
+        /**
+         * Get the folder that saves the controller files on the server
+         * @return string
+         */
         protected function getControllerDir() {
             return $this->_controllerDir;
         }
         
+        /**
+         * Get the folder that saves the model files on the server
+         * @return string
+         */
         protected function getModelDir(){
             return $this->_modelDir;
         }
         
+        /**
+         * Get the action view class name.
+         * @param string $moduleName
+         * @param string $controllerName
+         * @param string $actionName
+         * @return string
+         */
         private function getActionViewClassName($moduleName, $controllerName, $actionName) {
             $viewArray = RouterHelper::getActionViewData($moduleName, $controllerName, $actionName);
             return $viewArray[0];
         }
-        
+
+        /**
+         * Get the action view file.
+         * @param string $moduleName
+         * @param string $controllerName
+         * @param string $actionName
+         * @return string
+         */
         private function getActionViewFile($moduleName, $controllerName, $actionName) {
             $viewArray = RouterHelper::getActionViewData($moduleName, $controllerName, $actionName);
             return $viewArray[1];
         }
         
+        /**
+         * Get the lower cased view file path
+         * 
+         * @param string $viewFile
+         * @return string
+         */
         private function toLowerCaseViewFilename($viewFile) {
         	$elems = explode(DIRECTORY_SEPARATOR, $viewFile);
         	$viewFilename = ucfirst($elems[count($elems)-1]);

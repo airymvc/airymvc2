@@ -1,52 +1,62 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
 /**
- * Description of htmlScript
+ * This handles the html scripts
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\html\component\HtmlScript
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class HtmlScript extends UIComponent{
-    //put your code here
+	
+	/**
+	 * HTML text
+	 * @property string $_html
+	 */
     protected $_html;
-    private $_id;
     
+    /**
+     * @property string $_id
+     */
+    private $_id;
+
+    /**
+     * @param string $id
+     */
     public function setId($id)
     {
         $this->_id = $id;
     }
+    
+    /**
+     * @return string
+     */
     public function getId()
     {
         return $this->_id;
     }
     
-    
-    public function setScript($html, $id = null)
+    /**
+     * @param string $html
+     * @param string $id Default value =  NULL
+     */
+    public function setScript($html, $id = NULL)
     {
         $this->_html =$html;
         $this->setId($id);
     }
-    
-    protected function renderElements()
-    {
-        $this->_html;      
-    }
-    
+
+    /**
+     * @see UIComponent::render()
+     */
     public function render()
     {
-        $this->renderElements();
         return $this->_html;
     }
 }

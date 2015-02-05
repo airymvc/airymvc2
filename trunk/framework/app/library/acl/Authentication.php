@@ -1,35 +1,44 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
-
+/**
+ * This is for preparing the ACL object for authentication (login).
+ *
+ * @package framework\app\library\acl\Authentication
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Authentication {
 
     const IS_LOGIN = "islogin";
     const UID = "uid";
     const ENCRYPT_UID = "encrypt_uid";
-    
-    
+     
     //Four default login related actions
     const SIGN_IN = "signIn";
     const LOGIN = "login";
     const LOGIN_ERROR = "loginError";
     const LOGOUT = "logout";
     
+    /**
+     * @property array $layoutAllows
+     */
     public static $layoutAllows = array();
+    
+    /**
+     * @property string $aclXml The acl xml file.
+     */    
     public static $aclXml;
     
+    /**
+     * The method checks the session value; the login value is set after login; the value is unset after logout
+     * @param string $moduleName
+     * @return boolean
+     */
     public static function isLogin($moduleName) {
         /**
          * Use uid and module for now  
@@ -39,7 +48,12 @@ class Authentication {
         }
         return true;
     }
-
+    
+    /**
+     * Get sign in action according to module.
+     * @param string $module
+     * @return string The sign in action.
+     */
     public static function getSignInAction($module) {
         $auth = self::getAclUtitlity()->getAuthentications();
         $action = self::SIGN_IN;
@@ -49,6 +63,11 @@ class Authentication {
         return $action;
     }
 
+    /**
+     * Get the login controller.
+     * @param string $module
+     * @return string The ACL controller.
+     */
     public static function getLoginController($module) {
         $auth = self::getAclUtitlity()->getAuthentications();
         if (is_null($auth[$module]["controller"])) {
@@ -59,6 +78,11 @@ class Authentication {
         return $auth[$module]["controller"];
     }
 
+    /**
+     * Get the login action.
+     * @param string $module
+     * @return string The login action.
+     */
     public static function getLoginAction($module) {
         $auth = self::getAclUtitlity()->getAuthentications();
         $action = self::LOGIN;
@@ -67,7 +91,12 @@ class Authentication {
         }
         return $action;
     }
-
+    
+    /**
+     * Get the login error action.
+     * @param string $module
+     * @return string The login error action.
+     */
     public static function getLoginErrorAction($module) {
         $auth = self::getAclUtitlity()->getAuthentications();
         $action = self::LOGIN_ERROR;
@@ -77,6 +106,11 @@ class Authentication {
         return $action;
     }
     
+    /**
+     * Get the controller that is used after sucessful.
+     * @param string $module
+     * @return string
+     */    
     public static function getSuccessController($module) {
     	$auth = self::getAclUtitlity()->getSuccessfulDispatch();
     	$successController = NULL;
@@ -85,7 +119,12 @@ class Authentication {
     	}
     	return $successController;
     }
-    
+
+    /**
+     * Get the action that is called after sucessful.
+     * @param string $module
+     * @return string
+     */
     public static function getSuccessAction($module) {
     	$auth = self::getAclUtitlity()->getSuccessfulDispatch();
     	$successAction = NULL;
@@ -94,7 +133,12 @@ class Authentication {
     	}
     	return $successAction;
     }
-    
+
+    /**
+     * Get the actions that can be still dispatched (forwarded) before login. These are defined in the acl.xml.
+     * @param string $module
+     * @return array
+     */
     public static function getOtherExclusiveActions($module) {
         $auth = self::getAclUtitlity()->getAuthentications();
         $actions = array();
@@ -105,7 +149,15 @@ class Authentication {
         }
 	    return $actions;
     }
-
+    
+    /**
+     * Get all the actions that can be still dispatched (forwarded) before login;
+     * this includes those login related and exclusive actions;
+     * these are defined in the acl.xml.
+     * 
+     * @param string $module
+     * @return array
+     */
     public static function getLoginExcludeActions($module) {
         $loginActions = array();
         $auth = self::getAclUtitlity()->getAuthentications();
@@ -152,17 +204,38 @@ class Authentication {
 
         return $loginActions;
     }
-
+    
+    /**
+     * Get all the allowing rules;these are defined in the acl.xml.
+     *
+     * @param string $module
+     * @return array
+     */
     public static function getAllAllows($module) {
         $rules = self::getAclUtitlity()->getBrowseRules();
         $allows = (isset($rules[$module]))? $rules[$module]: null;
         return $allows;
     }
     
+    /**
+     * Get all the layout allowing actions.
+     *
+     * @param string $module
+     * @param string $controllerName
+     * @param string $actionName
+     * @return array
+     */    
     public static function addLayoutAllowAction($module, $controllerName, $actionName) {
     	self::$layoutAllows[$module][$controllerName][] = $actionName;
     }
-    
+
+    /**
+     * Remove all the layout allowing actions.
+     *
+     * @param string $module
+     * @param string $controllerName
+     * @param string $actionName
+     */
     public static function removeLayoutAllowAction($module, $controllerName, $actionName) {
     	foreach (self::$layoutAllows[$module][$controllerName] as $idx => $allowActionName) {
     		if ($actionName == $allowActionName) {
@@ -177,6 +250,12 @@ class Authentication {
     	}
     }
     
+    /**
+     * Get the instance of AclUtility.
+     *
+     * @see framework/core/AclUtility
+     * @return object
+     */
     private static function getAclUtitlity() {
         $acl = AclUtility::getInstance();
     	if (!is_null(self::$aclXml)) {
@@ -185,6 +264,12 @@ class Authentication {
     	return $acl;
     }
     
+    /**
+     * Set the acl xml.
+     *
+     * @see framework/config/acl.xml
+     * @see framework/config/example.acl.xml
+     */    
     public static function setAclXml($xml) {
     	self::$aclXml = $xml;
     }
