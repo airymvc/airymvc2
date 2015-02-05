@@ -1,28 +1,33 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
-
+/**
+ * The fieldset html UI component
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\container\FieldSet
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class FieldSet extends AbstractContainer{
-    //put your code here
+
     protected $_fsText;
     protected $_legend;
     
+    /**
+     * @param string $label
+     */
     public function setLabel($label){
         $this->_legend = $label;
     }
     
+    /**
+     * @see UIComponent::render()
+     */
     public function render()
     {
         $fsText = "<fieldset";

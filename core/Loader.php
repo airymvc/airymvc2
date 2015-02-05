@@ -1,22 +1,27 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * This utility class saves objects that initially are used.
+ *
+ * @package framework\core\Loader
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Loader
 {
   private static $loaded = array();
   
+  /**
+   * This method loads the objects that are used initially.
+   *
+   * @return array the objects
+   */
   public static function load($object) {
     $valid = array(  "Ini",
                      "Initializer",

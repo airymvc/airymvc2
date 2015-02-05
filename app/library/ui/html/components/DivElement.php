@@ -1,39 +1,55 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * The abstract class handles HTML container type elements.
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\component\DivElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class DivElement extends AbstractFormElement{
 
+	/**
+	 * @property string $_innerHtml
+	 */
     protected $_innerHtml;
+    
+    /**
+     * @property string $_id
+     */
     private $_id;
     
     public function __construct($id)
     {
         $this->setId($id);
     }
-        
+    
+    /**
+     * @param string $innerHtml
+     */
     public function setHtmlValue($innerHtml)
     {
         $this->_innerHtml = $innerHtml;
     }
     
+    /**
+     * @return string
+     */
     public function getHtmlValue() 
     {
         return $this->_innerHtml;	
     }
     
-    //override the method
+    /**
+     * Override the method
+     * @see AbstractFormElement::renderElements()
+     */
     protected function renderElements()
     {
     	$insert = "";
@@ -43,7 +59,8 @@ class DivElement extends AbstractFormElement{
         }
         $inputText = "<div{$insert}>";
         
-        $this->_elementText = $inputText . $this->_innerHtml . '</div>';       
+        $this->_elementText = $inputText . $this->_innerHtml . '</div>';
+        return $this->_elementText;
     }
     
 }

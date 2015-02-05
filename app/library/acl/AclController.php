@@ -2,85 +2,80 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
-/*
- * @TODO: Need to refactoring this. This controller shares several methods with AppController
+/**
+ * This is a special controller for ACL.
+ *
+ * @package framework\app\library\acl\AclController
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
-
-
-
 class AclController extends AbstractController {
 
+	/**
+	 * @property object $_loginForm
+	 */
     protected $_loginForm;
+    
+    /**
+     * @property string $_loginFormVariableName
+     */
     protected $_loginFormVariableName;
+    
+    /**
+     * The ACL object.
+     * @property object $_acl
+     */
     protected $_acl;
 
+    /**
+     * Initialize the controller instance.
+     * @param array $params
+     * @param array view variables.
+     */
     public function initial($params, $viewVariables = null) {
     	parent::initial($params, $viewVariables);
     	$this->_acl = new AclComponent($this->view);
-    	//$this->_loginFormVariableName = $this->_loginForm->getFormId();
     } 
 
     /**
-     * signIn, check with the database table with uid, pwd and mapping table
-     * @params: String $uid, String $pwd, String $mapTbl
+     * Sign in action
      */
     public function signInAction() {
         $this->_acl->signIn();
     }
     
+    /**
+     * login out action
+     */    
     public function logoutAction() {
         $this->_acl->loginOut();
     }
     
+    /**
+     * Login error action
+     */    
     public function loginErrorAction() {
         $this->_acl->loginError();
     }
-
+    
+    /**
+     * Login action
+     */
     public function loginAction() {
         $this->_acl->login();
     }
-
+    
+    /**
+     * Get the ACL component.
+     * @return object
+     */
     public function getAclComponent() {
     	return $this->_acl;
     }
 
-    
-//    protected function signIn($moduleName = null, $controllerName = null, $actionName = null) {
-//         $this->_acl->signIn($moduleName, $controllerName, $actionName);   	
-//    }
-    
-    
-//    protected function login($loginFormName = null) {
-//    	if (!is_null($loginFormName)) {
-//    		$this->setLoginFormVariableName($loginFormName);
-//    	}
-//    	$this->view->setVariable($this->_loginFormVariableName, $this->_loginForm);
-//    	$this->view->render();
-//    }
-//    
-//    protected function loginError($viewName = null, $errorMessage = null) {
-//        $moduleName = MvcReg::getModuleName();
-//        $this->_loginForm->populateErrorMessage($errorMessage);
-//        
-//        if (!is_null($viewName)) {
-//            $this->switchView($moduleName, $viewName);
-//        }
-//        $errorMessage = is_null($errorMessage) ? "ERROR!!" : $errorMessage;
-//        $this->view->setVariable('loginErrorMessage', $errorMessage);
-//        $this->view->setVariable($this->_loginFormVariableName, $this->_loginForm);
-//        $this->view->render();
-//    }
-    
     /**
      * Login Form setter functions
      */
@@ -88,9 +83,6 @@ class AclController extends AbstractController {
     	$this->_loginFormVariableName = $loginFormVariableName;
     }
     
-//    public function resetLoginForm($moduleName = null, $formId = null, $formName = null, $uidLabel = null, $pwdLabel = null, $formLayout = null, $loginMsgId = null) {
-//        $this->_acl->resetLoginForm($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout, $loginMsgId);
-//    }
 }
 ?>
 

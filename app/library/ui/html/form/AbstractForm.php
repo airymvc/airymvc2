@@ -1,41 +1,68 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
- * @author Hung-Fu Aaron Chang
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework/app/library/ui/html/UIComponent
+ */
 require_once dirname(__FILE__) . '/../UIComponent.php';
 
+/**
+ * This abstract class handles UI component.
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\form\AbstractForm
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class AbstractForm extends UIComponent{
 
+	/**
+	 * @property The HTML form attributes
+	 */
     protected $_attributes = array();
-    protected $_elements = array();
-    protected $_formText;
-    protected $_formDecoration;
     
+	/**
+	 * @property The elements that the form contains.
+	 */
+    protected $_elements = array();
     
     /**
-     * attributes is a key-value structure that stores all the form attribtes 
+     * @property The HTML form text
+     */
+    protected $_formText;
+    
+    /**
+     * @property The HTML form decoration.
+     */
+    protected $_formDecoration;
+    
+    /**
+     * Attributes is a key-value structure that stores all the form attribtes
+     * @param string $key
+     * @param mixed $value
      */
     public function setAttribute($key, $value)
     {
         $this->_attributes[$key] =  $value;
     }
     
+    /**
+     * @param array $attributes
+     */
     public function setAttributes($attributes)
     {
         $this->_attributes = $attributes;
     }
     
+    /**
+     * @param object $element
+     * @return AbstractForm
+     */
     public function setElement($element)
     {
         if ($element instanceof HtmlScript) {
@@ -50,6 +77,10 @@ class AbstractForm extends UIComponent{
         return $this;
     }
     
+    /**
+     * @param string $id
+     * @return mixed|NULL
+     */
     public function getElementById($id)
     {
         foreach ($this->_elements as $key => $element) {
@@ -59,9 +90,13 @@ class AbstractForm extends UIComponent{
                 }
             }
         }    
-        return null;
+        return NULL;
     }
     
+    /**
+     * @param string $name
+     * @return mixed|NULL
+     */
     public function getElementByName($name)
     {
         foreach ($this->_elements as $key => $element) {
@@ -74,20 +109,31 @@ class AbstractForm extends UIComponent{
         return null;       
     }   
 
+    /**
+     * @param array $formDecoration
+     */
     public function setDecoration($formDecoration) {
     	$this->_formDecoration = $formDecoration;
     }
     
+    /**
+     * @return array
+     */
     public function getDecoration() {
     	return $this->_formDecoration;
     }
     
+    /**
+     * @param array $elements
+     */
     public function setElements($elements)
     {
         $this->_elements = $elements;
     }
+    
     /**
-     * Form Decoration example:
+     * @example
+     * Form Decoration:
      * 
      * array(formId      => array('<div class="class_selector">', '</div>'),
      *       elementId1  => array('<div class="elememtClass1">', '</div>'),
@@ -97,6 +143,8 @@ class AbstractForm extends UIComponent{
      *      );
      *      
      * This render the form
+     * 
+     * @return string
      */
     public function render()
     {

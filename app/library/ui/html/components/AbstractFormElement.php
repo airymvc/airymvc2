@@ -1,78 +1,116 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
 /**
- * Description of abstractFormElement
+ * The fieldset html UI component
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\html\component\AbstractFormElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class AbstractFormElement extends UIComponent{
-    //put your code here
+    
+    /**
+     * @property array $_attributes
+     */
     protected $_attributes = array();
+
+    /**
+     * @property string $_elementText
+     */
     protected $_elementText;
+    
+    /**
+     * @property array $_decoration
+     */
     protected $_decoration = null;
    
+    /**
+     * @param string $id
+     */
     public function setId($id)
     {
         $this->_attributes['id'] = $id;
     }
+    
+    /**
+     * @return string
+     */
     public function getId()
     {
         return $this->_attributes['id'];
     }
     
+    /**
+     * @param string $name
+     */
     public function setName($name)
     {
         $this->_attributes['name'] = $name;
     }
+    
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->_attributes['name'];
     }
     
+    /**
+     * @param string $value
+     */
     public function setValue($value)
     {
         $this->_attributes['value'] = $value;
     }
     
+    /**
+     * @param array $decoration
+     */
     public function setDecoration($decoration) {
     	$this->_decoration = $decoration;
     }
 
+    /**
+     * @return array
+     */
     public function getDecoration() {
     	return $this->_decoration;
     }    
-    
+
     /**
-     * attributes is a key-value structure that stores all the form attribtes 
+     * Attributes is a key-value structure that stores all the form attribtes 
+     * @param string $key
+     * @param string $value
      */
     public function setAttribute($key, $value)
     {
         $this->_attributes[$key] =  $value;
     }
     
+    /**
+     * @param array $attributes
+     */
     public function setAttributes($attributes)
     {
         $this->_attributes = $attributes;
-    }    
+    } 
+       
     /**
+     * @example
      * Element Decoration:
      * array('{elementId}' => array('{openHtml}', '{closeHtml}'))
      * 
      * Example of Element Decoration:
      * array('elementId'   => array('<div class="class1">', '<div>'))
+     * 
+     * @return string
      */
     protected function renderElements()
     {   
@@ -89,9 +127,13 @@ class AbstractFormElement extends UIComponent{
         	$openHtml  = $decoration[0];
         	$closeHtml = $decoration[1];
         }
-        $this->_elementText = $openHtml . $inputText . $closeHtml;       
+        $this->_elementText = $openHtml . $inputText . $closeHtml;
+        return $this->_elementText; 
     }
     
+    /**
+     * @see UIComponent::render()
+     */
     public function render()
     {
         $this->renderElements();

@@ -1,18 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This handles the language code and translation. The translation - the different language
+ * word mappings are defined in the language files in the language folder (default folder is "lang").
+ *
+ * @package framework\app\library\lang\Language
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Language {
 
     private $_config;
@@ -69,9 +69,9 @@ class Language {
         return $langArray;
     }
     /**
-     * @param String $key
-     * @param String $langCode
-     * @return String 
+     * @param string $key
+     * @param string $langCode
+     * @return string 
      */
     public function getWord($key, $langCode)
     {
@@ -84,10 +84,10 @@ class Language {
     }
     /**
      *
-     * @param String $word
-     * @param String $fromLangCode
-     * @param String $toLangCode
-     * @return String 
+     * @param string $word
+     * @param string $fromLangCode
+     * @param string $toLangCode
+     * @return string 
      */
     public function getTranslation($word, $fromLangCode, $toLangCode)
     {
@@ -111,7 +111,7 @@ class Language {
     }
     
     /**
-     *
+     * Replace the word by the key defined in the language mapping file.
      * @param string $buffer 
      */
     public function replaceWordByKey($buffer){

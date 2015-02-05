@@ -1,18 +1,17 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This handles the framework log.
+ *
+ * @package framework\app\library\log\Logger
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Logger {
 	
 	protected $file;
@@ -33,12 +32,20 @@ class Logger {
         }    
         return self::$instance;
     } 
-    
+    /**
+     * Set the log file.
+     * @param string $file
+     */    
     public function setFile($file) {
     	$instance = self::getInstance($file);
     	return $instance;    
     }
-    
+    /**
+     * Write the logs.
+     * @param string $message
+     * @param string $level
+     * @param string $file
+     */
 	public function write($message, $level = self::LEVEL_INFO, $file = null) {
 		$saveFile = is_null($file) ? $this->file : $file;
 		$log = sprintf("[%s] %s", $level, $message);

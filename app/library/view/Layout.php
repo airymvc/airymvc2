@@ -1,18 +1,17 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * The layout contains multiple views and it is also specify the decoration of the page.
+ *
+ * @package framework\app\library\view\Layout
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Layout {
         
     protected $_layoutPath = null;
@@ -31,7 +30,7 @@ class Layout {
     /**
      * Variables that have been set to this layout are saved in an array
      * 
-     * @var array 
+     * @var array $_variables
      */
     protected $_variables; 
     
@@ -41,7 +40,10 @@ class Layout {
     const PARAMS     = "params";
     const ALLOW_THIS_ACTION = 'inlayout_mca';
         
-    
+    /**
+     * Set the view.
+     * @param object $view
+     */
     public function setView($view) {
         $this->_view = $view;
     }
@@ -51,6 +53,7 @@ class Layout {
      * @param string $layoutPath
      * @param array  $layout 
      * 
+     * @example
      * $layoutPath: the path of the layout file
      * 
      * $layout = array ($layoutKey => $viewScriptPath)
@@ -65,6 +68,10 @@ class Layout {
          $this->_layout     = $layout;
     }
     
+    /**
+     * Rendering a layout. It also renders the views that the layout contains.
+     * @throws AiryException
+     */
     public function render(){
          //To get the layout file
          $layoutContent = file_get_contents($this->_layoutPath);
@@ -197,7 +204,7 @@ class Layout {
           return $keyValuePair;
     }
     
-    /*
+    /**
      * This method uses (1) <?php echo $contentKey ?>
      *                  (2) @{contentKey}@
      */
@@ -234,6 +241,7 @@ class Layout {
     }
     
     /**
+     * @example
      * Array (
      *		[0] => Array (
      *       	[0] => <?php   echo    $x1  ?>
@@ -258,12 +266,17 @@ class Layout {
     	}
     	$this->_keyContents = $keyReplacements;
     }
-    
+    /**
+     * Set the doctype
+     * @param string $doctype
+     */
     public function setDoctype($doctype = NULL) {
         $doctypeHandler = new Doctype();
         $this->_doctype = $doctypeHandler->getDoctype($doctype);
     }
-        
+    /**
+     * Set no doctype
+     */
     public function noDoctype() {
 		$this->_noDoctype = true;
     }

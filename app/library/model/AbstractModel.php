@@ -2,25 +2,25 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This handles the framework log.
+ *
+ * @package framework\app\library\model\AbstractModel
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 abstract class AbstractModel {
     
     /**
-     * $db : a database object 
+     * @property object $db Database object. 
      */
     public $db;
 
     /**
-     * $multiDb : array of database objects 
+     * * @property object $multiDb Array of database objects. 
      */
     public $multiDb = array();
     

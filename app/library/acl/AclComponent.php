@@ -1,43 +1,91 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\core\AclUtility
+ */
 require_once ('AclUtility.php');
-//require_once('MysqlAccess.php');
 
-
+/**
+ * This is for preparing the ACL object for authentication (login).
+ *
+ * @package framework\app\library\acl\AclComponent
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class AclComponent {
 	
 	const MD5 = "MD5";
 	const ACTION_POSTFIX = "Action";
 	
+	/**
+	 * @property object $_loginForm The form object is used for view.
+	 */
 	public $_loginForm;
-	//put form varriable here
-	private $_moduleName; 
-	private $_formId; 
-	private $_formName;
-	private $_uidLabel;
-	private $_pwdLabel; 
-	private $_formLayout = array(); 
-	private $_loginMsgId;
-	protected $_view;
-	public $params = array();
 	
+	/**
+	 * @property string $_moduleName The module name.
+	 */
+	private $_moduleName;
+	
+	/**
+	 * @property string $_formId The form id.
+	 */
+	private $_formId;
+	
+	/**
+	 * @property string $_formName The form name.
+	 */
+	private $_formName;
+	
+	/**
+	 * @property string $_uidLabel The label of user id of the form.
+	 */
+	private $_uidLabel;
+	
+	/**
+	 * @property string $_pwdLabel The label of password of the form.
+	 */
+	private $_pwdLabel;
+	
+	/**
+	 * @property array $_formLayout An array saves form's layouts.
+	 */	
+	private $_formLayout = array();
+	
+	/**
+	 * @property string $_loginMsgId The login message id.
+	 */
+	private $_loginMsgId;
+	
+	/**
+	 * @property object $_view The view object.
+	 */
+	protected $_view;
+	
+	/**
+	 * @property array $params Save the parameters.
+	 */
+	public $params = array();
+
+	/**
+	 * @property object $acDb The database object used for ACL.
+	 */
 	protected $acDb;
+	
+	/**
+	 * @property array $acDbArray The array saves database objects that are used for ACL.
+	 */
 	protected $acDbArray;
     
-	
+	/**
+	 * Constructor
+	 */	
 	public function __construct($view) {
 		//prepare db
 		$this->initialDB();
@@ -51,6 +99,10 @@ class AclComponent {
 		
 	}
 	
+	/**
+	 * Initialize the database object.
+	 * @throws AiryException The exception is thrown for database mapping.
+	 */	
     public function initialDB() {
         $multiDb = DbConfig::getConfig();
         $acl              = AclUtility::getInstance();
@@ -67,13 +119,21 @@ class AclComponent {
         }
     }
     
+    /**
+     * Set the database object
+     * @param string $mapDbId The mapping database id that is set in acl.xml.
+     */    
     public function setDb($mapDbId) {
     	$this->acDb = $this->acDbArray[$mapDbId];
     }
 
 	/**
-     * signIn, check with the database table with uid, pwd and mapping table
-     * @params: String $uid, String $pwd, String $mapTbl
+     * The signIn method - check with the database table with uid, pwd and mapping table 
+     * and dispatch to the responding action after login.
+     * 
+     * @param string $uid
+     * @param string $pwd
+     * @param string $mapTbl
      */
     public function signIn($moduleName = null, $controllerName = null, $actionName = null) {
 
@@ -173,7 +233,9 @@ class AclComponent {
             Dispatcher::forward($moduleName, $controllerName, $loginErrorActionName, $params);
         }
     }
-    
+    /**
+     * Unset all the session values that are about the authentication (login).
+     */    
     public function loginOut() {
         $moduleName = MvcReg::getModuleName();
         unset($_SESSION[$moduleName][Authentication::UID]);
@@ -183,11 +245,25 @@ class AclComponent {
     }
     
     /**
-     * Modify the following function
+     * Getter and setter for each form variables
      */
-    
-    //getter and setter for each form variables
-    
+
+    /**
+     * Prepare the login form object for the view.
+     * 
+     * @example 
+     * FormLayout example:
+     * 
+     * array(formId      => array('<div class="class_selector">', '</div>'),
+     *       elementId1  => array('<div class="elememtClass1">', '</div>'),
+     *       elementId2  => array('<div class="elememtClass2">', '</div>'),
+     *       ...
+     *       {elementId} => array('{open_html}, {close_html})
+     *      );
+     *
+     * @see framework\app\library\acl\LoginForm 
+     * @return object The login form object.
+     */
     public function prepareLoginForm() {
 
         $this->_moduleName = (is_null($this->_moduleName)) ? MvcReg::getModuleName() : $this->_moduleName;
@@ -197,23 +273,17 @@ class AclComponent {
         $this->_pwdLabel   = (is_null($this->_pwdLabel)) ? "%{Password}%" : $this->_pwdLabel;
         $this->_loginMsgId = (is_null($this->_loginMsgId)) ? "system_login_message" : $this->_loginMsgId; 
         
-   		 /**
-     	  * FormLayout example:
-     	  * 
-     	  * array(formId      => array('<div class="class_selector">', '</div>'),
-     	  *       elementId1  => array('<div class="elememtClass1">', '</div>'),
-     	  *       elementId2  => array('<div class="elememtClass2">', '</div>'),
-    	  *       ...
-     	  *       {elementId} => array('{open_html}, {close_html})
-     	  *      );
-     	  *      
-     	  */ 
         $this->_formLayout = array($this->_formId  => array("<div class='{$this->_formName}' name='{$this->_formName}'>", "</div>"));           
         $loginForm = new LoginForm($this->_formId, $this->_formName, $this->_uidLabel, $this->_pwdLabel, $this->_moduleName, $this->_formLayout, $this->_loginMsgId, null);
         return $loginForm;
     }
-    
-    public function login($loginFormName = null) {
+
+    /**
+     * Set the login form object to the view variable and then render the view
+     *
+     * @param string $loginFormName The login form name; the default value = NULL
+     */
+    public function login($loginFormName = NULL) {
         $this->_loginForm = $this->prepareLoginForm();
     	$loginFormName = (is_null($loginFormName)) ? $this->_loginForm->getFormId() : $loginFormName;
     	
@@ -222,17 +292,36 @@ class AclComponent {
         $this->_view->render();
     } 
 
-    
-
-    
-    public function resetLoginForm($moduleName = null, $formId = null, $formName = null, $uidLabel = null, $pwdLabel = null, $formLayout = null, $loginMsgId = null) {
+    /**
+     * Set NULL (Reset) for all the login form attributes
+     * 
+     * @see AclComponent::setLoginFormOptions() Call for setting the login form options.
+     *
+     * @param string $moduleName Default value = NULL.
+     * @param string $formId Default value = NULL.
+     * @param string $formName Default value = NULL.
+     * @param string $uidLabel Default value = NULL.
+     * @param string $pwdLabel Default value = NULL.
+     * @param array  $formLayout Default value = NULL.
+     * @param string $loginMsgId Default value = NULL.
+     */
+    public function resetLoginForm($moduleName = NULL, $formId = NULL, $formName = NULL, $uidLabel = NULL, $pwdLabel = NULL, $formLayout = NULL, $loginMsgId = NULL) {
         $this->setLoginFormOptions($moduleName, $formId, $formName, $uidLabel, $pwdLabel, $formLayout, $loginMsgId);
     	$this->_loginForm = $this->prepareLoginForm();
         return $this->_loginForm;
     }
     
-    
-    public function loginError($errorMessage = null, $errorMsgVariableName = null, $loginFormName = null) {
+    /**
+     * Render the login error in the view.
+     *
+     * @see AclComponent::prepareLoginForm() Prepare the login form object.
+     * @see LoginForm::populateErrorMessage() Populate error messages.
+     *
+     * @param string $errorMessage Default value = NULL.
+     * @param string $errorMsgVariableName Default value = NULL.
+     * @param string $loginFormName Default value = NULL.
+     */    
+    public function loginError($errorMessage = NULL, $errorMsgVariableName = NULL, $loginFormName = NULL) {
     	if (is_null($this->_loginForm)) {
     		$this->_loginForm = $this->prepareLoginForm();
     	}
@@ -248,16 +337,16 @@ class AclComponent {
     }
     
     /**
-     * This is the convenient method for setup all the form variables
-     * @param String $moduleName
-     * @param String $formId
-     * @param String $formName
-     * @param String $uidLabel
-     * @param String $pwdLabel
-     * @param array $formLayout
-     * @param String $loginMsgId
+     * This is the convenient method for setting all the form variables
+     * @param String $moduleName Default value = NULL.
+     * @param String $formId Default value = NULL.
+     * @param String $formName Default value = NULL.
+     * @param String $uidLabel Default value = NULL.
+     * @param String $pwdLabel Default value = NULL.
+     * @param array  $formLayout Default value = NULL.
+     * @param String $loginMsgId Default value = NULL.
      */
-    public function setLoginFormOptions($moduleName = null, $formId = null, $formName = null ,$uidLabel = null, $pwdLabel = null, $formLayout = null, $loginMsgId = null) {
+    public function setLoginFormOptions($moduleName = NULL, $formId = NULL, $formName = NULL ,$uidLabel = NULL, $pwdLabel = NULL, $formLayout = NULL, $loginMsgId = NULL) {
 		$this->setModuleName($moduleName);
 		$this->setFormId($formId);
 		$this->setFormName($formName);
@@ -269,6 +358,7 @@ class AclComponent {
     
     
 	/**
+	 * Get the login form.
 	 * @return the $_loginForm
 	 */
 	public function getLoginForm() {
@@ -276,6 +366,7 @@ class AclComponent {
 	}
 
 	/**
+	 * Get the module name.
 	 * @return the $_moduleName
 	 */
 	public function getModuleName() {
@@ -283,6 +374,7 @@ class AclComponent {
 	}
 
 	/**
+	 * Get the login form id.
 	 * @return the $_formId
 	 */
 	public function getFormId() {
@@ -290,6 +382,7 @@ class AclComponent {
 	}
 
 	/**
+	 * Get the login form name.
 	 * @return the $_formName
 	 */
 	public function getFormName() {
@@ -297,6 +390,7 @@ class AclComponent {
 	}
 
 	/**
+	 * Get the login form's user id label .
 	 * @return the $_uidLabel
 	 */
 	public function getUidLabel() {
@@ -304,6 +398,7 @@ class AclComponent {
 	}
 
 	/**
+	 * Get the login form's password label 
 	 * @return the $_pwdLabel
 	 */
 	public function getPwdLabel() {
@@ -311,6 +406,7 @@ class AclComponent {
 	}
 
 	/**
+	 * Get all the form layouts.
 	 * @return the $_formLayout
 	 */
 	public function getFormLayout() {
@@ -318,6 +414,7 @@ class AclComponent {
 	}
 
 	/**
+	 * Get the login message id.
 	 * @return the $_loginMsgId
 	 */
 	public function getLoginMsgId() {
@@ -325,66 +422,88 @@ class AclComponent {
 	}
 
 	/**
-	 * @param Form $_loginForm
+	 * Set the login form.
+	 * @param object $loginForm
 	 */
 	public function setLoginForm($loginForm) {
 		$this->_loginForm = $loginForm;
 	}
 
 	/**
-	 * @param String $moduleName
+	 * Set the module name.
+	 * @param string $moduleName
 	 */
 	public function setModuleName($moduleName) {
 		$this->_moduleName = $moduleName;
 	}
 
 	/**
-	 * @param String $formId
+	 * Set the form id.
+	 * @param string $formId
 	 */
 	public function setFormId($formId) {
 		$this->_formId = $formId;
 	}
 
 	/**
-	 * @param String $formName
+	 * Set the form name value.
+	 * @param string $formName
 	 */
 	public function setFormName($formName) {
 		$this->_formName = $formName;
 	}
 
 	/**
-	 * @param String $uidLabel
+	 * Set user id label value.
+	 * @param string $uidLabel
 	 */
 	public function setUidLabel($uidLabel) {
 		$this->_uidLabel = $uidLabel;
 	}
 
 	/**
-	 * @param String $pwdLabel
+	 * Set all the form layouts.
+	 * @param string $pwdLabel
 	 */
 	public function setPwdLabel($pwdLabel) {
 		$this->_pwdLabel = $pwdLabel;
 	}
 
 	/**
-	 * @param array() $_formLayout
+	 * Set all the form layouts.
+	 * @param array() $formLayout
 	 */
 	public function setFormLayout($formLayout) {
 		$this->_formLayout = $formLayout;
 	}
 
 	/**
-	 * @param String $loginMsgId
+	 * Set the login message id.
+	 * @param string $loginMsgId The login message id value.
 	 */
 	public function setLoginMsgId($loginMsgId) {
 		$this->_loginMsgId = $loginMsgId;
 	}
 
+	/**
+	 * Set the view variable.
+	 * @param string $variableName The view variable name.
+	 * @param object $variable     The view variable.
+	 */
     public function setViewVariable($variableName, $variable) {
     	$this->_view->setVariable($variableName, $variable); 
     }
     
-    private function getUserByUid($tableName, $uidField, $uid, $isDeleteField = null, $isDelete= null) {
+    /**
+     * Get the database query result of the user.
+     * @param string $tableName 	The table name which maps to the user.
+     * @param string $uidField 		The user id field name of the table.
+     * @param string $uid 			The user id value.
+     * @param string $isDeleteField The isDelete field name of the table.
+     * @param string $isDelete 		The isDelete value.
+     * @return object The database result.
+     */    
+    private function getUserByUid($tableName, $uidField, $uid, $isDeleteField = NULL, $isDelete= NULL) {
 
 		$columns = array('*');
         if (is_null($isDeleteField) || is_null($isDelete)) {

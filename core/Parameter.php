@@ -1,29 +1,28 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
-
+/**
+ * This utility class saves objects that initially are used.
+ *
+ * @package framework\core\Parameter
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Parameter {
+	
     /**
-     * This is used for save the varialbe into an array
-     * @var array 
+     * @var array $_params This is used for save the varialbe into an array
      */
     public static $_params = array();
     
     /**
      * setter
-     * @param array $params 
+     * @param array $params saving the URL parameters
      */
     public static function setParams($params) {
         
@@ -31,8 +30,8 @@ class Parameter {
     }
     
     /**
-     * getter
-     * @return array 
+     * Getter of params
+     * @return array url parameters
      */
     public static function getParams() {
         
@@ -40,10 +39,10 @@ class Parameter {
     }
     
     /**
-     * setter
+     * Setter of the parameters.
      * 
-     * @param string $key
-     * @param string $value 
+     * @param string $key the key of the parameter
+     * @param string $value the value of the parameter
      */
     public static function setParam($key, $value) {
         
@@ -62,7 +61,9 @@ class Parameter {
     }
     
     /**
-     * set params to Session
+     * Set params to Session
+     * 
+     * @param array $params the key-value pairs that are saved in the session
      */
     public static function setSession($params) {
     	foreach ($params as $key => $value) {
@@ -71,7 +72,7 @@ class Parameter {
     }
 
     /**
-     * unset params to Session
+     * Unset params to Session
      */
     public static function unsetSession($params) {
     	foreach ($params as $key => $value) {
@@ -80,14 +81,21 @@ class Parameter {
     }    
     
     /**
-     * get parameter from Session
+     * Get parameter from Session based on the key
+     * 
+     * @param string $key the key value 
+     * @return object 
      */
     public static function getSession($key) {
     	return $_SESSION[$key];
     } 
     
     /**
-     * get parameter from Session
+     * Get value that is saved in the Session based on the module
+     * 
+     * @param string $key
+     * @return object the value according to the key
+     * 
      */
     public static function getModuleSession($key) {
     	$moduleName = MvcReg::getModuleName();
@@ -95,7 +103,7 @@ class Parameter {
     }
     
     /**
-     * set params to Session
+     * Set params to Session based on the module
      */
     public static function setModuleSession($params) {
     	$moduleName = MvcReg::getModuleName();
@@ -105,7 +113,7 @@ class Parameter {
     }
     
     /**
-     * set params to Session
+     * Unset params to Session based on the module
      */
     public static function unsetModuleSession($params) {
     	$moduleName = MvcReg::getModuleName();
@@ -115,7 +123,7 @@ class Parameter {
     }
 
     /**
-     * set params to Session
+     * Unset all params from Session
      */
     public static function unsetAllParams() {
     	if (is_array(self::$_params)) {

@@ -1,41 +1,55 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\component\AbstractFormElement
+ */
 require_once 'AbstractFormElement.php';
 
 /**
- * Description of CheckBoxElement
+ * The button element
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\html\component\CheckBoxElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class CheckBoxElement extends AbstractFormElement{
-    //put your code here
+
+	/**
+	 * @property string $_text
+	 */
+	protected $_text;
+	
     public function __construct($id) {
         $this->setId($id);
         $this->setAttribute("type", InputType::CHECKBOX);
     }
-    protected $_text;
-   
+
+    /**
+     * @param string $text
+     * @return string
+     */
     public function setText($text) {
         $this->_text    = $text;
     }
     
+    /**
+     * @param string $text
+     * @return string
+     */
     public function getText($text) {
        return  $this->_text;
     }
     
+    /**
+     * @see AbstractFormElement::renderElements()
+     */
     protected function renderElements() {
         $insert = "";
         foreach ($this->_attributes as $key => $value)

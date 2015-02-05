@@ -2,16 +2,16 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * All the html doctypes.
+ *
+ * @package framework\app\library\view\Doctype
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Doctype {
 	
 	/**
@@ -30,6 +30,10 @@ class Doctype {
     const HTML4_FRAMESET      = 'HTML4_FRAMESET';
     const HTML5               = 'HTML5';
     
+    /**
+     * Array of doctypes.
+     * @property array $_doctypes
+     */
     private $_doctypes = array();
     
 	
@@ -50,11 +54,19 @@ class Doctype {
                     		);
                 
     }
-    
+    /**
+     * Set the doctype.
+     * @param string $newDocTypeKey
+     * @param string $newDocType
+     */
     public function setDoctype($newDocTypeKey, $newDocType) {
     	 $this->_doctypes[$newDocTypeKey] = $newDocType;
     }
-    
+    /**
+     * Get the doctype
+     * @param string $newDocTypeKey
+     * @return string
+     */
     public function getDoctype($newDocTypeKey = NULL) {
     	 $newDocTypeKey = is_null($newDocTypeKey) ? (self::HTML4_LOOSE) : $newDocTypeKey;
     	 return $this->_doctypes[$newDocTypeKey];

@@ -1,18 +1,23 @@
 <?php
 /**
  * AiryMVC Framework
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- *
+ * 
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework/core/AclXmlConstant
+ */
 require_once 'AclXmlConstant.php';
 
+/**
+ * This class is responsible for the authentication related methods.
+ * 
+ * @package framework\core\AclUtility
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class AclUtility 
 {
     private static $instance;
@@ -30,7 +35,9 @@ class AclUtility
     }
     
     /**
-     *  Use Singleton pattern here
+     *  For Singleton pattern.
+     *  
+     *  @return object the instance of this class
      */
     public static function getInstance()
     {
@@ -41,15 +48,22 @@ class AclUtility
         return self::$instance;
     }
     
+    /**
+     * This method sets a acl xml - the default is "acl.xml" in config folder.
+     *
+     * @param string $aclxml A xml file.
+     *
+     * @return void
+     */
     public function setAclXml($aclxml) {
     	$this->_aclxml = $aclxml;
     }
 
-//    public function loadXMLtoDOM($file) {
-//
-//        $this->_xmldom->load($file);
-//    }
-
+    /**
+     * This method gets authentication related action's values that are set in acl.xml.
+     *
+     * @return array values of authentication actions 
+     */
     public function getAuthentications() {
     	$loginRelatedActions = array("sign_in_action", 
     								 "login_action", 
@@ -91,7 +105,13 @@ class AclUtility
 
         return $auth;
     }
-
+    
+    /**
+     * This method gets the dispatch action when the authentication is successful.
+     * The successful dispatch action is defined in acl.xml.
+     * 
+     * @return array with key module, controller, and action
+     */
     public function getSuccessfulDispatch() {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $dispdom = $xmldom->getElementsByTagName(AclXmlConstant::ACL_SUCCESSFUL_DISPATCH)->item(0);
@@ -109,7 +129,7 @@ class AclUtility
                  	 if (trim($child->nodeName) == "action") {
                  	 	 $value = RouterHelper::hyphenToCamelCase($value);
                  	 }
-                        $resp[$module_name][trim($child->nodeName)] = $value;
+                     $resp[$module_name][trim($child->nodeName)] = $value;
                  }
             }   
            
@@ -118,12 +138,24 @@ class AclUtility
         return $resp;
     }
 
+    /**
+     * Convert a xml file into a xml dom.
+     * 
+     * @param string $xml A xml file.
+     * 
+     * @return object xml dom object
+     */
     public function getDOMfromXML($xml) {
         $xmldom = new DOMDocument();
         $xmldom->load($xml);
         return $xmldom;
     }
-
+    
+    /**
+     * Get the all attributes of mapping database tables, which are defined in acl.xml.
+     *
+     * @return array key table id and values are all the attributes.
+     */
     public function getAllMapTblAttr() {
         $tbl = $this->getMapTables();
         $map_tbl_attrs = array();
@@ -132,17 +164,36 @@ class AclUtility
         }
         return $map_tbl_attrs;
     }
-    
+
+    /**
+     * Get the table name according to table id.
+     *
+     * @param string database table id that is defined in acl.xml.
+     *
+     * @return string table name.
+     */    
     public function getTableById($tbl_id){
         $tbls =  $this->getMapTables();
         return $tbls[$tbl_id];
     }  
 
+    /**
+     * Get the mapping database id.
+     *
+     * @param string mapping table id that is defined in acl.xml.
+     *
+     * @return string mapping database id.
+     */
     public function getMapDatabaseId($mapTableId) {
         $mapDbIds = $this->getMapDatabaseIds();
         return $mapDbIds[$mapTableId][AclXmlConstant::ACL_MAPPING_DB_ID];
     }
     
+    /**
+     * Get all the mapping database ids. These are defined in acl.xml.
+     *
+     * @return array mapping database ids.
+     */    
     public function getMapDatabaseIds() {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $mapTbls = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_TABLE);
@@ -163,7 +214,11 @@ class AclUtility
         return $mapDbs;
     }
 
-    
+    /**
+     * Get encryption type of the password in the mapping authentication (account) table. This is defined in acl.xml.
+     *
+     * @return string encrption type.
+     */    
     public function getEncrytion() {
     	$xmldom = $this->getDOMfromXML($this->_aclxml);
         $tblist = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_TABLE);
@@ -191,7 +246,11 @@ class AclUtility
     	
     }
     
-
+    /**
+     * Convert all the mapping tables that are defined in acl.xml.
+     *
+     * @return array all the mapping tables
+     */
     public function getMapTables() {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $tblist = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_TABLE);
@@ -208,6 +267,11 @@ class AclUtility
         return $tables;
     }
     
+    /**
+     * Get all the mapping tables that are categorized by modules.
+     *
+     * @return array all the mapping tables
+     */    
     public function getMappingModuleTables()
     {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
@@ -229,12 +293,25 @@ class AclUtility
         return $map_tables;
     }
     
+    /**
+     * Get the mapping tables according to the module
+     *
+     * 
+     * @return array all the mapping tables
+     */    
     public function getTableIdByModule($moduleName)
     {
         $mtbl = $this->getMappingModuleTables();
         return $mtbl[$moduleName];
     }
-
+    
+    /**
+     * Get the mapping fields in a database table according to table id.
+     *
+     * @param string mapping table id.
+     *
+     * @return array mapping fields.
+     */
     public function getMappingFieldByTbl($tb_id) {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $map_tbls = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_TABLE);
@@ -270,7 +347,13 @@ class AclUtility
     }
     
 
-
+    /**
+     * Get the role types based on a mapping table name.
+     *
+     * @param string mapping table name.
+     *
+     * @return array role types.
+     */
     public function getRoleTypesByTbl($tbl_name) {
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $fields = $xmldom->getElementsByTagName(AclXmlConstant::ACL_MAPPING_FIELDS);
@@ -294,6 +377,11 @@ class AclUtility
         return $map_fields;
     }
     
+    /**
+     * Get rules of accessible actions after login.
+     *
+     * @return array all the accessible rules.
+     */
     public function getLoginedAccessRules(){
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $rdom = $xmldom->getElementsByTagName(AclXmlConstant::ACL_ACCESS_RULES_AFTER_AUTHENTICATION)->item(0);
@@ -335,7 +423,13 @@ class AclUtility
         
         return $rules;
     }
-
+    
+    /**
+     * Get browse rules that are defined in acl.xml. Browse rules define the accessible module-controller-actions 
+     * before user login under the authentication control.
+     *
+     * @return array all the browse rules.
+     */
     public function getBrowseRules(){
         $xmldom = $this->getDOMfromXML($this->_aclxml);
         $rdom = $xmldom->getElementsByTagName(AclXmlConstant::ACL_ACCESS_CONTROL_EXCLUSION)->item(0);

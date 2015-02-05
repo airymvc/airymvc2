@@ -1,18 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This abstract class is used for composing each kind of the SQL statement.
+ *
+ * @filesource
+ * @package framework\app\library\db\MysqlCommon
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 abstract class MysqlCommon extends SqlComponent{
 
     function __construct() {
@@ -21,8 +21,9 @@ abstract class MysqlCommon extends SqlComponent{
     }
     
     /**
-     * Deprecated method 
+     * @deprecated Deprecated method 
      * @param array $tables
+     * @return MysqlCommon
      */
     public function innerJoin($tables) {
         //INNER JOIN messages INNER JOIN languages
@@ -38,7 +39,9 @@ abstract class MysqlCommon extends SqlComponent{
     }
     
 
-    /*
+    /**
+     * @example
+     * 
      * Deprecated method 
      * 
      * conditions represent 
@@ -53,8 +56,10 @@ abstract class MysqlCommon extends SqlComponent{
      * ON `table1`.`field1` = `table2`.`field2`AND `table3`.`field3` <> `table2`.`field2`AND `table4`.`field4` <> `table3`.`field3`
      * OR `table5`.`field5` = `table6`.`field6` LIMIT 0, 10
      * 
+     * @param array $condition
+     * @return SqlComponent
+     * 
      */
-
     public function joinOn($condition) {
         $this->joinOnPart = " ON ";
         if (is_array($condition)) {
@@ -65,21 +70,39 @@ abstract class MysqlCommon extends SqlComponent{
         return $this;
     }
     
+    /**
+     * @param array $condition
+     * @return MysqlCommon
+     */
     public function andJoinOn($condition) {
         $this->joinOnPart .= " AND {$condition}";
         return $this;
     }
     
+    /**
+     * @param array $condition
+     * @return MysqlCommon
+     */
     public function orJoinOn($condition) {
         $this->joinOnPart .= " OR {$condition}";
         return $this;
     }
     
+    /**
+     * @param string $joinOnString
+     * @param string $conditionString
+     * @return string
+     */
     protected function composeJoinOnByString($joinOnString, $conditionString) {
     	$joinOnString .= $conditionString;
     	return $joinOnString;
     }
     
+    /**
+     * @param string $joinOnString
+     * @param array $condition
+     * @return string
+     */
     protected function composeJoinOnByArray($joinOnString, $condition) {
         $ops = array_keys($condition);
         
@@ -113,6 +136,13 @@ abstract class MysqlCommon extends SqlComponent{
         return $joinOnString;  	
     }
     
+    /**
+     * 
+     * @param string $joinOnString
+     * @param array $tfPairs
+     * @param string $op
+     * @return string
+     */
     protected function attachPairs($joinOnString, $tfPairs, $op) {
         foreach ($tfPairs as $idx => $tfPair) {
                  $operation = $op;
@@ -124,6 +154,14 @@ abstract class MysqlCommon extends SqlComponent{
         return $joinOnString;    	
     }
     
+    /**
+     * 
+     * @param string $joinOnString
+     * @param array $tf_pair
+     * @param string $op
+     * @param string $leadingOp
+     * @return string
+     */
     protected function attachJoinOn($joinOnString, $tf_pair, $op = null, $leadingOp = null) {
         $op = is_null($op) ? "" : $op;
         $leadingOp = is_null($leadingOp) ? "" : (" " . $leadingOp);	

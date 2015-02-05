@@ -1,22 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
- *
- * The Paginator creates a piece of html that contains links to each page. It takes the SQL, converts it, query partial of results, and then compose the pagination html.
- * The composed html is attached to a URL like http://URL&pagination_query_string_key_value. The URL should contain complete domain and/or query string.
- * 
  */
-
+/**
+ * The component generates the paginator text.
+ *
+ * @filesource
+ * @package framework\app\library\page\Paginator
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class Paginator{
 
     private $_URL;
@@ -79,6 +75,9 @@ class Paginator{
         $this->setDefaultValue();
     }
     
+    /**
+     * Set all the default values for the paginator
+     */
     public function setDefaultValue() {
     	$this->setPaginatorCssIdSelector("paginator", "paginator");
     	$this->setCurrentCssIdSelector("current_page", "current_page");
@@ -95,14 +94,14 @@ class Paginator{
     }
     
     /**
-     * 
-     * Ex: $dbSettings = array("dbtype"   => "mysql",
-	 * 						   "host"     => "localhost:3036",
-	 * 						   "id"       => "root",
-	 *                         "database" => "demo",
-	 *                         "pwd"      => "root", 
-	 * 						   "encoding" => "utf8"
-	 * 						  )
+     * @example
+     * $dbSettings = array("dbtype"   => "mysql",
+	 * 					   "host"     => "localhost:3036",
+	 * 					   "id"       => "root",
+	 *                     "database" => "demo",
+	 *                     "pwd"      => "root", 
+	 * 					   "encoding" => "utf8"
+	 * 			 		  )
      * @param array $dbSetting
      */
     public function configDbSetting($dbSetting = NULL) {
@@ -115,25 +114,38 @@ class Paginator{
     	}
     }
     
+    /**
+     * @return array
+     */
     public function getDbSetting() {
     	return $this->_dbSetting;
     }
     
+    /**
+     * @param int $databaseId
+     */
     public function setDatabaseId($databaseId) {
         $this->_databaseId = $databaseId;
     }
-        
+    
+    /**
+     * @param string $URL
+     */
     public function setURL($URL) {
         $this->_URL = $URL;
     }
+    
     /**
-     *
      * @param array $params 
      */
     public function setParams($params) {
         $this->_params = $params;
     }
     
+    /**
+     * @param string $sql
+     * @return string
+     */
     public function getPageHtmlBySQL($sql) {
 
     	$numberItemsOnPage = $this->_numberOfItems;
@@ -203,6 +215,12 @@ class Paginator{
         
     }
     
+    /**
+     * @param int $page
+     * @param int $numberOfItems
+     * @param string $paramsString
+     * @return string
+     */
     protected function composeLink($page, $numberOfItems, $paramsString = "") {
     	$attachParamsString = "";
         if ($paramsString != "") {
@@ -221,17 +239,26 @@ class Paginator{
         return $link;   	
     }
     
+    /**
+     * @return number
+     */
     public function getPreviousPage() {
         $prev = (($this->_currentPage - 1) < 1) ? 1 : ($this->_currentPage - 1);
         return $prev;
     }
     
+    /**
+     * @return int
+     */
     public function getNextPage()
     {
         $next = (($this->_currentPage + 1) > $this->_totalPage) ? $this->_totalPage : ($this->_currentPage + 1);
         return $next;
     }
     
+    /**
+     * @return string
+     */
     private function getParamString() {
         $paramsString = "";
         
@@ -244,6 +271,11 @@ class Paginator{
         return $paramsString;
     }
     
+    /**
+     * @param string $sql
+     * @throws AiryException
+     * @return int|NULL
+     */
     private function getTotalItemCount($sql) {
     	
         $search = "/^SELECT(.*)FROM/i";
@@ -299,211 +331,226 @@ class Paginator{
 		return $count;
     }
     
+    /**
+     * @return int
+     */
     public function getTotalPage()
     {
         return $this->_totalPage;
     }
 	/**
-	 * @return the $_params
+	 * @return array
 	 */
 	public function getParams() {
 		return $this->_params;
 	}
 
 	/**
-	 * @return the $_numberItemsOnPage
+	 * @return int
 	 */
 	public function getNumberOfItems() {
 		return $this->_numberOfItems;
 	}
 
 	/**
-	 * @return the $_currentPage
+	 * @return int
 	 */
 	public function getCurrentPage() {
 		return $this->_currentPage;
 	}
 
 	/**
-	 * @return the $_numberItemsOnPageKey
+	 * @return int
 	 */
 	public function getNumberOfItemsKey() {
 		return $this->_numberOfItemsKey;
 	}
 
 	/**
-	 * @return the $_pageParameterKey
+	 * @return string
 	 */
 	public function getPageParameterKey() {
 		return $this->_pageParameterKey;
 	}
 
 	/**
-	 * @return the $_pageHtml
+	 * @return string
 	 */
 	public function getPageHtml() {
 		return $this->_pageHtml;
 	}
 
 	/**
-	 * @param field_type $_totalPage
+	 * @param int $totalPage
 	 */
 	public function setTotalPage($totalPage) {
 		$this->_totalPage = $totalPage;
 	}
 
 	/**
-	 * @param field_type $_numberItemsOnPage
+	 * @param int $numberOfItems
 	 */
 	public function setNumberOFItems($numberOfItems) {
 		$this->_numberOfItems = $numberOfItems;
 	}
 
 	/**
-	 * @param field_type $_currentPage
+	 * @param int $currentPage
 	 */
 	public function setCurrentPage($currentPage) {
 		$this->_currentPage = $currentPage;
 	}
 
 	/**
-	 * @param field_type $_numberItemsOnPageKey
+	 * @param int $numberOfItemsKey
 	 */
 	public function setNumberOfItemsKey($numberOfItemsKey) {
 		$this->_numberOfItemsKey = $numberOfItemsKey;
 	}
 
 	/**
-	 * @param field_type $_pageParameterKey
+	 * @param string $pageParameterKey
 	 */
 	public function setPageParameterKey($pageParameterKey) {
 		$this->_pageParameterKey = $pageParameterKey;
 	}
 
 	/**
-	 * @param field_type $_pageHtml
+	 * @param string $pageHtml
 	 */
 	public function setPageHtml($pageHtml) {
 		$this->_pageHtml = $pageHtml;
 	}
 	
+	/**
+	 * @return string
+	 */
 	public function getNavPrefix() {
 		return $this->_navPrefix;
 	}
 	
+	/**
+	 * @return string
+	 */	
 	public function getNavPostfix() {
 		return $this->_navPostfix;
 	}
 	
-	
+	/**
+	 * @param string $navPrefix
+	 */
 	public function setNavPrefix($navPrefix) {
 		$this->_navPrefix = $navPrefix;
 	}
 	
+	/**
+	 * @param string $navPostfix
+	 */	
 	public function setNavPostfix($navPostfix) {
 		$this->_navPostfix = $navPostfix;
 	}
+	
 	/**
-	 * @return the $_paginatorCssId
+	 * @return string
 	 */
 	public function getPaginatorCssId() {
 		return $this->_paginatorCssId;
 	}
 
 	/**
-	 * @return the $_paginatorCssSelector
+	 * @return string
 	 */
 	public function getPaginatorCssSelector() {
 		return $this->_paginatorCssSelector;
 	}
 
 	/**
-	 * @return the $_nextCssId
+	 * @return string
 	 */
 	public function getNextCssId() {
 		return $this->_nextCssId;
 	}
 
 	/**
-	 * @return the $_nextCssSelector
+	 * @return string
 	 */
 	public function getNextCssSelector() {
 		return $this->_nextCssSelector;
 	}
 
 	/**
-	 * @return the $_prevCssId
+	 * @return string
 	 */
 	public function getPrevCssId() {
 		return $this->_prevCssId;
 	}
 
 	/**
-	 * @return the $_prevCssSelector
+	 * @return string
 	 */
 	public function getPrevCssSelector() {
 		return $this->_prevCssSelector;
 	}
 
 	/**
-	 * @return the $_firstCssId
+	 * @return string
 	 */
 	public function getFirstCssId() {
 		return $this->_firstCssId;
 	}
 
 	/**
-	 * @return the $_firstCssSelector
+	 * @return string
 	 */
 	public function getFirstCssSelector() {
 		return $this->_firstCssSelector;
 	}
 
 	/**
-	 * @return the $_lastCssId
+	 * @return string
 	 */
 	public function getLastCssId() {
 		return $this->_lastCssId;
 	}
 
 	/**
-	 * @return the $_lastCssSelector
+	 * @return string
 	 */
 	public function getLastCssSelector() {
 		return $this->_lastCssSelector;
 	}
 
 	/**
-	 * @return the $_currentCssId
+	 * @return string
 	 */
 	public function getCurrentCssId() {
 		return $this->_currentCssId;
 	}
 
 	/**
-	 * @return the $_currentCssSelector
+	 * @return  string
 	 */
 	public function getCurrentCssSelector() {
 		return $this->_currentCssSelector;
 	}
 
 	/**
-	 * @return the $_pageCssId
+	 * @return string
 	 */
 	public function getPageCssId() {
 		return $this->_pageCssId;
 	}
 
 	/**
-	 * @return the $_pageCssSelector
+	 * @return string
 	 */
 	public function getPageCssSelector() {
 		return $this->_pageCssSelector;
 	}
 
 	/**
-	 * @param field_type $paginatorCssId
-	 * @param field_type $paginatorCssSelector
+	 * @param string $paginatorCssId
+	 * @param string $paginatorCssSelector
 	 */
 	public function setPaginatorCssIdSelector($paginatorCssId, $paginatorCssSelector) {
 		$this->_paginatorCssId = $paginatorCssId;
@@ -511,14 +558,14 @@ class Paginator{
 	}
 	
 	/**
-	 * @param field_type $paginatorCssId
+	 * @param string $paginatorCssId
 	 */
 	public function setPaginatorCssId($paginatorCssId) {
 		$this->_paginatorCssId = $paginatorCssId;
 	}
 
 	/**
-	 * @param field_type $paginatorCssSelector
+	 * @param string $paginatorCssSelector
 	 */
 	public function setPaginatorCssSelector($paginatorCssSelector) {
 		$this->_paginatorCssSelector = $paginatorCssSelector;
@@ -730,22 +777,37 @@ class Paginator{
 		$this->_numberOfPages = $numberOfPages;
 	}
 
+	/**
+	 * @param boolean $isShowTotalPage
+	 */
 	public function setIsShowTotalPage($isShowTotalPage) {
 		$this->_isShowTotalPage = $isShowTotalPage;
 	}
 
+	/**
+	 * @param string $totalPagePrefix
+	 */
 	public function setTotalPagePrefix($totalPagePrefix) {
 		$this->_totalPagePrefix = $totalPagePrefix;
 	}
 	
+	/**
+	 * @param string $totalPagePostfix
+	 */
     public function setTotalPagePostfix($totalPagePostfix) {
     	$this->_totalPagePostfix = $totalPagePostfix;	
     }
     
+    /**
+     * @return string
+     */
     public function getTotalPagePrefix() {
     	return $this->_totalPagePrefix;
     }
     
+    /**
+     * @return string
+     */
     public function getTotalPagePostfix() {
     	return $this->_totalPagePostfix;
     }

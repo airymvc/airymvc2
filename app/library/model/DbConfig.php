@@ -1,25 +1,25 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This handles the framework log.
+ *
+ * @package framework\app\library\log\DbConfig
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class DbConfig {
 	
 	private static $dbAccessElements = array();
 
 	/**
 	 * This is the function to get the database access objects for all the database settings in the config.ini file.
-	 * 
+	 * @see framework\config\config.ini
+	 * @see framework\config\example.config.ini
 	 * @throws AiryException
 	 */
     public static function getConfig() {
@@ -34,7 +34,8 @@ class DbConfig {
     }
     /**
      * 
-     * @param int $idx, array $configArray
+     * @param int $idx
+     * @param array $configArray
      * @throws AiryException
      */
     public static function assignDbAccess($idx, $configArray) {

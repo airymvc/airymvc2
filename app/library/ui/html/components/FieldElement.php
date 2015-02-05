@@ -1,31 +1,47 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\component\AbstractFormElement
+ */
 require_once 'AbstractFormElement.php';
 
 /**
- * Description of fieldElement
+ * The field element
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\html\component\FieldElement
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class FieldElement extends AbstractFormElement{
-    //put your code here
+
+	/**
+	 * @property string $_label
+	 */
     protected $_label;
+    
+    /**
+     * @property string $_label_id
+     */
     protected $_label_id;
+    
+    /**
+     * @property string $_label_css
+     */
     protected $_label_css;
     
+    /**
+     * Set the label of the form element
+     * @param string $label_id
+     * @param string $label
+     * @param string $label_css
+     */
     public function setLabel($label_id, $label, $label_css = null)
     {
         $this->_label     = $label;
@@ -33,6 +49,9 @@ class FieldElement extends AbstractFormElement{
         $this->_label_css = $label_css;
     }
     
+    /*
+     * @return string
+     */
     protected function renderElements()
     {
         $insert = "";

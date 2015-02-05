@@ -1,18 +1,18 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This abstract class is used for composing each kind of the SQL statement.
+ *
+ * @filesource
+ * @package framework\app\library\db\MssqlComponent
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class MssqlComponent extends SqlComponent{
 
     function __construct() {
@@ -20,7 +20,8 @@ class MssqlComponent extends SqlComponent{
 		$this->setCloseIdentifier("]");
     }
     
-    /*
+    /**
+     *  @example
      *  $offset @int
      *  $interval @int
      *  
@@ -40,8 +41,11 @@ class MssqlComponent extends SqlComponent{
 	 *  (SELECT *, ROW_NUMBER() OVER (ORDER BY name) as row FROM table_name) a 
 	 *  WHERE row > 5 and row <= 10
 	 *  
+	 *  @param int $offset
+	 *  @param int $interval
+	 *  @return MssqlComponent
+	 *  
      */
-
     public function limit($offset, $interval) {
         $this->limitPart = "";
         if (is_null($offset) && is_null($interval)) {
@@ -55,36 +59,19 @@ class MssqlComponent extends SqlComponent{
         return $this;
     }
     
-    
-//    /**
-//     * @return the $queryStmt
-//     */
-//    
-//    public function getStatement() {
-//        //Combine every part of the query statement
-//        switch ($this->queryType) {
-//            case "SELECT":
-//                $this->queryStmt = null; 
-//				$this->queryStmt = $this->composeSelectStatement($this->selectPart, $this->joinPart, $this->joinOnPart, $this->wherePart, 
-//									 							 $this->groupPart, $this->orderPart, $this->limitPart);
-//                break;
-//            case "UPDATE":
-//                $this->queryStmt = null;
-//                $this->queryStmt = $this->updatePart . $this->wherePart;
-//                break;
-//            case "INSERT":
-//                $this->queryStmt = null;
-//                $this->queryStmt = $this->insertPart;
-//                break;
-//            case "DELETE":
-//                $this->queryStmt = null;
-//                $this->queryStmt = $this->deletePart . $this->wherePart;
-//                break;
-//        }
-//        return $this->queryStmt;
-//    }
-    
-    
+    /**
+     * @see SqlComponent::composeSelectStatement()
+     * 
+     * @param string $selectPart
+     * @param string $joinOnParts
+     * @param string $joinPart
+     * @param string $joinOnPart
+     * @param string $wherePart
+     * @param string $groupPart
+     * @param string $orderPart
+     * @param string $limitPart
+     * @return string
+     */    
     public function composeSelectStatement($selectPart, $joinOnParts, $joinPart, $joinOnPart, $wherePart, $groupPart, $orderPart, $limitPart) {
         $queryStmt = ""; 
         
@@ -110,6 +97,11 @@ class MssqlComponent extends SqlComponent{
           return $queryStmt;
     }
     
+    /**
+     * @see SqlComponent::execute()
+     * 
+     * @param string $statement Default value = NULL
+     */
     public function execute($statement = NULL) {
 
     	$statement = is_null($statement) ? $this->getStatement() : $statement;
@@ -137,9 +129,12 @@ class MssqlComponent extends SqlComponent{
         //So, in order to passing the whole result, we need to wrap the result by using mssql_fetch_array first
         return $resultArray;
     }
-
-
-
+	
+    /**
+     * @see SqlComponent::sqlEscape()
+     * 
+     * @param string $content
+     */
     function sqlEscape($content) {
         return $content;
     }

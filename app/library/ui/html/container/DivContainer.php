@@ -1,23 +1,28 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
-
+/**
+ * The fieldset html UI component
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\container\DivContainer
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class DivContainer extends AbstractContainer{
 
+	/**
+	 * @property HTML div text
+	 */
     protected $_divText;
     
+    /**
+     * @see UIComponent::render()
+     */
     public function render()
     {
         $divText = "<div ";

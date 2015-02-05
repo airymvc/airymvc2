@@ -1,23 +1,26 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * This abstract class is used for composing each kind of the SQL statement.
+ *
+ * @filesource
+ * @package framework\app\library\db\MysqliComponent
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class MysqliComponent extends MysqlCommon {
 
 	private $port = 3306;
 	private $host;
 	
+	/**
+	 * @see MysqlCommon::execute()
+	 */
     public function execute() {
 		$hostArray = explode(":", $this->dbConfigArray['host']);    	
 		$this->host = $hostArray[0];
@@ -35,7 +38,9 @@ class MysqliComponent extends MysqlCommon {
         
         return $result;
     }
-    
+    /**
+     * @see SqlComponent::sqlEscape()
+     */
     function sqlEscape($content) {
         /**
          * Need to add connection in order to avoid ODBC errors here 
