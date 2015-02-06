@@ -14,8 +14,11 @@
  * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class PdoMssqlComponent extends PdoSqlComponent {
-	
-	//mssql component is used for exporting limit and 
+
+	/**
+	 * Mssql component is used for exporting limit
+	 * @var MssqlComponent $mssqlComponent
+	 */
 	protected $mssqlComponent;
 
     function __construct() {

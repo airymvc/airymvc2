@@ -15,7 +15,14 @@
  */
 class MysqliComponent extends MysqlCommon {
 
+	/**
+	 * @var int $port
+	 */
 	private $port = 3306;
+	
+	/**
+	 * @var string $host
+	 */
 	private $host;
 	
 	/**

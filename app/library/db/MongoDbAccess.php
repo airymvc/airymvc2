@@ -15,23 +15,74 @@
  */
 class MongoDbAccess implements DbAccessInterface {
 	
-	//component part
+	/**
+	 * @var array $dbConfigArray
+	 */
 	protected $dbConfigArray;
 
+	/**
+	 * @var object $mongoClient
+	 */
 	protected $mongoClient;
+	
+	/**
+	 * @var object $database
+	 */
 	protected $database;
 	
+	/**
+	 * @var array $dbCollection
+	 */
 	protected $dbCollection;
+	
+	/**
+	 * @var string $selectPart
+	 */
 	protected $selectPart;
+	
+	/**
+	 * @var string $updatePart
+	 */
 	protected $updatePart;
+	
+	/**
+	 * @var string $insertPart
+	 */
 	protected $insertPart;
 	
+	/**
+	 * @var string $wherePart
+	 */
 	protected $wherePart;
+	
+	/**
+	 * @var string $distinctPart
+	 */
 	protected $distinctPart;
+	
+	/**
+	 * @var string $orderPart
+	 */
 	protected $orderPart;
+	
+	/**
+	 * @var string $groupPart
+	 */
 	protected $groupPart;
+	
+	/**
+	 * @var string $limitPart
+	 */
 	protected $limitPart;
+	
+	/**
+	 * @var string $offsetPart
+	 */
 	protected $offsetPart;
+	
+	/**
+	 * @var string $queryType
+	 */
 	protected $queryType;
 	
 	/**

@@ -1,22 +1,29 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
- * @author Hung-Fu Aaron Chang
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ * @author: Hung-Fu Aaron Chang
  */
 
-
+/**
+ * The key-value validation.
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\form\validation\ParamsValidation
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class ParamsValidation {
-    //put your code here
+    
+    /**
+     * @var array $_fields
+     */
     private $_fields;
+    
+    /**
+     * @var array $_respones
+     */
     private $_respones;
     
     function __construct() {
@@ -24,10 +31,17 @@ class ParamsValidation {
         $this->_respones = array();
     }
     
+    /**
+     * Set the validator
+     * @param string $name
+     * @param object $validator
+     */
     public function setValidator($name, $validator) {
         $this->_fields[$name][] = $validator; 
     }
+    
     /**
+     * Validate the parameters.
      * @param array $params: key-value array as GET or POST results ($_GET or $_POST)
      * @return string: error message 
      */

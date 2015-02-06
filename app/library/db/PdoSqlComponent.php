@@ -15,10 +15,29 @@
  */
 class PdoSqlComponent extends SqlComponent {
 	
+	/**
+	 * @var object $pdoConn
+	 */
 	protected $pdoConn;
+	
+	/**
+	 * @var string $dsn
+	 */
 	protected $dsn;
+	
+	/**
+	 * @var string $host
+	 */
 	protected $host;
+	
+	/**
+	 * @var int $port
+	 */
 	protected $port;
+	
+	/**
+	 * @var boolean $autoConnectionClose
+	 */
 	protected $autoConnectionClose = false;
  	
 	/**

@@ -1,33 +1,39 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
- * @author Hung-Fu Aaron Chang
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ * @author: Hung-Fu Aaron Chang
  */
 
+/**
+ * @see framework\app\library\ui\html\form\validation\RuleInterface
+ */
 require_once 'RuleInterface.php';
 
+/**
+ * This is email validation rule.
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\form\validation\EmailRule
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class EmailRule implements RuleInterface{
-    //put your code here
-    
-   private $_pattern; 
+   
    /**
-    *
+    * @var string $_pattern
+    */ 
+   private $_pattern; 
+   
+   /**
     * @param string $pattern 
     */ 
    public function setRule($pattern){
        $this->_pattern = $pattern;
    }
+   
    /**
-    *
     * @param string $input
     * @return boolean 
     */ 

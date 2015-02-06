@@ -1,32 +1,29 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
- * @author Hung-Fu Aaron Chang
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ * @author: Hung-Fu Aaron Chang
  */
-
 
 /**
- * Description of RuleInterface
- *   
- * This interface defines the rule interface for future implements
- * Any customized rules need to follow the interface like below.
- * Then, the customized rule can be used in the validators.
+ * The interface for a validation rule.
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\html\form\validation\RuleInterface
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 interface RuleInterface {
-    //put your code here
+    
+	/**
+	 * @param object $pattern
+	 */
     public function setRule($pattern);
     
+    /**
+     * @param object $input
+     */
     public function validRule($input);
 }
 
