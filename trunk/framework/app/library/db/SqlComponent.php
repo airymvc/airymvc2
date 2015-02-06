@@ -15,27 +15,95 @@
  */
 abstract class SqlComponent {
 
-
+	/**
+	 * @var array $dbConfigArray
+	 */
     protected $dbConfigArray;
-    protected $queryStmt;
-    protected $selectStatement;
-    protected $selectPart;
-    protected $updatePart;
-    protected $deletePart;
-    protected $insertPart;
-    protected $joinOnParts = array();    
-    protected $wherePart;
-    protected $orderPart;
-    protected $groupPart;
-    protected $limitPart;
-    protected $keywords = array('CURRENT_TIMESTAMP' => "CURRENT_TIMESTAMP");
-    protected $queryType;
     
-    //joinPart and JoinOnPart will be modified after the method is deprecated
+    /**
+     * @var string $queryStmt
+     */
+    protected $queryStmt;
+    
+    /**
+     * 
+     * @var string $selectStatement
+     */
+    protected $selectStatement;
+    
+    /**
+     * @var string $selectPart
+     */
+    protected $selectPart;
+    
+    /**
+     * @var string $updatePart
+     */
+    protected $updatePart;
+    
+    /**
+     * @var string $deletePart
+     */
+    protected $deletePart;
+    
+    /**
+     * @var string $insertPart
+     */
+    protected $insertPart;
+    
+    /**
+     * @var array $joinOnParts
+     */
+    protected $joinOnParts = array(); 
+
+    /**
+     * @var string $wherePart
+     */
+    protected $wherePart;
+    
+    /**
+     * @var string $orderPart
+     */
+    protected $orderPart;
+    
+    /**
+     * @var string $groupPart
+     */
+    protected $groupPart;
+    
+    /**
+     * @var string $limitPart
+     */
+    protected $limitPart;
+    
+    /**
+     * @var array $keywords
+     */
+    protected $keywords = array('CURRENT_TIMESTAMP' => "CURRENT_TIMESTAMP");
+    
+    /**
+     * @var string $queryType
+     */
+    protected $queryType;
+
+    /**
+     * @var string $joinPart
+     */
     protected $joinPart;
+    
+    /**
+     * @var string $joinOnPart
+     */
     protected $joinOnPart;
     
+    /**
+     * @var string $openIdentifier
+     */
     protected $openIdentifier  = "";
+    
+    /**
+     * @var string $closeIdentifier
+     */
     protected $closeIdentifier = "";
     
     /**

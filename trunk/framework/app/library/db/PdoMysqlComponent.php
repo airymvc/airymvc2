@@ -20,6 +20,9 @@ class PdoMysqlComponent extends PdoSqlComponent {
     	$this->setIdentifier();
     }
     
+    /**
+     * @param array $dbConfigArray
+     */
     public function configConnection($dbConfigArray) {
     	$hostArray = explode(":", $dbConfigArray['host']);
     	$this->host = $hostArray[0];
@@ -30,6 +33,9 @@ class PdoMysqlComponent extends PdoSqlComponent {
     	$this->setConnection($this->dsn, $dbConfigArray['id'], $dbConfigArray['pwd']);
     }
 
+    /**
+     * @see PdoSqlComponent::sqlEscape()
+     */
     function sqlEscape($content) {
         return $content;
     }    

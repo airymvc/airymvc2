@@ -1,21 +1,25 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
- * @author Hung-Fu Aaron Chang
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ * @author: Hung-Fu Aaron Chang
  */
 
-
+/**
+ * A class is used for factory pattern of Validator.
+ *
+ * @filesource
+ * @package framework\app\library\ui\html\form\validation\ValidatorFactory
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class ValidatorFactory {
     
+	/**
+	 * @param string $validatorClassName
+	 * @return string|NULL
+	 */
     public function create($validatorClassName) {
         if (class_exists($validatorClassName)) {
             return new $validatorClassName();
