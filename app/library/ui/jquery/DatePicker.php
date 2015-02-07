@@ -2,16 +2,17 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * The date picker component.
+ *
+ * @filesource
+ * @package framework\app\library\ui\jquery\DatePicker
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class DatePicker extends JUIComponent{
     
     private $_inputElement;
@@ -29,21 +30,39 @@ class DatePicker extends JUIComponent{
         $this->_inputElement = new TextElement($id);
     }
     
+    /**
+     * 
+     * @param string $label_id
+     * @param string $label
+     * @param string $label_css
+     */
     public function setLabel($label_id, $label, $label_css = null)
     {
         $this->_inputElement->setLabel($label_id, $label, $label_css);
     }
     
+    /**
+     * 
+     * @param string $value
+     */
     public function setValue($value) 
     {
         $this->_inputElement->setValue($value);   
     }
     
+    /**
+     * 
+     * @param int $number
+     */
     public function setNumberOfMonth($number)
     {
         $this->_number = $number;
     }
     
+    /**
+     * 
+     * @param boolean $changeMonth
+     */
     public function setIsChangeMonth($changeMonth) 
     {
         if ($changeMonth == true || $changeMonth == "true") {
@@ -51,6 +70,10 @@ class DatePicker extends JUIComponent{
         }
     }
     
+    /**
+     * 
+     * @param boolean $changeYear
+     */
     public function setIsChangeYear($changeYear) 
     {
         if ($changeYear == true || $changeYear == "true") {
@@ -58,12 +81,18 @@ class DatePicker extends JUIComponent{
         }
     }
     
+    /**
+     * 
+     * @param string $dateFormat
+     */
     public function setDateFormt($dateFormat)
     {
         $this->_dateFormat = $dateFormat;
     }
     
-    
+    /**
+     * @see JUIComponent::render()
+     */
     public function render()
     {
         $datePickerText = $this->_inputElement->render(); 
@@ -76,6 +105,11 @@ class DatePicker extends JUIComponent{
         return $this->_elementText;
     }
     
+    /**
+     * 
+     * @param string $id
+     * @return string
+     */
     protected function appendJs($id){
         
         $options = ""; //sprintf("dateFormat: '%s'", $this->_dateFormat);

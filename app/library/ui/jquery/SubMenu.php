@@ -2,27 +2,27 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
 /**
- * SubMenu is attached under a specific MenuItem 
+ * SubMenu is attached under a specific MenuItem.
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\jquery\MenuItem
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class SubMenu {
     
+	/**
+	 * 
+	 * @var array $_items
+	 */
 	protected $_items;
     
 	/**
- 	 * Ex: Array(0 => an instance of MenuItem)
+ 	 * @example Array(0 => an instance of MenuItem)
  	 * @param Array $menuItems
  	 */
     public function addMenuItem(Array $menuItems){
@@ -31,6 +31,11 @@ class SubMenu {
     	}
     }  
     
+    /**
+     * 
+     * @param string $MenuItemId
+     * @return MenuItem|NULL
+     */
     public function getMenuItem($MenuItemId) {
     	foreach ($this->_items as $itemId => $itemValue) {
     		if ($itemId == $MenuItemId) {
@@ -40,7 +45,10 @@ class SubMenu {
     	return NULL;
     }
    
-    
+    /**
+     * 
+     * @return string
+     */
     public function render()
     {
     	$menuHtml = "<ul>";

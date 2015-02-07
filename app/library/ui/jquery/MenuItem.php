@@ -2,29 +2,50 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
 /**
- * MenuItem is used by SubMenu and Menu
+ * The select item in the menu.
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\jquery\MenuItem
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
-
 class MenuItem {
 	
+	/**
+	 * 
+	 * @var string $label
+	 */
 	private $label;
+	
+	/**
+	 * 
+	 * @var string $link
+	 */
 	private $link;
+	
+	/**
+	 * 
+	 * @var string $iconCssClass
+	 */
 	private $iconCssClass;
+	
+	/**
+	 * 
+	 * @var string $subMenu
+	 */
 	private $subMenu;
 	
+	/**
+	 * 
+	 * @param string $label
+	 * @param string $link
+	 * @param string $iconCssClass
+	 * @param string $subMenu
+	 */
 	public function __construct($label, $link, $iconCssClass = NULL, $subMenu = NULL) {
 		$this->label = $label;
 		$this->link  = $link;
@@ -32,6 +53,11 @@ class MenuItem {
 		$this->subMenu = $subMenu;
 	}
 	
+	
+	/**
+	 * 
+	 * @return string
+	 */
 	public function render() {
 		$html = "";
 		if (is_null($this->iconCssClass)) {
