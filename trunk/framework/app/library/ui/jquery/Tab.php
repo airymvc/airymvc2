@@ -1,27 +1,31 @@
 <?php
-
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
 /**
- * Description of Tab
+ * A Tab UI element.
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\jquery\Tab
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class Tab extends JUIComponent{
     
+	/**
+	 * 
+	 * @var array $_tabs
+	 */
     protected $_tabs;
     
+    /**
+     * 
+     * @param string $id
+     * @param string $class
+     */
     public function __construct($id, $class = null) {
         $this->_id = $id;
         $this->setAttribute('id', $id);
@@ -29,14 +33,24 @@ class Tab extends JUIComponent{
             $this->setAttribute('class', $class);
         }
     }
-    //$tabLink is the identifer for the tab
-    //It could be a URL or #Identifer
+
+    
+    /**
+     * $tabLink is the identifer for the tab. It could be a URL or #Identifer
+     * 
+     * @param string $label
+     * @param string $tabLink
+     * @param boolean $isAjax Default value = false
+     */
     public function addTab($label, $tabLink, $isAjax = false){
         $this->_tabs[$tabLink] = array($label, $isAjax);
     }  
     
 
-    
+    /**
+     *
+     * @see JUIComponent::render()
+     */
     public function render()
     {
 
@@ -50,6 +64,11 @@ class Tab extends JUIComponent{
         return $this->_elementText;
     }
     
+    
+    /**
+     * 
+     * @return string
+     */
     protected function appendTabHtml() 
     {
         $tabText = "<div ";
@@ -93,6 +112,12 @@ class Tab extends JUIComponent{
         return $tabText;
     }
     
+    
+    /**
+     * 
+     * @param string $tabId
+     * @return string
+     */
     protected function appendTabJs($tabId) {
         
         $tabText = '<script type="text/javascript">'

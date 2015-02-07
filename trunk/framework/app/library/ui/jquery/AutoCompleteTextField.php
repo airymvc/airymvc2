@@ -2,19 +2,29 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
+/**
+ * The auto complete text field component.
+ *
+ * @filesource
+ * @package framework\app\library\ui\query\AutoCompleteTextField
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
+ */
 class AutoCompleteTextField extends JUIComponent{
     
+	/**
+	 * 
+	 * @var object $_inputElement
+	 */
     private $_inputElement;
+    
+    /**
+     * 
+     * @var unknown
+     */
     private $_selections;
 
     
@@ -27,21 +37,38 @@ class AutoCompleteTextField extends JUIComponent{
         $this->_inputElement = new TextElement($id);
     }
     
+    /**
+     * 
+     * @param string $label_id
+     * @param string $label
+     * @param string $label_css
+     */
     public function setLabel($label_id, $label, $label_css = null)
     {
         $this->_inputElement->setLabel($label_id, $label, $label_css);
     }
     
+    /**
+     * 
+     * @param string                                                                                      $value
+     */
     public function setValue($value) 
     {
         $this->_inputElement->setValue($value);   
     }
     
+    /**
+     * 
+     * @param array $selections
+     */
     public function setSelections($selections)
     {
         $this->_selections = $selections;
     }
     
+    /**
+     * @see JUIComponent::render()
+     */
     public function render()
     {
         $autoCompleteElement = $this->_inputElement->render(); 
@@ -54,6 +81,11 @@ class AutoCompleteTextField extends JUIComponent{
         return $this->_elementText;
     }
     
+    /**
+     * 
+     * @param string $id
+     * @return string
+     */
     protected function appendJs($id){
     	$sourceStr = "var availableSelections = [";
     	$cn = 0;

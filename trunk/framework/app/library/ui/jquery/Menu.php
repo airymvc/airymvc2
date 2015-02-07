@@ -2,25 +2,30 @@
 /**
  * AiryMVC Framework
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license.
- *
- * It is also available at this URL: http://opensource.org/licenses/BSD-3-Clause
- * The project website URL: https://code.google.com/p/airymvc/
- *
+ * @category AiryMVC
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * @author: Hung-Fu Aaron Chang
  */
-
 /**
- * Description of Menu
+ * The menu component.
  *
- * @author Hung-Fu Aaron Chang
+ * @filesource
+ * @package framework\app\library\ui\jquery\Menu
+ * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  */
 class Menu extends JUIComponent{
 	
+	/**
+	 * 
+	 * @var array $_items
+	 */
     protected $_items;
     
+    /**
+     * 
+     * @param string $id
+     * @param string $class
+     */
     public function __construct($id, $class = null) {
         $this->_id = $id;
         $this->setAttribute('id', $id);
@@ -29,7 +34,7 @@ class Menu extends JUIComponent{
         }
     }
 	/**
- 	 * Ex: Array(0 => an instance of MenuItem)
+ 	 * @example Array(0 => an instance of MenuItem)
  	 * @param Array $menuItems
  	 */
     public function addMenuItem(Array $menuItems){
@@ -38,6 +43,12 @@ class Menu extends JUIComponent{
     	}
     }  
     
+    
+    /**
+     * 
+     * @param string $MenuItemId
+     * @return string|NULL
+     */
     public function getMenuItem($MenuItemId) {
     	foreach ($this->_items as $itemId => $itemValue) {
     		if ($itemId == $MenuItemId) {
@@ -47,7 +58,9 @@ class Menu extends JUIComponent{
     	return NULL;
     }
    
-    
+    /**
+     * @see JUIComponent::render()
+     */
     public function render()
     {
 
@@ -60,6 +73,11 @@ class Menu extends JUIComponent{
         return $this->_elementText;
     }
     
+    
+	/**
+ 	 * 
+ 	 * @return string
+ 	 */
     protected function appendMenuHtml() 
     {
         $menuText = "<ul ";
@@ -81,6 +99,11 @@ class Menu extends JUIComponent{
         return $menuText;
     }
     
+    /**
+     * 
+     * @param string $menuId
+     * @return string
+     */
     protected function appendJs($menuId) {
         
         $menuJs = '<script type="text/javascript">'
