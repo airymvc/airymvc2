@@ -8,11 +8,6 @@
  */
 
 /**
- * @see framework\app\library\view\Layout
- */
-require dirname(dirname(__FILE__)) . "/view/Layout.php";
-
-/**
  * This is the abstract class of the database access.
  *
  * @package framework\app\library\db\AbstractAccess
